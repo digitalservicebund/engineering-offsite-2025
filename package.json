@@ -1,0 +1,24 @@
+{
+  "name": "engineering-offsite-2025",
+  "version": "1.0.0",
+  "description": "This repository contains visualisations of key events and anecdotes about people within the engineering discipline at DigitalService.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitalservicebund/engineering-offsite-2025.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/digitalservicebund/engineering-offsite-2025/issues"
+  },
+  "homepage": "https://github.com/digitalservicebund/engineering-offsite-2025#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mapbox-gl": "^3.15.0",
+    "papaparse": "^5.5.3"
+  }
+}

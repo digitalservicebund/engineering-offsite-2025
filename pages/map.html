@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DigitalService People Map</title>
+    <script src="../node_modules/mapbox-gl/dist/mapbox-gl.js"></script>
+    <link
+      href="../node_modules/mapbox-gl/dist/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="../node_modules/papaparse/papaparse.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+      .profile-pic {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoibWlrZS1waWVyY2UtZGlnaXRhbHNlcnZpY2UiLCJhIjoiY21oM2dtNmVxMTVjcmQzc2IxbDc4eXV0dyJ9.MbZkYC0SWQ_a-OHNddzOXg";
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/standard",
+        center: [10, 51], // Centered on Germany
+        zoom: 5,
+        projection: "globe",
+      });
+
+      map.on("load", () => {
+        fetch("../data/people.csv")
+          .then((response) => response.text())
+          .then((csvText) => {
+            Papa.parse(csvText, {
+              header: true,
+              complete: (results) => {
+                plotData(results.data);
+              },
+            });
+          });
+      });
+
+      function plotData(data) {
+        data.forEach((person) => {
+          if (person.Bundesland && person.Country) {
+            const query = `${person.Bundesland}, ${person.Country}`;
+            fetch(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+                query
+              )}.json?access_token=${mapboxgl.accessToken}`
+            )
+              .then((response) => response.json())
+              .then((geoData) => {
+                if (geoData.features && geoData.features.length > 0) {
+                  const coordinates = geoData.features[0].center;
+
+                  const el = document.createElement("div");
+                  el.className = "marker";
+                  el.style.backgroundImage = `url(${person.ProfilePic})`;
+                  el.style.width = "50px";
+                  el.style.height = "50px";
+                  el.style.backgroundSize = "cover";
+                  el.style.borderRadius = "50%";
+                  el.style.border = "2px solid #fff";
+                  el.style.boxShadow = "0 0 5px rgba(0,0,0,0.5)";
+
+                  new mapboxgl.Marker(el)
+                    .setLngLat(coordinates)
+                    .setPopup(
+                      new mapboxgl.Popup({ offset: 25 }).setHTML(
+                        `<h3>${person.FirstName} ${person.LastName}</h3><p>${person.Anecdote}</p>`
+                      )
+                    )
+                    .addTo(map);
+                }
+              });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
