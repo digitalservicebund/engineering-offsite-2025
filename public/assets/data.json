@@ -1,0 +1,116 @@
+{
+  "startYear": 2020,
+  "endYear": 2024,
+  "people": [
+    {
+      "id": "p1",
+      "name": "Alice Chen",
+      "joined": "2020-03-01",
+      "left": null
+    },
+    {
+      "id": "p2",
+      "name": "Bob Smith",
+      "joined": "2020-06-15",
+      "left": null
+    },
+    {
+      "id": "p3",
+      "name": "Carol Johnson",
+      "joined": "2021-01-10",
+      "left": "2023-08-15"
+    },
+    {
+      "id": "p4",
+      "name": "David Lee",
+      "joined": "2021-09-01",
+      "left": null
+    },
+    {
+      "id": "p5",
+      "name": "Emma Wilson",
+      "joined": "2022-03-15",
+      "left": null
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj1",
+      "name": "Platform v1",
+      "start": "2020-06-01",
+      "end": null,
+      "widthIncrement": 3
+    },
+    {
+      "id": "proj2",
+      "name": "Mobile App",
+      "start": "2021-03-01",
+      "end": "2022-12-31",
+      "widthIncrement": 5
+    },
+    {
+      "id": "proj3",
+      "name": "Analytics Dashboard",
+      "start": "2022-09-01",
+      "end": null,
+      "widthIncrement": 4
+    }
+  ],
+  "events": [
+    {
+      "id": "evt1",
+      "date": "2020-07-15",
+      "name": "Company Founded",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt2",
+      "date": "2021-02-10",
+      "name": "First Product Launch",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt3",
+      "date": "2021-10-15",
+      "name": "First Team Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt4",
+      "date": "2022-06-20",
+      "name": "Series A Funding",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt5",
+      "date": "2023-03-01",
+      "name": "Reached 1M Users",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt6",
+      "date": "2023-11-15",
+      "name": "Second Annual Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    }
+  ]
+}
+
