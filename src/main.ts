@@ -64,14 +64,12 @@ function setupKeyboardControls(viewportController: ViewportController): void {
     if (event.key === ' ' || event.key === 'ArrowRight') {
       event.preventDefault(); // Prevent default browser behavior (page scroll)
       viewportController.panRight(LAYOUT.scroll.panDistance);
-      console.log('Pan right');
     }
     
     // Handle Left arrow - pan left
     if (event.key === 'ArrowLeft') {
       event.preventDefault(); // Prevent default browser behavior
       viewportController.panLeft(LAYOUT.scroll.panDistance);
-      console.log('Pan left');
     }
   });
   

@@ -30,7 +30,7 @@ body {
 
 /* Timeline container - inner scrollable container that will be transformed */
 #timeline-container {
-  width: 100%;
+  width: fit-content; /* Let container be as wide as its content (SVG) */
   height: 100%;
   position: relative;
   /* CSS transform will be applied here for panning */

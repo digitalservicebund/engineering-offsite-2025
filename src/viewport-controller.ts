@@ -60,8 +60,13 @@ export class ViewportController {
   public panRight(distance: number): void {
     if (this.isAnimating) return;
     
-    this.currentOffset = Math.min(this.maxOffset, this.currentOffset + distance);
-    this.applyTransform();
+    const newOffset = Math.min(this.maxOffset, this.currentOffset + distance);
+    
+    // Only apply transform if offset actually changes
+    if (newOffset !== this.currentOffset) {
+      this.currentOffset = newOffset;
+      this.applyTransform();
+    }
   }
 
   /**
@@ -70,8 +75,13 @@ export class ViewportController {
   public panLeft(distance: number): void {
     if (this.isAnimating) return;
     
-    this.currentOffset = Math.max(this.minOffset, this.currentOffset - distance);
-    this.applyTransform();
+    const newOffset = Math.max(this.minOffset, this.currentOffset - distance);
+    
+    // Only apply transform if offset actually changes
+    if (newOffset !== this.currentOffset) {
+      this.currentOffset = newOffset;
+      this.applyTransform();
+    }
   }
 
   /**
@@ -94,7 +104,8 @@ export class ViewportController {
 
   /**
    * Apply CSS transform to pan the timeline
-   * Uses negative translateX because we're moving the timeline left to reveal content on the right
+   * When currentOffset is negative (initial state), timeline moves right to show left padding
+   * When currentOffset is positive (panning right), timeline moves left to reveal content on right
    * @param animate - Whether to use CSS transition (default: true)
    */
   private applyTransform(animate: boolean = true): void {
@@ -102,8 +113,8 @@ export class ViewportController {
       this.isAnimating = true;
     }
     
-    // Negative offset moves timeline left (reveals content on right)
-    this.container.style.transform = `translateX(-${this.currentOffset}px)`;
+    // Negate currentOffset to get proper CSS translateX value
+    this.container.style.transform = `translateX(${-this.currentOffset}px)`;
   }
 
   /**
