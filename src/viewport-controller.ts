@@ -18,16 +18,19 @@ export class ViewportController {
   private readonly xScale: d3.ScaleTime<number, number>;
   private readonly startDate: Date;
   private readonly endDate: Date;
+  private readonly onViewportChange?: (date: Date) => void;
 
   private currentOffset: number;
   private isAnimating = false;
+  private animationFrameId: number | null = null;
 
   constructor(
     container: HTMLElement,
     timelineWidth: number,
     xScale: d3.ScaleTime<number, number>,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
+    onViewportChange?: (date: Date) => void
   ) {
     this.container = container;
     this.timelineWidth = timelineWidth;
@@ -35,6 +38,7 @@ export class ViewportController {
     this.xScale = xScale;
     this.startDate = startDate;
     this.endDate = endDate;
+    this.onViewportChange = onViewportChange;
 
     // Calculate scroll boundaries
     this.minOffset = this.calculateMinOffset();
@@ -46,6 +50,9 @@ export class ViewportController {
 
     // Setup event listener for animation completion
     this.setupTransitionEndListener();
+
+    // Notify initial viewport position
+    this.notifyViewportChange();
   }
 
   /**
@@ -68,7 +75,53 @@ export class ViewportController {
   private setupTransitionEndListener(): void {
     this.container.addEventListener('transitionend', () => {
       this.isAnimating = false;
+      this.stopContinuousUpdate();
     });
+  }
+
+  /**
+   * Start continuous counter updates during animation
+   */
+  private startContinuousUpdate(): void {
+    // Cancel any existing animation frame
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+
+    const update = (): void => {
+      this.notifyViewportChange();
+
+      // Continue updating while animating
+      if (this.isAnimating) {
+        this.animationFrameId = requestAnimationFrame(update);
+      } else {
+        this.animationFrameId = null;
+      }
+    };
+
+    this.animationFrameId = requestAnimationFrame(update);
+  }
+
+  /**
+   * Stop continuous updates
+   */
+  private stopContinuousUpdate(): void {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    // Final update when animation completes
+    this.notifyViewportChange();
+  }
+
+  /**
+   * Notify callback of current viewport center date
+   */
+  private notifyViewportChange(): void {
+    if (this.onViewportChange) {
+      const centerDate = this.getCurrentCenterDate();
+      this.onViewportChange(centerDate);
+    }
   }
 
   /**
@@ -83,6 +136,7 @@ export class ViewportController {
     if (newOffset !== this.currentOffset) {
       this.currentOffset = newOffset;
       this.applyTransform();
+      this.startContinuousUpdate();
     }
   }
 
@@ -98,12 +152,14 @@ export class ViewportController {
     if (newOffset !== this.currentOffset) {
       this.currentOffset = newOffset;
       this.applyTransform();
+      this.startContinuousUpdate();
     }
   }
 
   /**
    * Get the date at the current position marker (configured via LAYOUT.scroll.currentPositionRatio)
    * Used for calculating counter values
+   * Reads the actual current transform value during animations for real-time accuracy
    */
   public getCurrentCenterDate(): Date {
     const currentPositionX = this.calculateCurrentPositionX();
@@ -114,9 +170,23 @@ export class ViewportController {
 
   /**
    * Calculate the x-position at the current position marker
+   * During CSS transitions, reads the actual animated transform value
    */
   private calculateCurrentPositionX(): number {
-    return this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    let actualOffset = this.currentOffset;
+
+    // During animation, read the actual transform value from the DOM
+    if (this.isAnimating) {
+      const style = window.getComputedStyle(this.container);
+      const transform = style.transform;
+
+      if (transform && transform !== 'none') {
+        const matrix = new DOMMatrix(transform);
+        actualOffset = -matrix.m41; // m41 is the x translation component
+      }
+    }
+
+    return actualOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
   }
 
   /**

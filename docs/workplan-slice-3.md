@@ -151,17 +151,18 @@
 ---
 
 ### Phase 5: Counter Updates Integration
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 5.1: Connect counter updates to viewport changes**
+**Task 5.1: Connect counter updates to viewport changes** ✅ DONE
 - In `ViewportController.applyTransform()`:
   - Calculate center date after transform
   - Call counter update method
 - Create `updateCounters(date: Date)` method in main app
   - Use `CounterCalculator` to get counts
   - Update DOM elements with new values
+- **Implementation:** Added optional `onViewportChange` callback parameter to ViewportController constructor. Callback is invoked after initial position and after each transition completes.
 
-**Task 5.2: Implement counter display updates**
+**Task 5.2: Implement counter display updates** ✅ DONE
 - Select counter DOM elements in `main.ts`
 - Update text content on viewport changes:
   - `#counter-engineers` → `"Engineers: X"`
@@ -170,13 +171,19 @@
 - Update on:
   - Initial page load (show year 2020, 0 engineers, 0 projects)
   - After each pan animation completes
+- **Implementation:** Created `getCounterElements()` helper function and `updateCounters()` callback that uses CounterCalculator to fetch counts and update DOM text content. Callback is passed to ViewportController.
 
-**Task 5.3: Handle transition timing**
+**Task 5.3: Handle transition timing** ✅ DONE
 - Option A: Update counters after CSS transition completes (use `transitionend` event)
 - Option B: Update counters continuously during transition (use requestAnimationFrame)
-- **Decision:** Start with Option A (simpler), can enhance to Option B if needed
-
-**Rationale:** Updating after transition completion is simpler and avoids visual "flickering" during panning. Can enhance to real-time updates if user feedback requires it.
+- **Decision:** Implemented Option B - continuous updates required for proper behavior
+- **Rationale:** With auto-scroll feature coming in future slices, counters must update continuously as people/projects cross the current position marker. Option A would only update when auto-scroll pauses at key events, making counters appear broken during scrolling.
+- **Implementation:** 
+  - `startContinuousUpdate()` starts requestAnimationFrame loop when panning begins
+  - Reads actual animated transform value from DOM using `getComputedStyle()` and matrix parsing
+  - Updates counters every frame during animation
+  - `stopContinuousUpdate()` cancels loop when transition completes
+  - Final update after animation ensures accuracy
 
 ---
 

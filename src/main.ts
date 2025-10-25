@@ -5,10 +5,14 @@
 import { loadTimelineData } from './data-loader';
 import { Timeline } from './timeline';
 import { ViewportController } from './viewport-controller';
+import { CounterCalculator } from './counter-calculator';
 import { LAYOUT } from './config';
 import './style.css';
 
 const CONTAINER_ID = 'timeline-container';
+const COUNTER_ENGINEERS_ID = 'counter-engineers';
+const COUNTER_PROJECTS_ID = 'counter-projects';
+const COUNTER_YEAR_ID = 'counter-year';
 
 /**
  * Get the timeline container element
@@ -19,6 +23,25 @@ function getTimelineContainer(): HTMLElement {
     throw new Error(`Container element #${CONTAINER_ID} not found`);
   }
   return container;
+}
+
+/**
+ * Get counter DOM elements
+ */
+function getCounterElements(): {
+  engineers: HTMLElement;
+  projects: HTMLElement;
+  year: HTMLElement;
+} {
+  const engineers = document.getElementById(COUNTER_ENGINEERS_ID);
+  const projects = document.getElementById(COUNTER_PROJECTS_ID);
+  const year = document.getElementById(COUNTER_YEAR_ID);
+
+  if (!engineers || !projects || !year) {
+    throw new Error('Counter elements not found in DOM');
+  }
+
+  return { engineers, projects, year };
 }
 
 /**
@@ -74,10 +97,25 @@ async function init(): Promise<void> {
     console.log('Data loaded:', data);
 
     const container = getTimelineContainer();
+    const counterElements = getCounterElements();
 
     // Create and render timeline
     const timeline = new Timeline(container, data);
     timeline.render();
+
+    // Create counter calculator
+    const counterCalculator = new CounterCalculator(data);
+
+    // Create counter update callback
+    const updateCounters = (date: Date): void => {
+      const engineers = counterCalculator.getActiveEngineersAt(date);
+      const projects = counterCalculator.getActiveProjectsAt(date);
+      const year = counterCalculator.getYearAt(date);
+
+      counterElements.engineers.textContent = `Engineers: ${engineers}`;
+      counterElements.projects.textContent = `Projects: ${projects}`;
+      counterElements.year.textContent = `Year: ${year}`;
+    };
 
     // Create viewport controller for panning
     const viewportController = new ViewportController(
@@ -85,7 +123,8 @@ async function init(): Promise<void> {
       timeline.getTimelineWidth(),
       timeline.getXScale(),
       timeline.getStartDate(),
-      timeline.getEndDate()
+      timeline.getEndDate(),
+      updateCounters
     );
 
     // Setup keyboard controls
