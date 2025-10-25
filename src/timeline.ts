@@ -177,6 +177,72 @@ export class Timeline {
   }
 
   /**
+   * Render event markers on the events lane
+   * Visual encoding: Vertical lines mark timeline events, with bold text for key moments
+   */
+  private renderEventMarkers(): void {
+    if (!this.xScale) return;
+
+    // Calculate marker positioning from outer edge of lane
+    const laneTopEdge = LAYOUT.lanes.events.yPosition - (LAYOUT.lanes.events.strokeWidth / 2);
+    const markerTopY = laneTopEdge - LAYOUT.eventMarkers.lineHeight;
+
+    // Create group for all event markers
+    const markersGroup = this.svg.append('g')
+      .attr('class', 'event-markers');
+
+    // Bind data to create groups for each event (marker + label)
+    const eventGroups = markersGroup
+      .selectAll('g.event-marker')
+      .data(this.sortedEvents)
+      .join('g')
+      .attr('class', 'event-marker');
+
+    // Render vertical marker lines
+    // Visual encoding: Orange vertical lines indicate discrete events on timeline
+    // Lines extend upward from the top edge of the events lane (not center)
+    eventGroups
+      .append('line')
+      .attr('class', 'marker-line')
+      .attr('x1', d => this.xScale!(this.parseDate(d.date, d.name)))
+      .attr('x2', d => this.xScale!(this.parseDate(d.date, d.name)))
+      .attr('y1', laneTopEdge)
+      .attr('y2', markerTopY)
+      .attr('stroke', LAYOUT.eventMarkers.color)
+      .attr('stroke-width', LAYOUT.eventMarkers.lineWidth)
+      .attr('stroke-linecap', 'round');
+
+    // Render event name labels using foreignObject for text wrapping
+    // Visual encoding: Bold text indicates key moments requiring presenter pause
+    // Text wraps automatically and bottom edge maintains consistent spacing from marker
+    eventGroups
+      .append('foreignObject')
+      .attr('class', d => d.isKeyMoment ? 'marker-label-container key-moment' : 'marker-label-container')
+      .attr('x', d => this.xScale!(this.parseDate(d.date, d.name)) - LAYOUT.eventMarkers.label.maxWidth / 2)
+      .attr('y', markerTopY + LAYOUT.eventMarkers.label.offsetY - 100) // Start well above, div will grow downward
+      .attr('width', LAYOUT.eventMarkers.label.maxWidth)
+      .attr('height', 100) // Enough space for wrapped text
+      .append('xhtml:div')
+      .style('width', '100%')
+      .style('height', '100%')
+      .style('display', 'flex')
+      .style('flex-direction', 'column')
+      .style('justify-content', 'flex-end') // Align text to bottom
+      .style('text-align', 'center')
+      .style('font-size', `${LAYOUT.eventMarkers.label.fontSize}px`)
+      .style('font-family', LAYOUT.eventMarkers.label.fontFamily)
+      .style('font-weight', d => d.isKeyMoment 
+        ? LAYOUT.eventMarkers.keyMoment.fontWeight 
+        : LAYOUT.eventMarkers.regular.fontWeight)
+      .style('color', LAYOUT.eventMarkers.label.color)
+      .style('line-height', '1.2')
+      .style('word-wrap', 'break-word')
+      .style('overflow-wrap', 'break-word')
+      .style('hyphens', 'auto')
+      .text(d => d.name);
+  }
+
+  /**
    * Main render method - orchestrates all rendering steps
    */
   public render(): void {
@@ -185,8 +251,10 @@ export class Timeline {
     this.renderBackground();
     this.renderGridlines();
     this.renderLanes();
+    this.renderEventMarkers();
     
     console.log(`Timeline rendered: ${this.timelineWidth}px wide (${this.data.endYear - this.data.startYear} years)`);
+    console.log(`Events rendered: ${this.sortedEvents.length} markers`);
   }
 }
 

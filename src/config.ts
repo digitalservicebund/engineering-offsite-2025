@@ -29,18 +29,17 @@ export const LAYOUT = {
   },
   eventMarkers: {
     // Vertical line extending upward from events lane
-    lineHeight: 30,          // px - extends upward from lane
+    lineHeight: 30,          // px - extends upward from top edge of lane
     lineWidth: 3,            // px - stroke width
     color: '#F5A623',        // Orange - matches events lane
     
-    // Text label styling
+    // Text label styling (wraps automatically, never truncates)
     label: {
       fontSize: 11,          // px
       fontFamily: 'sans-serif',
       color: '#2C3E50',      // Matches textColor
-      offsetY: -5,           // px - space above marker line
-      maxWidth: 100,         // px - truncate labels longer than this
-      maxCharacters: 20,     // characters - fallback truncation threshold
+      offsetY: -5,           // px - space between bottom edge of text and marker top
+      maxWidth: 100,         // px - text wraps within this width
     },
     
     // Visual distinction for key moments (isKeyMoment: true)
