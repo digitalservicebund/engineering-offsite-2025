@@ -55,20 +55,22 @@
 ---
 
 ### Phase 2: Keyboard Controls & Panning Logic
-**Status:** Pending
+**Status:** In Progress
 
-**Task 2.1: Create ViewportController class in new file `viewport-controller.ts`**
+**Task 2.1: Create ViewportController class in new file `viewport-controller.ts`** ✅ DONE
 - Properties:
   - `currentOffset: number` (current translateX value in px)
   - `timelineWidth: number` (total timeline width)
   - `viewportWidth: number` (visible viewport width)
-  - `maxOffset: number` (calculated: timelineWidth - viewportWidth)
+  - `maxOffset: number` (calculated based on current position ratio)
+  - `minOffset: number` (negative value for left padding)
   - `isAnimating: boolean` (prevent overlapping transitions)
 - Methods:
   - `panRight(distance: number): void`
   - `panLeft(distance: number): void`
-  - `getCurrentCenterDate(): Date`
-  - `applyTransform(): void` (applies CSS translateX)
+  - `getCurrentCenterDate(): Date` (returns date at current position marker)
+  - `applyTransform(animate?: boolean): void` (applies CSS translateX)
+- **Note:** Uses `LAYOUT.scroll.currentPositionRatio` (0.75) from config for "current" date position. Timeline starts with negative offset to position first event at this marker. Comments reference the config constant rather than hardcoding percentages.
 
 **Task 2.2: Implement keyboard event handling**
 - Add event listener for `keydown` events in `main.ts`
@@ -235,11 +237,13 @@
 - More consistent cross-browser behavior
 
 ### 2. Counter calculation timing
-**Decision:** Calculate counts at viewport center date (not edges)  
+**Decision:** Calculate counts at configurable viewport position (`LAYOUT.scroll.currentPositionRatio` = 0.75, not center at 0.5)  
 **Rationale:**  
-- Spec explicitly states "count active people/projects at viewport center position"
-- Center point is most intuitive reference for "current" date
+- Position further from left edge provides better presentation flow - shows what's coming while keeping focus on current moment
+- Allows more preview of upcoming events on the right side
+- Timeline starts with left padding (negative offset) so first event can appear at this position initially
 - Simplifies calculation logic (single point instead of range)
+- Configured in one place (`config.ts`) for easy adjustment without updating comments throughout code
 
 ### 3. Date comparison logic for "active" status
 **Decision:** Use inclusive start date, exclusive end date (SQL-style intervals)  
