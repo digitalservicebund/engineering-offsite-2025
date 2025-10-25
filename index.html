@@ -7,7 +7,16 @@
     <title>Engineering Timeline Visualization</title>
   </head>
   <body>
-    <div id="timeline-container"></div>
+    <div id="viewport-wrapper">
+      <div id="counters" class="counters">
+        <span id="counter-engineers" class="counter">Engineers: 0</span>
+        <span class="counter-separator">|</span>
+        <span id="counter-projects" class="counter">Projects: 0</span>
+        <span class="counter-separator">|</span>
+        <span id="counter-year" class="counter">Year: 2020</span>
+      </div>
+      <div id="timeline-container"></div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

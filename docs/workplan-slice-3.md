@@ -28,9 +28,9 @@
 ## Detailed Task Breakdown
 
 ### Phase 1: Viewport Configuration & Container Setup
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 1.1: Add viewport/camera configuration to `config.ts`**
+**Task 1.1: Add viewport/camera configuration to `config.ts`** ✅ DONE
 - Add scroll configuration:
   - `panDistance: 400` (px to move per keypress)
   - `transitionDuration: 600` (ms for smooth panning)
@@ -40,7 +40,7 @@
   - Font settings (18px, medium weight)
   - Spacing between counter items
 
-**Task 1.2: Restructure HTML container for scrolling**
+**Task 1.2: Restructure HTML container for scrolling** ✅ DONE
 - Modify `index.html` to add:
   - Wrapper div with fixed viewport size (1200px × 800px)
   - Inner scrollable container for timeline SVG

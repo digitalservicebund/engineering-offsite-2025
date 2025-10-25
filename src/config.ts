@@ -10,6 +10,22 @@ export const LAYOUT = {
   timeline: {
     pixelsPerYear: 400
   },
+  scroll: {
+    panDistance: 400,           // px - distance to move per keypress
+    transitionDuration: 600,    // ms - duration of smooth panning animation
+    transitionEasing: 'ease-out' // CSS easing function for panning
+  },
+  counters: {
+    position: {
+      top: 20,                  // px - distance from top edge
+      right: 40                 // px - distance from right edge
+    },
+    fontSize: 18,               // px
+    fontWeight: 500,            // Medium weight
+    fontFamily: 'sans-serif',
+    color: '#2C3E50',           // Matches textColor
+    separatorSpacing: 16        // px - space around separator (|)
+  },
   lanes: {
     projects: {
       yPosition: 150,
