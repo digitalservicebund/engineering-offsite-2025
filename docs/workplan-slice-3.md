@@ -121,9 +121,9 @@
 ---
 
 ### Phase 4: Counter Calculation Logic
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 4.1: Create CounterCalculator class in new file `counter-calculator.ts`**
+**Task 4.1: Create CounterCalculator class in new file `counter-calculator.ts`** ✅ DONE
 - Constructor takes `TimelineData` and `xScale`
 - Methods:
   - `getActiveEngineersAt(date: Date): number`
@@ -132,12 +132,19 @@
     - Count projects where `start <= date` AND (`end === null` OR `end > date`)
   - `getYearAt(date: Date): number`
     - Extract 4-digit year from date
+- **Implementation:** Created CounterCalculator class with private helper methods `isPersonActive` and `isProjectActive` for clean separation of concerns
 
-**Task 4.2: Implement date parsing utilities**
+**Task 4.2: Implement date parsing utilities** ✅ DONE
 - Reuse `parseDate()` method from Timeline class (consider moving to shared utils)
 - Parse person `joined`/`left` dates
 - Parse project `start`/`end` dates
 - Handle null dates (currently active)
+- **Implementation:** Complete architectural refactor to eliminate redundant parsing:
+  - Private `parseISODate()` function in `data-loader.ts` (only place it's used)
+  - Split types into `TimelineDataRaw` (JSON strings) and `TimelineData` (parsed Dates)
+  - **Date parsing happens ONCE in `data-loader.ts`** - all date strings transformed to Date objects
+  - Timeline and CounterCalculator operate only on Date objects, never parse strings
+  - Zero code duplication, single transformation point, minimal file structure
 
 **Rationale:** Encapsulates business logic for counting active entities. Separates calculation from UI update logic for testability.
 

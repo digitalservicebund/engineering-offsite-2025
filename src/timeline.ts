@@ -35,39 +35,10 @@ export class Timeline {
   }
 
   /**
-   * Parse and validate date string in YYYY-MM-DD format
-   */
-  private parseDate(dateString: string, contextName: string): Date {
-    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-
-    if (!dateRegex.test(dateString)) {
-      throw new Error(
-        `Invalid date format for "${contextName}": "${dateString}"\n` +
-          `Expected format: YYYY-MM-DD (e.g., 2020-01-15)`
-      );
-    }
-
-    const date = new Date(dateString);
-
-    if (Number.isNaN(date.getTime())) {
-      throw new Error(
-        `Invalid date value for "${contextName}": "${dateString}"\n` +
-          `Date does not exist in calendar (e.g., 2020-13-45 is invalid)`
-      );
-    }
-
-    return date;
-  }
-
-  /**
    * Sort events by date in chronological order
    */
   private sortEventsByDate(events: Event[]): Event[] {
-    return [...events].sort((a, b) => {
-      const dateA = this.parseDate(a.date, a.name);
-      const dateB = this.parseDate(b.date, b.name);
-      return dateA.getTime() - dateB.getTime();
-    });
+    return [...events].sort((a, b) => a.date.getTime() - b.date.getTime());
   }
 
   /**
@@ -262,8 +233,8 @@ export class Timeline {
     eventGroups
       .append('line')
       .attr('class', 'marker-line')
-      .attr('x1', (d) => xScale(this.parseDate(d.date, d.name)))
-      .attr('x2', (d) => xScale(this.parseDate(d.date, d.name)))
+      .attr('x1', (d) => xScale(d.date))
+      .attr('x2', (d) => xScale(d.date))
       .attr('y1', laneTopEdge)
       .attr('y2', markerTopY)
       .attr('stroke', LAYOUT.eventMarkers.color)
@@ -276,7 +247,7 @@ export class Timeline {
       .attr('class', (d) =>
         d.isKeyMoment ? 'marker-label-container key-moment' : 'marker-label-container'
       )
-      .attr('x', (d) => xScale(this.parseDate(d.date, d.name)) - LAYOUT.eventMarkers.label.maxWidth / 2)
+      .attr('x', (d) => xScale(d.date) - LAYOUT.eventMarkers.label.maxWidth / 2)
       .attr('y', markerTopY + LAYOUT.eventMarkers.label.offsetY - 100)
       .attr('width', LAYOUT.eventMarkers.label.maxWidth)
       .attr('height', 100);
