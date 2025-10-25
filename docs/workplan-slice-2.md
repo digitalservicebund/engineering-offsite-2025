@@ -27,16 +27,16 @@
    - Text label positioning offsets
    - Text truncation settings (max width before truncation)
 
-### Phase 2: Data Preparation
-**Status:** Pending
+### Phase 2: Data Preparation ✅
+**Status:** Complete
 
 2. **Sort events by date in Timeline constructor**
    - Parse event date strings to Date objects
    - Sort events array chronologically
    - Store sorted events for rendering
+   - Load events only, not people or projects (yet)
 
 ### Phase 3: Event Marker Rendering
-**Status:** Pending
 
 3. **Create `renderEventMarkers()` private method in Timeline class**
    - Create SVG group for event markers

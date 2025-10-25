@@ -4,7 +4,7 @@
  */
 
 import * as d3 from 'd3';
-import type { TimelineData } from './types';
+import type { TimelineData, Event } from './types';
 import { LAYOUT } from './config';
 
 export class Timeline {
@@ -12,15 +12,58 @@ export class Timeline {
   private svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
   private timelineWidth: number = 0;
   private xScale: d3.ScaleTime<number, number> | null = null;
+  private sortedEvents: Event[] = [];
 
   constructor(container: HTMLElement, data: TimelineData) {
     this.data = data;
+    
+    // Sort events chronologically for rendering
+    this.sortedEvents = this.sortEventsByDate(data.events);
     
     // Create SVG element
     this.svg = d3.select(container)
       .append('svg')
       .attr('width', 0)  // Will be set in calculateDimensions
       .attr('height', LAYOUT.viewport.height);
+  }
+
+  /**
+   * Parse and validate date string in YYYY-MM-DD format
+   * Throws error if date is invalid
+   */
+  private parseDate(dateString: string, eventName: string): Date {
+    // Enforce exact YYYY-MM-DD format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(dateString)) {
+      throw new Error(
+        `Invalid date format for event "${eventName}": "${dateString}"\n` +
+        `Expected format: YYYY-MM-DD (e.g., 2020-01-15)`
+      );
+    }
+
+    const date = new Date(dateString);
+    
+    // Check if date is valid (not NaN)
+    if (isNaN(date.getTime())) {
+      throw new Error(
+        `Invalid date value for event "${eventName}": "${dateString}"\n` +
+        `Date does not exist in calendar (e.g., 2020-13-45 is invalid)`
+      );
+    }
+
+    return date;
+  }
+
+  /**
+   * Sort events by date in chronological order
+   * Throws error if any event has invalid date
+   */
+  private sortEventsByDate(events: Event[]): Event[] {
+    return [...events].sort((a, b) => {
+      const dateA = this.parseDate(a.date, a.name);
+      const dateB = this.parseDate(b.date, b.name);
+      return dateA.getTime() - dateB.getTime();
+    });
   }
 
   /**
