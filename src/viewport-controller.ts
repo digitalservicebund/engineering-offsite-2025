@@ -1,25 +1,26 @@
 /**
  * ViewportController - Manages viewport panning and transform state
  * Handles keyboard-controlled horizontal scrolling with smooth CSS transitions
- * 
+ *
  * Uses configurable viewport position (LAYOUT.scroll.currentPositionRatio) as the "current" date marker.
  * Timeline includes left padding so early events can appear at the current position marker.
  */
 
-import * as d3 from 'd3';
+import type * as d3 from 'd3';
 import { LAYOUT } from './config';
 
 export class ViewportController {
-  private currentOffset: number = 0;
-  private timelineWidth: number;
-  private viewportWidth: number;
-  private maxOffset: number;
-  private minOffset: number;
-  private isAnimating: boolean = false;
-  private container: HTMLElement;
-  private xScale: d3.ScaleTime<number, number>;
-  private startDate: Date;
-  private endDate: Date;
+  private readonly container: HTMLElement;
+  private readonly timelineWidth: number;
+  private readonly viewportWidth: number;
+  private readonly maxOffset: number;
+  private readonly minOffset: number;
+  private readonly xScale: d3.ScaleTime<number, number>;
+  private readonly startDate: Date;
+  private readonly endDate: Date;
+
+  private currentOffset: number;
+  private isAnimating = false;
 
   constructor(
     container: HTMLElement,
@@ -34,21 +35,37 @@ export class ViewportController {
     this.xScale = xScale;
     this.startDate = startDate;
     this.endDate = endDate;
-    
-    // Calculate left padding needed for first event to be at the current position marker
-    // At offset 0, the current position marker should show the timeline start (x=0)
-    // So we need to start with negative offset
-    this.minOffset = -(this.viewportWidth * LAYOUT.scroll.currentPositionRatio);
-    
-    // Calculate maximum offset (when timeline end reaches the current position marker)
-    // Timeline can scroll until its end is at the current position
-    this.maxOffset = this.timelineWidth - (this.viewportWidth * LAYOUT.scroll.currentPositionRatio);
-    
-    // Start at minimum offset so timeline begins at the current position marker
+
+    // Calculate scroll boundaries
+    this.minOffset = this.calculateMinOffset();
+    this.maxOffset = this.calculateMaxOffset();
+
+    // Initialize position and apply transform
     this.currentOffset = this.minOffset;
-    this.applyTransform(false); // No transition on initial position
-    
-    // Listen for transitionend to reset isAnimating flag
+    this.applyTransform(false);
+
+    // Setup event listener for animation completion
+    this.setupTransitionEndListener();
+  }
+
+  /**
+   * Calculate left padding needed for first event to be at the current position marker
+   */
+  private calculateMinOffset(): number {
+    return -(this.viewportWidth * LAYOUT.scroll.currentPositionRatio);
+  }
+
+  /**
+   * Calculate maximum offset (when timeline end reaches the current position marker)
+   */
+  private calculateMaxOffset(): number {
+    return this.timelineWidth - this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+  }
+
+  /**
+   * Setup listener to reset animation flag when CSS transition completes
+   */
+  private setupTransitionEndListener(): void {
     this.container.addEventListener('transitionend', () => {
       this.isAnimating = false;
     });
@@ -59,9 +76,9 @@ export class ViewportController {
    */
   public panRight(distance: number): void {
     if (this.isAnimating) return;
-    
+
     const newOffset = Math.min(this.maxOffset, this.currentOffset + distance);
-    
+
     // Only apply transform if offset actually changes
     if (newOffset !== this.currentOffset) {
       this.currentOffset = newOffset;
@@ -74,9 +91,9 @@ export class ViewportController {
    */
   public panLeft(distance: number): void {
     if (this.isAnimating) return;
-    
+
     const newOffset = Math.max(this.minOffset, this.currentOffset - distance);
-    
+
     // Only apply transform if offset actually changes
     if (newOffset !== this.currentOffset) {
       this.currentOffset = newOffset;
@@ -89,30 +106,38 @@ export class ViewportController {
    * Used for calculating counter values
    */
   public getCurrentCenterDate(): Date {
-    // Calculate the x-position at the current position marker
-    const currentPositionX = this.currentOffset + (this.viewportWidth * LAYOUT.scroll.currentPositionRatio);
-    
-    // Use D3 scale invert to convert x-position back to date
+    const currentPositionX = this.calculateCurrentPositionX();
     const currentDate = this.xScale.invert(currentPositionX);
-    
-    // Clamp to timeline bounds
-    if (currentDate < this.startDate) return this.startDate;
-    if (currentDate > this.endDate) return this.endDate;
-    
-    return currentDate;
+
+    return this.clampDateToTimelineBounds(currentDate);
+  }
+
+  /**
+   * Calculate the x-position at the current position marker
+   */
+  private calculateCurrentPositionX(): number {
+    return this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+  }
+
+  /**
+   * Clamp date to timeline boundaries
+   */
+  private clampDateToTimelineBounds(date: Date): Date {
+    if (date < this.startDate) return this.startDate;
+    if (date > this.endDate) return this.endDate;
+    return date;
   }
 
   /**
    * Apply CSS transform to pan the timeline
    * When currentOffset is negative (initial state), timeline moves right to show left padding
    * When currentOffset is positive (panning right), timeline moves left to reveal content on right
-   * @param animate - Whether to use CSS transition (default: true)
    */
-  private applyTransform(animate: boolean = true): void {
+  private applyTransform(animate = true): void {
     if (animate) {
       this.isAnimating = true;
     }
-    
+
     // Negate currentOffset to get proper CSS translateX value
     this.container.style.transform = `translateX(${-this.currentOffset}px)`;
   }
@@ -124,4 +149,3 @@ export class ViewportController {
     return this.currentOffset;
   }
 }
-

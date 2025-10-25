@@ -8,46 +8,51 @@ import type { TimelineData, Event } from './types';
 import { LAYOUT } from './config';
 
 export class Timeline {
-  private data: TimelineData;
-  private svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
-  private timelineWidth: number = 0;
+  private readonly data: TimelineData;
+  private readonly svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
+  private readonly sortedEvents: Event[];
+
+  private timelineWidth = 0;
   private xScale: d3.ScaleTime<number, number> | null = null;
-  private sortedEvents: Event[] = [];
 
   constructor(container: HTMLElement, data: TimelineData) {
     this.data = data;
-    
-    // Sort events chronologically for rendering
     this.sortedEvents = this.sortEventsByDate(data.events);
-    
-    // Create SVG element
-    this.svg = d3.select(container)
+    this.svg = this.createSvgElement(container);
+  }
+
+  /**
+   * Create SVG element and append to container
+   */
+  private createSvgElement(
+    container: HTMLElement
+  ): d3.Selection<SVGSVGElement, unknown, null, undefined> {
+    return d3
+      .select(container)
       .append('svg')
-      .attr('width', 0)  // Will be set in calculateDimensions
+      .attr('width', 0) // Will be set in calculateDimensions
       .attr('height', LAYOUT.viewport.height);
   }
 
   /**
    * Parse and validate date string in YYYY-MM-DD format
-   * Throws error if date is invalid
    */
-  private parseDate(dateString: string, eventName: string): Date {
-    // Enforce exact YYYY-MM-DD format
+  private parseDate(dateString: string, contextName: string): Date {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
     if (!dateRegex.test(dateString)) {
       throw new Error(
-        `Invalid date format for event "${eventName}": "${dateString}"\n` +
-        `Expected format: YYYY-MM-DD (e.g., 2020-01-15)`
+        `Invalid date format for "${contextName}": "${dateString}"\n` +
+          `Expected format: YYYY-MM-DD (e.g., 2020-01-15)`
       );
     }
 
     const date = new Date(dateString);
-    
-    // Check if date is valid (not NaN)
-    if (isNaN(date.getTime())) {
+
+    if (Number.isNaN(date.getTime())) {
       throw new Error(
-        `Invalid date value for event "${eventName}": "${dateString}"\n` +
-        `Date does not exist in calendar (e.g., 2020-13-45 is invalid)`
+        `Invalid date value for "${contextName}": "${dateString}"\n` +
+          `Date does not exist in calendar (e.g., 2020-13-45 is invalid)`
       );
     }
 
@@ -56,7 +61,6 @@ export class Timeline {
 
   /**
    * Sort events by date in chronological order
-   * Throws error if any event has invalid date
    */
   private sortEventsByDate(events: Event[]): Event[] {
     return [...events].sort((a, b) => {
@@ -79,19 +83,28 @@ export class Timeline {
    * Create D3 time scale for x-axis positioning
    */
   private createScales(): void {
-    const startDate = new Date(this.data.startYear, 0, 1);
-    const endDate = new Date(this.data.endYear, 11, 31);
-    
-    this.xScale = d3.scaleTime()
-      .domain([startDate, endDate])
-      .range([0, this.timelineWidth]);
+    const startDate = this.getStartDate();
+    const endDate = this.getEndDate();
+
+    this.xScale = d3.scaleTime().domain([startDate, endDate]).range([0, this.timelineWidth]);
+  }
+
+  /**
+   * Ensure xScale is initialized before use
+   */
+  private getXScaleOrThrow(): d3.ScaleTime<number, number> {
+    if (!this.xScale) {
+      throw new Error('Timeline must be rendered before accessing xScale');
+    }
+    return this.xScale;
   }
 
   /**
    * Render background rectangle
    */
   private renderBackground(): void {
-    this.svg.append('rect')
+    this.svg
+      .append('rect')
       .attr('class', 'background')
       .attr('x', 0)
       .attr('y', 0)
@@ -104,18 +117,17 @@ export class Timeline {
    * Render vertical gridlines at year boundaries
    */
   private renderGridlines(): void {
-    if (!this.xScale) return;
-
-    const gridGroup = this.svg.append('g')
-      .attr('class', 'gridlines');
+    const xScale = this.getXScaleOrThrow();
+    const gridGroup = this.svg.append('g').attr('class', 'gridlines');
 
     // Draw gridlines for each year
     for (let year = this.data.startYear; year <= this.data.endYear; year++) {
       const date = new Date(year, 0, 1);
-      const x = this.xScale(date);
+      const x = xScale(date);
 
       // Vertical line
-      gridGroup.append('line')
+      gridGroup
+        .append('line')
         .attr('x1', x)
         .attr('x2', x)
         .attr('y1', 0)
@@ -124,7 +136,8 @@ export class Timeline {
         .attr('stroke-width', LAYOUT.gridlines.strokeWidth);
 
       // Year label
-      gridGroup.append('text')
+      gridGroup
+        .append('text')
         .attr('x', x)
         .attr('y', LAYOUT.viewport.height - 20)
         .attr('text-anchor', 'middle')
@@ -136,44 +149,97 @@ export class Timeline {
   }
 
   /**
+   * Render a single horizontal lane
+   */
+  private renderLane(
+    group: d3.Selection<SVGGElement, unknown, null, undefined>,
+    className: string,
+    yPosition: number,
+    strokeWidth: number,
+    color: string
+  ): void {
+    group
+      .append('line')
+      .attr('class', className)
+      .attr('x1', 0)
+      .attr('x2', this.timelineWidth)
+      .attr('y1', yPosition)
+      .attr('y2', yPosition)
+      .attr('stroke', color)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke-linecap', 'round');
+  }
+
+  /**
    * Render the three horizontal lanes
    */
   private renderLanes(): void {
-    const lanesGroup = this.svg.append('g')
-      .attr('class', 'lanes');
+    const lanesGroup = this.svg.append('g').attr('class', 'lanes');
 
     // Projects lane (top, green)
-    lanesGroup.append('line')
-      .attr('class', 'lane-projects')
-      .attr('x1', 0)
-      .attr('x2', this.timelineWidth)
-      .attr('y1', LAYOUT.lanes.projects.yPosition)
-      .attr('y2', LAYOUT.lanes.projects.yPosition)
-      .attr('stroke', LAYOUT.lanes.projects.color)
-      .attr('stroke-width', LAYOUT.lanes.projects.initialStrokeWidth)
-      .attr('stroke-linecap', 'round');
+    this.renderLane(
+      lanesGroup,
+      'lane-projects',
+      LAYOUT.lanes.projects.yPosition,
+      LAYOUT.lanes.projects.initialStrokeWidth,
+      LAYOUT.lanes.projects.color
+    );
 
     // Events lane (middle, orange)
-    lanesGroup.append('line')
-      .attr('class', 'lane-events')
-      .attr('x1', 0)
-      .attr('x2', this.timelineWidth)
-      .attr('y1', LAYOUT.lanes.events.yPosition)
-      .attr('y2', LAYOUT.lanes.events.yPosition)
-      .attr('stroke', LAYOUT.lanes.events.color)
-      .attr('stroke-width', LAYOUT.lanes.events.strokeWidth)
-      .attr('stroke-linecap', 'round');
+    this.renderLane(
+      lanesGroup,
+      'lane-events',
+      LAYOUT.lanes.events.yPosition,
+      LAYOUT.lanes.events.strokeWidth,
+      LAYOUT.lanes.events.color
+    );
 
     // People lane (bottom, blue)
-    lanesGroup.append('line')
-      .attr('class', 'lane-people')
-      .attr('x1', 0)
-      .attr('x2', this.timelineWidth)
-      .attr('y1', LAYOUT.lanes.people.yPosition)
-      .attr('y2', LAYOUT.lanes.people.yPosition)
-      .attr('stroke', LAYOUT.lanes.people.color)
-      .attr('stroke-width', LAYOUT.lanes.people.initialStrokeWidth)
-      .attr('stroke-linecap', 'round');
+    this.renderLane(
+      lanesGroup,
+      'lane-people',
+      LAYOUT.lanes.people.yPosition,
+      LAYOUT.lanes.people.initialStrokeWidth,
+      LAYOUT.lanes.people.color
+    );
+  }
+
+  /**
+   * Calculate event marker positioning
+   */
+  private calculateMarkerPositions(): { laneTopEdge: number; markerTopY: number } {
+    const laneTopEdge =
+      LAYOUT.lanes.events.yPosition - LAYOUT.lanes.events.strokeWidth / 2;
+    const markerTopY = laneTopEdge - LAYOUT.eventMarkers.lineHeight;
+    return { laneTopEdge, markerTopY };
+  }
+
+  /**
+   * Apply label styles to a div element
+   */
+  private applyLabelStyles(
+    div: d3.Selection<d3.BaseType, Event, d3.BaseType, unknown>
+  ): void {
+    div
+      .style('width', '100%')
+      .style('height', '100%')
+      .style('display', 'flex')
+      .style('flex-direction', 'column')
+      .style('justify-content', 'flex-end')
+      .style('text-align', 'center')
+      .style('font-size', `${LAYOUT.eventMarkers.label.fontSize}px`)
+      .style('font-family', LAYOUT.eventMarkers.label.fontFamily)
+      .style('font-weight', (d) =>
+        d.isKeyMoment
+          ? LAYOUT.eventMarkers.keyMoment.fontWeight
+          : LAYOUT.eventMarkers.regular.fontWeight
+      )
+      .style('color', LAYOUT.eventMarkers.label.color)
+      .style('line-height', '1.2')
+      .style('word-wrap', 'break-word')
+      .style('overflow-wrap', 'break-word')
+      .style('hyphens', 'auto')
+      .text((d) => d.name);
   }
 
   /**
@@ -181,31 +247,23 @@ export class Timeline {
    * Visual encoding: Vertical lines mark timeline events, with bold text for key moments
    */
   private renderEventMarkers(): void {
-    if (!this.xScale) return;
+    const xScale = this.getXScaleOrThrow();
+    const { laneTopEdge, markerTopY } = this.calculateMarkerPositions();
 
-    // Calculate marker positioning from outer edge of lane
-    const laneTopEdge = LAYOUT.lanes.events.yPosition - (LAYOUT.lanes.events.strokeWidth / 2);
-    const markerTopY = laneTopEdge - LAYOUT.eventMarkers.lineHeight;
+    const markersGroup = this.svg.append('g').attr('class', 'event-markers');
 
-    // Create group for all event markers
-    const markersGroup = this.svg.append('g')
-      .attr('class', 'event-markers');
-
-    // Bind data to create groups for each event (marker + label)
     const eventGroups = markersGroup
-      .selectAll('g.event-marker')
+      .selectAll<SVGGElement, Event>('g.event-marker')
       .data(this.sortedEvents)
       .join('g')
       .attr('class', 'event-marker');
 
     // Render vertical marker lines
-    // Visual encoding: Orange vertical lines indicate discrete events on timeline
-    // Lines extend upward from the top edge of the events lane (not center)
     eventGroups
       .append('line')
       .attr('class', 'marker-line')
-      .attr('x1', d => this.xScale!(this.parseDate(d.date, d.name)))
-      .attr('x2', d => this.xScale!(this.parseDate(d.date, d.name)))
+      .attr('x1', (d) => xScale(this.parseDate(d.date, d.name)))
+      .attr('x2', (d) => xScale(this.parseDate(d.date, d.name)))
       .attr('y1', laneTopEdge)
       .attr('y2', markerTopY)
       .attr('stroke', LAYOUT.eventMarkers.color)
@@ -213,33 +271,18 @@ export class Timeline {
       .attr('stroke-linecap', 'round');
 
     // Render event name labels using foreignObject for text wrapping
-    // Visual encoding: Bold text indicates key moments requiring presenter pause
-    // Text wraps automatically and bottom edge maintains consistent spacing from marker
-    eventGroups
+    const labelContainers = eventGroups
       .append('foreignObject')
-      .attr('class', d => d.isKeyMoment ? 'marker-label-container key-moment' : 'marker-label-container')
-      .attr('x', d => this.xScale!(this.parseDate(d.date, d.name)) - LAYOUT.eventMarkers.label.maxWidth / 2)
-      .attr('y', markerTopY + LAYOUT.eventMarkers.label.offsetY - 100) // Start well above, div will grow downward
+      .attr('class', (d) =>
+        d.isKeyMoment ? 'marker-label-container key-moment' : 'marker-label-container'
+      )
+      .attr('x', (d) => xScale(this.parseDate(d.date, d.name)) - LAYOUT.eventMarkers.label.maxWidth / 2)
+      .attr('y', markerTopY + LAYOUT.eventMarkers.label.offsetY - 100)
       .attr('width', LAYOUT.eventMarkers.label.maxWidth)
-      .attr('height', 100) // Enough space for wrapped text
-      .append('xhtml:div')
-      .style('width', '100%')
-      .style('height', '100%')
-      .style('display', 'flex')
-      .style('flex-direction', 'column')
-      .style('justify-content', 'flex-end') // Align text to bottom
-      .style('text-align', 'center')
-      .style('font-size', `${LAYOUT.eventMarkers.label.fontSize}px`)
-      .style('font-family', LAYOUT.eventMarkers.label.fontFamily)
-      .style('font-weight', d => d.isKeyMoment 
-        ? LAYOUT.eventMarkers.keyMoment.fontWeight 
-        : LAYOUT.eventMarkers.regular.fontWeight)
-      .style('color', LAYOUT.eventMarkers.label.color)
-      .style('line-height', '1.2')
-      .style('word-wrap', 'break-word')
-      .style('overflow-wrap', 'break-word')
-      .style('hyphens', 'auto')
-      .text(d => d.name);
+      .attr('height', 100);
+
+    const divs = labelContainers.append('xhtml:div');
+    this.applyLabelStyles(divs);
   }
 
   /**
@@ -252,40 +295,27 @@ export class Timeline {
     this.renderGridlines();
     this.renderLanes();
     this.renderEventMarkers();
-    
-    console.log(`Timeline rendered: ${this.timelineWidth}px wide (${this.data.endYear - this.data.startYear} years)`);
+
+    const numYears = this.data.endYear - this.data.startYear;
+    console.log(`Timeline rendered: ${this.timelineWidth}px wide (${numYears} years)`);
     console.log(`Events rendered: ${this.sortedEvents.length} markers`);
   }
 
-  /**
-   * Get the timeline width (for ViewportController)
-   */
+  // Public getters for ViewportController
+
   public getTimelineWidth(): number {
     return this.timelineWidth;
   }
 
-  /**
-   * Get the D3 time scale (for ViewportController)
-   */
   public getXScale(): d3.ScaleTime<number, number> {
-    if (!this.xScale) {
-      throw new Error('Timeline must be rendered before accessing xScale');
-    }
-    return this.xScale;
+    return this.getXScaleOrThrow();
   }
 
-  /**
-   * Get the start date (for ViewportController)
-   */
   public getStartDate(): Date {
     return new Date(this.data.startYear, 0, 1);
   }
 
-  /**
-   * Get the end date (for ViewportController)
-   */
   public getEndDate(): Date {
     return new Date(this.data.endYear, 11, 31);
   }
 }
-
