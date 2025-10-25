@@ -256,5 +256,36 @@ export class Timeline {
     console.log(`Timeline rendered: ${this.timelineWidth}px wide (${this.data.endYear - this.data.startYear} years)`);
     console.log(`Events rendered: ${this.sortedEvents.length} markers`);
   }
+
+  /**
+   * Get the timeline width (for ViewportController)
+   */
+  public getTimelineWidth(): number {
+    return this.timelineWidth;
+  }
+
+  /**
+   * Get the D3 time scale (for ViewportController)
+   */
+  public getXScale(): d3.ScaleTime<number, number> {
+    if (!this.xScale) {
+      throw new Error('Timeline must be rendered before accessing xScale');
+    }
+    return this.xScale;
+  }
+
+  /**
+   * Get the start date (for ViewportController)
+   */
+  public getStartDate(): Date {
+    return new Date(this.data.startYear, 0, 1);
+  }
+
+  /**
+   * Get the end date (for ViewportController)
+   */
+  public getEndDate(): Date {
+    return new Date(this.data.endYear, 11, 31);
+  }
 }
 

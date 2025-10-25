@@ -55,7 +55,7 @@
 ---
 
 ### Phase 2: Keyboard Controls & Panning Logic
-**Status:** In Progress
+**Status:** ✅ Complete
 
 **Task 2.1: Create ViewportController class in new file `viewport-controller.ts`** ✅ DONE
 - Properties:
@@ -72,7 +72,7 @@
   - `applyTransform(animate?: boolean): void` (applies CSS translateX)
 - **Note:** Uses `LAYOUT.scroll.currentPositionRatio` (0.75) from config for "current" date position. Timeline starts with negative offset to position first event at this marker. Comments reference the config constant rather than hardcoding percentages.
 
-**Task 2.2: Implement keyboard event handling**
+**Task 2.2: Implement keyboard event handling** ✅ DONE
 - Add event listener for `keydown` events in `main.ts`
 - Handle three keys:
   - **Space bar** (`key === ' '`) → pan right by 400px
@@ -80,22 +80,24 @@
   - **Left arrow** (`key === 'ArrowLeft'`) → pan left by 400px
 - Call `ViewportController` methods for panning
 - Prevent default browser behavior (space bar scrolling page)
+- **Implementation:** Added `setupKeyboardControls()` function in main.ts, created ViewportController instance after timeline render, added getter methods to Timeline class to expose necessary data
 
-**Task 2.3: Implement smooth CSS transform panning**
+**Task 2.3: Implement smooth CSS transform panning** ✅ DONE (implemented in Task 2.1)
 - Apply `transform: translateX(Xpx)` to timeline container
 - Use CSS transitions for smooth animation:
   - `transition: transform 600ms ease-out`
-- Clamp offset to valid range: `[0, maxOffset]`
+- Clamp offset to valid range: `[minOffset, maxOffset]`
 - Prevent new panning if transition in progress (`isAnimating` flag)
+- **Implementation:** Already implemented in ViewportController.applyTransform() method, CSS transition defined in style.css
 
 **Rationale:** CSS transforms are more performant than DOM scrolling and provide smoother animations. ViewportController centralizes scroll state management.
 
 ---
 
 ### Phase 3: Counter Display UI
-**Status:** Pending
+**Status:** ✅ Complete (implemented in Phase 1)
 
-**Task 3.1: Create counter HTML structure**
+**Task 3.1: Create counter HTML structure** ✅ DONE (completed in Task 1.2)
 - Add counter container to `index.html`:
 ```html
 <div id="counters" class="counters">
@@ -107,7 +109,7 @@
 </div>
 ```
 
-**Task 3.2: Add counter styles to `style.css`**
+**Task 3.2: Add counter styles to `style.css`** ✅ DONE (completed in Task 1.2)
 - Position: fixed top-right with padding (e.g., `top: 20px, right: 40px`)
 - Font: 18px, medium weight (500), sans-serif
 - Layout: inline flex with spacing between items
