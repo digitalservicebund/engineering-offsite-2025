@@ -1,6 +1,6 @@
 {
   "startYear": 2020,
-  "endYear": 2024,
+  "endYear": 2025,
   "people": [
     {
       "name": "Pers A",
@@ -361,6 +361,33 @@
     },
     {
       "id": "evt2",
+      "date": "2020-09-01",
+      "name": "First Office Space",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt3",
+      "date": "2020-11-20",
+      "name": "Beta Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt4",
+      "date": "2021-01-05",
+      "name": "New Year Kickoff",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt5",
       "date": "2021-02-10",
       "name": "First Product Launch",
       "isKeyMoment": true,
@@ -369,7 +396,43 @@
       "caption": null
     },
     {
-      "id": "evt3",
+      "id": "evt6",
+      "date": "2021-03-15",
+      "name": "Reached 1K Users",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt7",
+      "date": "2021-05-10",
+      "name": "First Hackathon",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt8",
+      "date": "2021-06-22",
+      "name": "Summer BBQ",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt9",
+      "date": "2021-08-05",
+      "name": "API v2 Release",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt10",
       "date": "2021-10-15",
       "name": "First Team Offsite",
       "isKeyMoment": true,
@@ -378,7 +441,61 @@
       "caption": null
     },
     {
-      "id": "evt4",
+      "id": "evt11",
+      "date": "2021-11-25",
+      "name": "Holiday Party",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt12",
+      "date": "2022-01-10",
+      "name": "Q4 All-Hands",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt13",
+      "date": "2022-02-14",
+      "name": "Engineering Week",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt14",
+      "date": "2022-03-20",
+      "name": "10K Users Milestone",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt15",
+      "date": "2022-04-12",
+      "name": "Security Audit Complete",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt16",
+      "date": "2022-05-18",
+      "name": "Enterprise Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt17",
       "date": "2022-06-20",
       "name": "Series A Funding",
       "isKeyMoment": true,
@@ -387,7 +504,79 @@
       "caption": null
     },
     {
-      "id": "evt5",
+      "id": "evt18",
+      "date": "2022-07-30",
+      "name": "New HQ Opening",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt19",
+      "date": "2022-08-15",
+      "name": "Summer Hackathon",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt20",
+      "date": "2022-09-22",
+      "name": "Mobile App Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt21",
+      "date": "2022-10-31",
+      "name": "Halloween Social",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt22",
+      "date": "2022-11-10",
+      "name": "100K Users",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt23",
+      "date": "2022-12-15",
+      "name": "Year-End Celebration",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt24",
+      "date": "2023-01-20",
+      "name": "2023 Kickoff",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt25",
+      "date": "2023-02-14",
+      "name": "Valentine's Team Lunch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt26",
       "date": "2023-03-01",
       "name": "Reached 1M Users",
       "isKeyMoment": false,
@@ -396,10 +585,289 @@
       "caption": null
     },
     {
-      "id": "evt6",
+      "id": "evt27",
+      "date": "2023-04-10",
+      "name": "Platform Redesign",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt28",
+      "date": "2023-05-25",
+      "name": "Spring Offsite",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt29",
+      "date": "2023-06-15",
+      "name": "Mid-Year Review",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt30",
+      "date": "2023-07-20",
+      "name": "AI Features Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt31",
+      "date": "2023-08-12",
+      "name": "Summer Games",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt32",
+      "date": "2023-09-05",
+      "name": "Q3 All-Hands",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt33",
+      "date": "2023-10-18",
+      "name": "Product Hunt Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt34",
       "date": "2023-11-15",
       "name": "Second Annual Offsite",
       "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt35",
+      "date": "2023-12-01",
+      "name": "5M Users Reached",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt36",
+      "date": "2023-12-20",
+      "name": "Holiday Celebration",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt37",
+      "date": "2024-01-15",
+      "name": "2024 Strategy Session",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt38",
+      "date": "2024-02-28",
+      "name": "Series B Funding",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt39",
+      "date": "2024-03-22",
+      "name": "Spring Launch Event",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt40",
+      "date": "2024-04-18",
+      "name": "Engineering Summit",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt41",
+      "date": "2024-05-30",
+      "name": "Customer Conference",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt42",
+      "date": "2024-07-04",
+      "name": "Summer BBQ 2024",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt43",
+      "date": "2024-08-15",
+      "name": "10M Users Milestone",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt44",
+      "date": "2024-09-10",
+      "name": "Platform v3 Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt45",
+      "date": "2024-10-25",
+      "name": "Third Annual Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt46",
+      "date": "2024-11-28",
+      "name": "Thanksgiving Social",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt47",
+      "date": "2024-12-18",
+      "name": "End of Year Party",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt48",
+      "date": "2025-01-10",
+      "name": "2025 Kickoff Meeting",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt49",
+      "date": "2025-02-20",
+      "name": "Product Roadmap Review",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt50",
+      "date": "2025-03-15",
+      "name": "International Expansion",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt51",
+      "date": "2025-04-22",
+      "name": "Spring Team Building",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt52",
+      "date": "2025-05-30",
+      "name": "Mid-Year Planning",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt53",
+      "date": "2025-07-04",
+      "name": "Summer Company Picnic",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt54",
+      "date": "2025-08-20",
+      "name": "Tech Conference 2025",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt55",
+      "date": "2025-09-15",
+      "name": "50M Users Milestone",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt56",
+      "date": "2025-10-30",
+      "name": "Q3 All-Hands",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt57",
+      "date": "2025-11-20",
+      "name": "Fourth Annual Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "photoUrl": null,
+      "caption": null
+    },
+    {
+      "id": "evt58",
+      "date": "2025-12-15",
+      "name": "Year End Celebration 2025",
+      "isKeyMoment": false,
       "hasPhoto": false,
       "photoUrl": null,
       "caption": null
