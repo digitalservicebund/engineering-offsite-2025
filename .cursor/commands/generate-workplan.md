@@ -2,6 +2,8 @@ Time to tackle the next slice.
 
 Carefully plan out the work required to achieve the stated goals. Create a detailed list of tasks to follow and present them to me for review before touching a single line of code.
 
+Make sure to structure the work in a way that integration of components happens frequently. Aim for vertical slices that expand in functionality over time rather than developing architectural layeres in isolation.
+
 Write your work plan to `docs/workplan-slice-{SLICE_NUMBER}.md`, ensuring it includes:
 
 ## Required Structure:
