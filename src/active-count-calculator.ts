@@ -122,6 +122,13 @@ export class ActiveCountCalculator<T> {
   }
 
   /**
+   * Get the timeline points (for path generation)
+   */
+  public getTimeline(): TimelinePoint[] {
+    return this.timeline;
+  }
+
+  /**
    * Get cumulative count at a specific date using binary search
    * Returns the count at the largest date <= query date
    */

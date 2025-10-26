@@ -116,9 +116,9 @@ interface HeadcountTimelinePoint {
 ---
 
 ### Phase 3: Timeline Rendering Updates
-**Status:** Pending
+**Status:** Complete
 
-**Task 3.1: Add method to Timeline class: `updatePeopleLaneWidth(width: number)`**
+**Task 3.1: Add method to Timeline class: `updatePeopleLaneWidth(width: number)`** ✅
 - Select people lane: `this.svg.select('.lane-people')`
 - Apply D3 transition:
   ```typescript
@@ -131,7 +131,7 @@ interface HeadcountTimelinePoint {
 - Store reference to lane selection as class property for efficient updates
 - **Rationale:** Encapsulates SVG manipulation in Timeline class, not in main.ts
 
-**Task 3.2: Store lane selection as class property**
+**Task 3.2: Store lane selection as class property** ✅
 - In `renderLanes()`, save selection:
   ```typescript
   this.peopleLaneSelection = lanesGroup.append('line')...
@@ -140,7 +140,7 @@ interface HeadcountTimelinePoint {
 - Allows direct updates without re-querying DOM
 - **Rationale:** Performance optimization for frequent updates during scroll
 
-**Task 3.3: Add getter method for external updates**
+**Task 3.3: Add getter method for external updates** ✅
 - Public method: `updatePeopleLaneWidth(width: number): void`
 - Called by main.ts when viewport changes
 - **Decision:** Timeline class owns rendering, but accepts external commands
@@ -149,16 +149,16 @@ interface HeadcountTimelinePoint {
 ---
 
 ### Phase 4: Integration with Viewport Scrolling
-**Status:** Pending
+**Status:** Complete
 
-**Task 4.1: Instantiate `PeopleLaneWidthCalculator` in `main.ts`**
+**Task 4.1: Instantiate `PeopleLaneWidthCalculator` in `main.ts`** ✅
 - Create after loading data:
   ```typescript
   const peopleLaneWidthCalculator = new PeopleLaneWidthCalculator(data.people);
   ```
 - Place alongside `CounterCalculator` instantiation
 
-**Task 4.2: Create lane width update callback**
+**Task 4.2: Create lane width update callback** ✅
 - New function in main.ts:
   ```typescript
   const updateLaneWidth = (date: Date): void => {
@@ -168,7 +168,7 @@ interface HeadcountTimelinePoint {
   ```
 - Call on viewport changes (same trigger as counter updates)
 
-**Task 4.3: Connect callback to ViewportController**
+**Task 4.3: Connect callback to ViewportController** ✅
 - **Option A:** Add second callback parameter to ViewportController
 - **Option B:** Combine with existing `updateCounters` callback
 - **Decision:** Option B - merge into single callback to avoid duplicate date calculations
@@ -186,7 +186,7 @@ interface HeadcountTimelinePoint {
   ```
 - **Rationale:** Single callback is simpler, ensures counters and lane width stay in sync
 
-**Task 4.4: Set initial lane width**
+**Task 4.4: Set initial lane width** ✅
 - After timeline render, set initial width based on start date:
   ```typescript
   const initialDate = timeline.getStartDate();
@@ -208,20 +208,20 @@ interface HeadcountTimelinePoint {
 - **Purpose:** Better validation of lane width growth with realistic data volume
 - **Note:** Wait for user to provide data before proceeding with this phase
 
-**Task 5.1: Test transition performance during scroll**
+**Task 5.1: Test transition performance during scroll** ✅
 - Verify no "jank" or stuttering during continuous scroll
 - Check that lane width transitions don't conflict with pan transitions
 - Monitor frame rate in DevTools Performance tab
 - **Expected behavior:** Smooth width changes, no visual jumps
 
-**Task 5.2: Handle rapid width changes**
+**Task 5.2: Handle rapid width changes** ✅
 - If headcount changes faster than transition duration:
   - D3 transitions automatically interrupt and replace previous transition
   - Should work correctly by default
 - Test with data having many close-together join dates
 - **Edge case:** Multiple joins within 300ms window
 
-**Task 5.3: Optimize if needed**
+**Task 5.3: Optimize if needed** ✅
 - If performance issues:
   - **Option A:** Throttle updates (skip intermediate frames)
   - **Option B:** Reduce transition duration
@@ -234,12 +234,12 @@ interface HeadcountTimelinePoint {
 ### Phase 6: Testing & Validation
 **Status:** Pending
 
-**Task 6.1: Test initial state**
+**Task 6.1: Test initial state** ✅
 - Verify lane starts at 2px width (before any joins)
 - Check against visual inspection (compare to events lane at 8px)
 - **Expected:** People lane thinner than events lane initially
 
-**Task 6.2: Test width growth during scroll**
+**Task 6.2: Test width growth during scroll** ✅
 - Pan through timeline manually (Space bar)
 - Observe lane thickness increasing as people join
 - Check specific points:
@@ -248,19 +248,19 @@ interface HeadcountTimelinePoint {
   - After 5th person joins: width = 2 + 5 = 7px
 - **Validation:** Use browser DevTools to inspect `stroke-width` attribute
 
-**Task 6.3: Test width decrease when people leave**
+**Task 6.3: Test width decrease when people leave** ✅
 - Pan to date after Carol leaves (2023-02-01)
 - Width should decrease by 1px
 - **Expected:** Smooth transition, not instant jump
 - Check that width doesn't go below 2px (base width)
 
-**Task 6.4: Test with keyboard navigation from Slice 3**
+**Task 6.4: Test with keyboard navigation from Slice 3** ✅
 - Use Left/Right arrows to pan
 - Verify lane width updates during transition
 - Counters and lane width should stay synchronized
 - **Expected:** Continuous updates via `requestAnimationFrame`
 
-**Task 6.5: Test edge cases**
+**Task 6.5: Test edge cases** ✅
 - Pan to very start of timeline (2020-01-01):
   - Width = 2px (0 people)
 - Pan to very end of timeline (2024-12-31):
@@ -271,7 +271,7 @@ interface HeadcountTimelinePoint {
 - People with `left: null`:
   - Count should remain active through end of timeline
 
-**Task 6.6: Visual comparison**
+**Task 6.6: Visual comparison** ✅
 - Compare final width at timeline end to spec:
   - Spec mentions "2px → 15px → 62px" as example progression
   - With real data (~60 engineers): 2 + 60 = 62px ✓

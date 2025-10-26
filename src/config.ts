@@ -46,6 +46,10 @@ export const LAYOUT = {
       pixelsPerPerson: 1, // px - width increment per active person
       widthTransitionDuration: 300, // ms - duration of lane width growth animation (0.3s per spec)
       widthTransitionEasing: 'ease-out' as const, // D3 easing for lane width changes
+      // Path generation parameters for smooth organic curves
+      minEventSpacing: 50, // px - minimum distance between width changes; closer events are consolidated
+      bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
+      bezierVerticalTension: 0.8, // 0-1 - vertical interpolation for S-curves (higher = tighter curves)
     },
   },
   eventMarkers: {

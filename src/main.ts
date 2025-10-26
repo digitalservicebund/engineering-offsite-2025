@@ -6,7 +6,7 @@ import { loadTimelineData } from './data-loader';
 import { Timeline } from './timeline';
 import { ViewportController } from './viewport-controller';
 import { CounterCalculator } from './counter-calculator';
-import { PeopleLaneWidthCalculator } from './people-lane-width-calculator';
+import { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
 import type { Person } from './types';
 import { LAYOUT } from './config';
@@ -102,11 +102,7 @@ async function init(): Promise<void> {
     const container = getTimelineContainer();
     const counterElements = getCounterElements();
 
-    // Create and render timeline
-    const timeline = new Timeline(container, data);
-    timeline.render();
-
-    // Create shared people count calculator (used by both counters and lane width)
+    // Create shared people count calculator (used by both counters and lane rendering)
     const peopleCount = new ActiveCountCalculator<Person>(
       data.people,
       (person) => person.joined,
@@ -117,12 +113,15 @@ async function init(): Promise<void> {
       }
     );
 
+    // Create lane path generator (for people lane path generation)
+    const peopleLanePathGenerator = new PeopleLanePathGenerator(peopleCount);
+
+    // Create and render timeline (with dynamic people lane)
+    const timeline = new Timeline(container, data, peopleLanePathGenerator);
+    timeline.render();
+
     // Create counter calculator (shares people count)
     const counterCalculator = new CounterCalculator(peopleCount, data);
-
-    // Create lane width calculator (shares people count)
-    const peopleLaneWidthCalculator = new PeopleLaneWidthCalculator(peopleCount);
-    void peopleLaneWidthCalculator; // TODO: Phase 3 - Wire up to update timeline lane width
 
     // Create counter update callback
     const updateCounters = (date: Date): void => {

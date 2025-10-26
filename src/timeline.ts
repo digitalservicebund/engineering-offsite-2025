@@ -5,19 +5,26 @@
 
 import * as d3 from 'd3';
 import type { TimelineData, Event } from './types';
+import type { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { LAYOUT } from './config';
 
 export class Timeline {
   private readonly data: TimelineData;
   private readonly svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
   private readonly sortedEvents: Event[];
+  private readonly peopleLanePathGenerator: PeopleLanePathGenerator | null;
 
   private timelineWidth = 0;
   private xScale: d3.ScaleTime<number, number> | null = null;
 
-  constructor(container: HTMLElement, data: TimelineData) {
+  constructor(
+    container: HTMLElement,
+    data: TimelineData,
+    peopleLanePathGenerator?: PeopleLanePathGenerator
+  ) {
     this.data = data;
     this.sortedEvents = this.sortEventsByDate(data.events);
+    this.peopleLanePathGenerator = peopleLanePathGenerator || null;
     this.svg = this.createSvgElement(container);
   }
 
@@ -165,14 +172,43 @@ export class Timeline {
       LAYOUT.lanes.events.color
     );
 
-    // People lane (bottom, blue)
-    this.renderLane(
-      lanesGroup,
-      'lane-people',
+    // People lane (bottom, blue) - rendered as filled path with variable width
+    this.renderPeopleLane(lanesGroup);
+  }
+
+  /**
+   * Render the people lane as a filled path with variable width
+   * Width grows/shrinks based on team headcount over time
+   */
+  private renderPeopleLane(
+    lanesGroup: d3.Selection<SVGGElement, unknown, null, undefined>
+  ): void {
+    if (!this.peopleLanePathGenerator) {
+      // Fallback: render as simple line if path generator not provided
+      this.renderLane(
+        lanesGroup,
+        'lane-people',
+        LAYOUT.lanes.people.yPosition,
+        LAYOUT.lanes.people.initialStrokeWidth,
+        LAYOUT.lanes.people.color
+      );
+      return;
+    }
+
+    const xScale = this.getXScaleOrThrow();
+    const pathData = this.peopleLanePathGenerator.generateLanePath(
+      xScale,
       LAYOUT.lanes.people.yPosition,
-      LAYOUT.lanes.people.initialStrokeWidth,
-      LAYOUT.lanes.people.color
+      this.getStartDate(),
+      this.getEndDate()
     );
+
+    lanesGroup
+      .append('path')
+      .attr('class', 'lane-people')
+      .attr('d', pathData)
+      .attr('fill', LAYOUT.lanes.people.color)
+      .attr('stroke', 'none');
   }
 
   /**
