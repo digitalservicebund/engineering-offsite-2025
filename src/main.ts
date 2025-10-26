@@ -6,6 +6,9 @@ import { loadTimelineData } from './data-loader';
 import { Timeline } from './timeline';
 import { ViewportController } from './viewport-controller';
 import { CounterCalculator } from './counter-calculator';
+import { PeopleLaneWidthCalculator } from './people-lane-width-calculator';
+import { ActiveCountCalculator } from './active-count-calculator';
+import type { Person } from './types';
 import { LAYOUT } from './config';
 import './style.css';
 
@@ -103,8 +106,23 @@ async function init(): Promise<void> {
     const timeline = new Timeline(container, data);
     timeline.render();
 
-    // Create counter calculator
-    const counterCalculator = new CounterCalculator(data);
+    // Create shared people count calculator (used by both counters and lane width)
+    const peopleCount = new ActiveCountCalculator<Person>(
+      data.people,
+      (person) => person.joined,
+      (person) => person.left,
+      {
+        entityName: 'People',
+        formatDescription: (person, isStart) => `${person.name} ${isStart ? '↑' : '↓'}`,
+      }
+    );
+
+    // Create counter calculator (shares people count)
+    const counterCalculator = new CounterCalculator(peopleCount, data);
+
+    // Create lane width calculator (shares people count)
+    const peopleLaneWidthCalculator = new PeopleLaneWidthCalculator(peopleCount);
+    void peopleLaneWidthCalculator; // TODO: Phase 3 - Wire up to update timeline lane width
 
     // Create counter update callback
     const updateCounters = (date: Date): void => {

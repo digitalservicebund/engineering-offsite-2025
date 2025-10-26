@@ -1,69 +1,45 @@
 /**
- * CounterCalculator - Business logic for calculating active engineers and projects
- * Encapsulates date comparisons and counting logic
- * Operates on parsed data with Date objects (no string parsing needed)
+ * CounterCalculator - Orchestrates counter displays for the UI
+ * Application layer: Composes domain logic (ActiveCountCalculator) for multiple entity types
  */
 
 import type { TimelineData, Person, Project } from './types';
+import { ActiveCountCalculator } from './active-count-calculator';
 
 export class CounterCalculator {
-  private readonly data: TimelineData;
+  private readonly peopleCount: ActiveCountCalculator<Person>;
+  private readonly projectCount: ActiveCountCalculator<Project>;
 
-  constructor(data: TimelineData) {
-    this.data = data;
+  constructor(
+    peopleCount: ActiveCountCalculator<Person>,
+    data: TimelineData
+  ) {
+    // Inject people count calculator (shared with PeopleLaneWidthCalculator)
+    this.peopleCount = peopleCount;
+
+    // Create project count calculator (no sharing yet)
+    this.projectCount = new ActiveCountCalculator(
+      data.projects,
+      (project) => project.start,
+      (project) => project.end
+      // No logging - counters don't need detailed timeline logs
+    );
   }
 
   /**
    * Count active engineers at a given date
+   * Now O(log n) instead of O(n) - performance optimized!
    */
   public getActiveEngineersAt(date: Date): number {
-    return this.data.people.filter((person) => this.isPersonActive(person, date)).length;
-  }
-
-  /**
-   * Check if a person is active at a given date
-   * A person is active if: joined <= date AND (left === null OR left > date)
-   */
-  private isPersonActive(person: Person, date: Date): boolean {
-    // Not yet joined
-    if (person.joined > date) {
-      return false;
-    }
-
-    // Still active (never left)
-    if (person.left === null) {
-      return true;
-    }
-
-    // Check if left date is after the query date
-    return person.left > date;
+    return this.peopleCount.getCountAt(date);
   }
 
   /**
    * Count active projects at a given date
-   * A project is active if: start <= date AND (end === null OR end > date)
+   * Now O(log n) instead of O(n) - performance optimized!
    */
   public getActiveProjectsAt(date: Date): number {
-    return this.data.projects.filter((project) => this.isProjectActive(project, date))
-      .length;
-  }
-
-  /**
-   * Check if a project is active at a given date
-   */
-  private isProjectActive(project: Project, date: Date): boolean {
-    // Not yet started
-    if (project.start > date) {
-      return false;
-    }
-
-    // Still active (never ended)
-    if (project.end === null) {
-      return true;
-    }
-
-    // Check if end date is after the query date
-    return project.end > date;
+    return this.projectCount.getCountAt(date);
   }
 
   /**

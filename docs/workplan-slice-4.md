@@ -30,9 +30,9 @@
 ## Detailed Task Breakdown
 
 ### Phase 1: Configuration & Types
-**Status:** Pending
+**Status:** Complete
 
-**Task 1.1: Add lane width growth configuration to `config.ts`**
+**Task 1.1: Add lane width growth configuration to `config.ts`** ✅
 - Add lane width animation settings:
   - `laneWidthTransitionDuration: 300` (ms - 0.3s per spec)
   - `laneWidthTransitionEasing: 'ease-out'`
@@ -41,7 +41,7 @@
   - `pixelsPerPerson: 1` (px to add per active person)
 - **Rationale:** Centralizes magic numbers for easy tuning. Separates lane width animation (0.3s) from panning animation (0.6s).
 
-**Task 1.2: Add types for headcount timeline data (if needed)**
+**Task 1.2: Add types for headcount timeline data (if needed)** ✅
 - Consider adding interface for timeline points:
 ```typescript
 interface HeadcountTimelinePoint {
@@ -55,9 +55,9 @@ interface HeadcountTimelinePoint {
 ---
 
 ### Phase 2: Cumulative Headcount Calculation
-**Status:** Pending
+**Status:** Complete
 
-**Task 2.1: Create `PeopleLaneWidthCalculator` class in new file `people-lane-width-calculator.ts`**
+**Task 2.1: Create `PeopleLaneWidthCalculator` class in new file `people-lane-width-calculator.ts`** ✅
 - Constructor takes `Person[]` array (not full `TimelineData` - more reusable)
 - Private property: `headcountTimeline: Array<{ date: Date, count: number }>`
 - Methods:
@@ -66,7 +66,7 @@ interface HeadcountTimelinePoint {
   - `public getStrokeWidthAt(date: Date): number` - formula: `2 + headcount`
 - **Design note:** Generic enough to be adapted for projects in Slice 8 (could extract base class later)
 
-**Task 2.2: Implement `buildHeadcountTimeline()` method**
+**Task 2.2: Implement `buildHeadcountTimeline()` method** ✅
 - Algorithm:
   1. Collect all join and departure dates from `people` array
   2. Create array of events: `{ date: Date, delta: +1 or -1 }`
@@ -83,7 +83,7 @@ interface HeadcountTimelinePoint {
 - **Design for reusability:** Algorithm is generic - works for any entity with start/end dates (people, projects)
 - **Rationale:** Precomputation at load time avoids recalculating during scroll
 
-**Task 2.3: Implement `getHeadcountAt(date: Date)` lookup method**
+**Task 2.3: Implement `getHeadcountAt(date: Date)` lookup method** ✅
 - Binary search through sorted `headcountTimeline` array
 - Find largest date <= query date
 - Return associated count
@@ -93,13 +93,13 @@ interface HeadcountTimelinePoint {
 - **Alternative:** Use `d3.bisector` for efficient binary search
 - **Rationale:** O(log n) lookup enables real-time updates during scroll
 
-**Task 2.4: Implement `getStrokeWidthAt(date: Date)` calculation**
+**Task 2.4: Implement `getStrokeWidthAt(date: Date)` calculation** ✅
 - Formula: `strokeWidth = LAYOUT.lanes.people.baseStrokeWidth + (headcount * LAYOUT.lanes.people.pixelsPerPerson)`
 - With defaults: `strokeWidth = 2 + headcount`
 - Simple wrapper around `getHeadcountAt()`
 - **Rationale:** Encapsulates business logic, makes formula explicit and configurable
 
-**Task 2.5: Add validation logging**
+**Task 2.5: Add validation logging** ✅
 - Log precomputed timeline points to console on init
 - Example output:
   ```
