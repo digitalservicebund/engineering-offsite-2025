@@ -8,7 +8,7 @@ export const LAYOUT = {
     height: 800,
   },
   timeline: {
-    pixelsPerYear: 400,
+    pixelsPerYear: 800,
   },
   scroll: {
     panDistance: 400, // px - distance to move per keypress
