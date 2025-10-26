@@ -43,7 +43,7 @@ export const LAYOUT = {
       initialStrokeWidth: 2,
       color: '#4A90E2', // Blue
       baseStrokeWidth: 2, // px - minimum width before any people join
-      pixelsPerPerson: 1, // px - width increment per active person
+      pixelsPerPerson: 2, // px - width increment per active person
       widthTransitionDuration: 300, // ms - duration of lane width growth animation (0.3s per spec)
       widthTransitionEasing: 'ease-out' as const, // D3 easing for lane width changes
       // Path generation parameters for smooth organic curves
