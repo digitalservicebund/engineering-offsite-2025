@@ -4,7 +4,7 @@
  */
 
 import * as d3 from 'd3';
-import type { TimelineData, Event } from './types';
+import type { TimelineData, Event, KeyEventPosition } from './types';
 import type { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { LAYOUT } from './config';
 
@@ -324,5 +324,21 @@ export class Timeline {
 
   public getEndDate(): Date {
     return new Date(this.data.endYear, 11, 31);
+  }
+
+  /**
+   * Get x-positions of all key events (where isKeyMoment=true)
+   * Pre-calculated for efficient pause detection during auto-scroll
+   */
+  public getKeyEventPositions(): KeyEventPosition[] {
+    const xScale = this.getXScaleOrThrow();
+    return this.data.events
+      .filter((event) => event.isKeyMoment)
+      .map((event) => ({
+        eventId: event.id,
+        eventName: event.name,
+        xPosition: xScale(event.date),
+      }))
+      .sort((a, b) => a.xPosition - b.xPosition);
   }
 }

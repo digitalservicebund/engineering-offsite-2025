@@ -16,6 +16,11 @@ export const LAYOUT = {
     transitionEasing: 'ease-out' as const, // CSS easing function for panning
     currentPositionRatio: 0.75, // ratio (0-1) - viewport position used as "current" date marker
   },
+  autoScroll: {
+    speed: 200, // px/sec - constant scroll speed per spec
+    keyEventPauseThreshold: 5, // px - how close to key event before pausing
+    pausedIndicatorPulseDuration: 2000, // ms - duration of pulse animation
+  },
   counters: {
     position: {
       top: 20, // px - distance from top edge

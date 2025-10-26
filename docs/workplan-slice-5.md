@@ -38,9 +38,9 @@
 ## Detailed Task Breakdown
 
 ### Phase 1: Configuration & Key Event Detection Setup
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 1.1: Add auto-scroll configuration to `config.ts`**
+**Task 1.1: Add auto-scroll configuration to `config.ts`** ✅ DONE
 - Add auto-scroll settings:
   ```typescript
   autoScroll: {
@@ -51,7 +51,7 @@
   ```
 - **Rationale:** Centralizes scroll speed and pause detection threshold for easy tuning.
 
-**Task 1.2: Add types for scroll state machine**
+**Task 1.2: Add types for scroll state machine** ✅ DONE
 - Add to `types.ts`:
   ```typescript
   export type ScrollState = 'idle' | 'scrolling' | 'paused';
@@ -65,7 +65,7 @@
   ```
 - **Rationale:** Type safety for state machine and key event tracking.
 
-**Task 1.3: Pre-calculate key event x-positions**
+**Task 1.3: Pre-calculate key event x-positions** ✅ DONE
 - Add method to Timeline class: `getKeyEventPositions(): KeyEventPosition[]`
 - Filter events where `isKeyMoment === true`
 - Map each to x-position using `xScale(event.date)`
@@ -76,9 +76,9 @@
 ---
 
 ### Phase 2: Auto-Scroll Engine in ViewportController
-**Status:** Pending
+**Status:** In Progress
 
-**Task 2.1: Add state machine properties to ViewportController**
+**Task 2.1: Add state machine properties to ViewportController** ✅ DONE
 - New private properties:
   ```typescript
   private scrollState: ScrollState = 'idle';
@@ -90,7 +90,7 @@
   ```
 - **Rationale:** Track current state, direction, and animation frame for scroll loop.
 
-**Task 2.2: Create `startAutoScroll(direction: ScrollDirection)` method**
+**Task 2.2: Create `startAutoScroll(direction: ScrollDirection)` method** ✅ DONE
 - Set `scrollState = 'scrolling'`
 - Set `scrollDirection = direction`
 - Reset `lastFrameTimestamp = null` (will be set on first frame)
@@ -98,7 +98,7 @@
 - Call `autoScrollLoop()` with `requestAnimationFrame`
 - **Rationale:** Entry point for starting continuous scroll.
 
-**Task 2.3: Implement core auto-scroll loop using `requestAnimationFrame`**
+**Task 2.3: Implement core auto-scroll loop using `requestAnimationFrame`** ✅ DONE
 - Create `private autoScrollLoop(timestamp: number): void`
 - Algorithm:
   ```typescript
@@ -120,7 +120,7 @@
 - Use high-resolution timestamp from `requestAnimationFrame` (DOMHighResTimeStamp)
 - **Rationale:** Precise speed control independent of frame rate. At 60fps, each frame moves ~3.33px (200px/sec ÷ 60).
 
-**Task 2.4: Implement key event pause detection**
+**Task 2.4: Implement key event pause detection** ✅ DONE
 - Create `private checkForKeyEventPause(): boolean`
 - Get current position marker x: `currentPositionX = currentOffset + viewportWidth * currentPositionRatio`
 - Find next key event in scroll direction:
@@ -136,21 +136,21 @@
 - If no, return false (continue scrolling)
 - **Rationale:** Monitors scroll position and pauses at key narrative moments.
 
-**Task 2.5: Create `stopAutoScroll()` method**
+**Task 2.5: Create `stopAutoScroll()` method** ✅ DONE
 - Cancel animation frame if active
 - Set `scrollState = 'idle'`
 - Reset `lastFrameTimestamp = null`
 - Clear `pausedAtEventId = null`
 - **Rationale:** Clean shutdown of auto-scroll system.
 
-**Task 2.6: Create `resumeAutoScroll()` method**
+**Task 2.6: Create `resumeAutoScroll()` method** ✅ DONE
 - If `scrollState === 'paused'`:
   - Set `scrollState = 'scrolling'`
   - Reset `lastFrameTimestamp = null` (restart timing)
   - Restart `autoScrollLoop()`
 - **Rationale:** Resume from paused state at key event.
 
-**Task 2.7: Create `togglePause()` method**
+**Task 2.7: Create `togglePause()` method** ✅ DONE
 - If `scrollState === 'scrolling'`:
   - Set `scrollState = 'paused'`
   - Cancel animation frame
@@ -158,7 +158,7 @@
   - Call `resumeAutoScroll()`
 - **Rationale:** Space bar toggle functionality while scrolling.
 
-**Task 2.8: Modify `applyTransform()` to support instant updates**
+**Task 2.8: Modify `applyTransform()` to support instant updates** ✅ DONE (completed in Task 2.3)
 - Add parameter: `useTransition: boolean = true`
 - If `useTransition === false`:
   - Apply transform without setting `isAnimating` flag
@@ -167,7 +167,7 @@
   - Keep existing CSS transition behavior (for manual panning)
 - **Rationale:** Auto-scroll needs instant updates every frame, not CSS transitions.
 
-**Task 2.9: Add public getters for state**
+**Task 2.9: Add public getters for state** ✅ DONE
 - `getScrollState(): ScrollState`
 - `getScrollDirection(): ScrollDirection`
 - `getPausedEventId(): string | null`

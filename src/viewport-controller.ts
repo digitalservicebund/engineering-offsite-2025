@@ -8,6 +8,7 @@
 
 import type * as d3 from 'd3';
 import { LAYOUT } from './config';
+import type { ScrollState, ScrollDirection, KeyEventPosition } from './types';
 
 export class ViewportController {
   private readonly container: HTMLElement;
@@ -23,6 +24,14 @@ export class ViewportController {
   private currentOffset: number;
   private isAnimating = false;
   private animationFrameId: number | null = null;
+
+  // Auto-scroll state machine properties
+  private scrollState: ScrollState = 'idle';
+  private scrollDirection: ScrollDirection = 'forward';
+  private keyEventPositions: KeyEventPosition[] = [];
+  private lastFrameTimestamp: number | null = null;
+  private autoScrollFrameId: number | null = null;
+  private pausedAtEventId: string | null = null;
 
   constructor(
     container: HTMLElement,
@@ -202,10 +211,16 @@ export class ViewportController {
    * Apply CSS transform to pan the timeline
    * When currentOffset is negative (initial state), timeline moves right to show left padding
    * When currentOffset is positive (panning right), timeline moves left to reveal content on right
+   * @param animate - If true, uses CSS transitions (for manual panning). If false, instant update (for auto-scroll).
    */
   private applyTransform(animate = true): void {
     if (animate) {
       this.isAnimating = true;
+      // Ensure CSS transition is enabled
+      this.container.style.transition = `transform ${LAYOUT.scroll.transitionDuration}ms ${LAYOUT.scroll.transitionEasing}`;
+    } else {
+      // Disable CSS transition for instant updates (auto-scroll)
+      this.container.style.transition = 'none';
     }
 
     // Negate currentOffset to get proper CSS translateX value
@@ -217,5 +232,227 @@ export class ViewportController {
    */
   public getCurrentOffset(): number {
     return this.currentOffset;
+  }
+
+  /**
+   * Get current scroll state
+   */
+  public getScrollState(): ScrollState {
+    return this.scrollState;
+  }
+
+  /**
+   * Get current scroll direction
+   */
+  public getScrollDirection(): ScrollDirection {
+    return this.scrollDirection;
+  }
+
+  /**
+   * Get paused event ID (null if not paused at key event)
+   */
+  public getPausedEventId(): string | null {
+    return this.pausedAtEventId;
+  }
+
+  /**
+   * Start auto-scroll in the specified direction
+   * Entry point for continuous scrolling at fixed speed (200px/sec)
+   */
+  public startAutoScroll(direction: ScrollDirection): void {
+    // Set state
+    this.scrollState = 'scrolling';
+    this.scrollDirection = direction;
+    this.lastFrameTimestamp = null; // Will be set on first frame
+    this.pausedAtEventId = null;
+
+    // Cancel any existing auto-scroll animation frame
+    if (this.autoScrollFrameId !== null) {
+      cancelAnimationFrame(this.autoScrollFrameId);
+      this.autoScrollFrameId = null;
+    }
+
+    // Start the auto-scroll loop
+    this.autoScrollFrameId = requestAnimationFrame((timestamp) =>
+      this.autoScrollLoop(timestamp)
+    );
+
+    console.log(`Auto-scroll started (${direction})`);
+  }
+
+  /**
+   * Auto-scroll loop - called every frame via requestAnimationFrame
+   * Implements smooth scrolling at constant speed (200px/sec)
+   */
+  private autoScrollLoop(timestamp: number): void {
+    // 1. Exit if no longer scrolling
+    if (this.scrollState !== 'scrolling') {
+      this.autoScrollFrameId = null;
+      return;
+    }
+
+    // 2. Calculate elapsed time since last frame
+    let elapsed = 0;
+    if (this.lastFrameTimestamp !== null) {
+      elapsed = timestamp - this.lastFrameTimestamp;
+    }
+    this.lastFrameTimestamp = timestamp;
+
+    // 3. Calculate distance to move based on speed and elapsed time
+    // Speed: 200px/sec = 0.2px/ms
+    const distance = (LAYOUT.autoScroll.speed / 1000) * elapsed;
+
+    // 4. Apply movement based on direction
+    if (this.scrollDirection === 'forward') {
+      this.currentOffset += distance;
+    } else {
+      this.currentOffset -= distance;
+    }
+
+    // 5. Clamp to boundaries
+    this.currentOffset = Math.max(this.minOffset, Math.min(this.maxOffset, this.currentOffset));
+
+    // 6. Apply transform without CSS transition (instant update for smooth animation)
+    this.applyTransform(false);
+
+    // 7. Check if reached key event → pause if within threshold
+    const shouldPause = this.checkForKeyEventPause();
+    if (shouldPause) {
+      return; // Exit loop, state is now 'paused'
+    }
+
+    // 8. Update counters via onViewportChange callback
+    this.notifyViewportChange();
+
+    // 9. Store timestamp already done above (step 2)
+
+    // 10. Schedule next frame
+    this.autoScrollFrameId = requestAnimationFrame((ts) => this.autoScrollLoop(ts));
+  }
+
+  /**
+   * Stop auto-scroll
+   * Clean shutdown of auto-scroll system
+   */
+  public stopAutoScroll(): void {
+    // Cancel animation frame if active
+    if (this.autoScrollFrameId !== null) {
+      cancelAnimationFrame(this.autoScrollFrameId);
+      this.autoScrollFrameId = null;
+    }
+
+    // Reset state
+    this.scrollState = 'idle';
+    this.lastFrameTimestamp = null;
+    this.pausedAtEventId = null;
+
+    console.log('Auto-scroll stopped');
+  }
+
+  /**
+   * Resume auto-scroll from paused state
+   * Continues scrolling in current direction from where we paused
+   */
+  public resumeAutoScroll(): void {
+    // Only resume if currently paused
+    if (this.scrollState !== 'paused') {
+      return;
+    }
+
+    // Set state to scrolling
+    this.scrollState = 'scrolling';
+    this.lastFrameTimestamp = null; // Restart timing from scratch
+    this.pausedAtEventId = null;
+
+    // Restart the auto-scroll loop
+    this.autoScrollFrameId = requestAnimationFrame((timestamp) =>
+      this.autoScrollLoop(timestamp)
+    );
+
+    console.log(`Auto-scroll resumed (${this.scrollDirection})`);
+  }
+
+  /**
+   * Toggle pause/resume during auto-scroll
+   * Space bar toggle functionality while scrolling
+   */
+  public togglePause(): void {
+    if (this.scrollState === 'scrolling') {
+      // Pause scrolling
+      this.scrollState = 'paused';
+
+      // Cancel animation frame
+      if (this.autoScrollFrameId !== null) {
+        cancelAnimationFrame(this.autoScrollFrameId);
+        this.autoScrollFrameId = null;
+      }
+
+      console.log('Auto-scroll paused (manual toggle)');
+    } else if (this.scrollState === 'paused') {
+      // Resume scrolling
+      this.resumeAutoScroll();
+    }
+  }
+
+  /**
+   * Check if we've reached a key event and should pause
+   * Monitors scroll position and pauses when within threshold of key events
+   */
+  private checkForKeyEventPause(): boolean {
+    // Skip if no key events configured
+    if (this.keyEventPositions.length === 0) {
+      return false;
+    }
+
+    // Get current position marker x (where we consider "current" to be)
+    const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+
+    // Find next key event in scroll direction
+    let targetKeyEvent: KeyEventPosition | null = null;
+
+    if (this.scrollDirection === 'forward') {
+      // Find first key event ahead of current position
+      for (const keyEvent of this.keyEventPositions) {
+        if (keyEvent.xPosition > currentPositionX) {
+          targetKeyEvent = keyEvent;
+          break;
+        }
+      }
+    } else {
+      // Backward: find last key event behind current position
+      for (let i = this.keyEventPositions.length - 1; i >= 0; i--) {
+        const keyEvent = this.keyEventPositions[i];
+        if (keyEvent.xPosition < currentPositionX) {
+          targetKeyEvent = keyEvent;
+          break;
+        }
+      }
+    }
+
+    // No key event found in this direction
+    if (!targetKeyEvent) {
+      return false;
+    }
+
+    // Check if within threshold
+    const distance = Math.abs(currentPositionX - targetKeyEvent.xPosition);
+    if (distance <= LAYOUT.autoScroll.keyEventPauseThreshold) {
+      // Pause!
+      this.scrollState = 'paused';
+      this.pausedAtEventId = targetKeyEvent.eventId;
+
+      // Snap to exact key event position for precision
+      this.currentOffset = targetKeyEvent.xPosition - this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+      this.applyTransform(false);
+
+      console.log(`Paused at key event: "${targetKeyEvent.eventName}" (${targetKeyEvent.eventId})`);
+
+      // Final counter update at paused position
+      this.notifyViewportChange();
+
+      return true; // Pause triggered
+    }
+
+    return false; // Continue scrolling
   }
 }
