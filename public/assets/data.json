@@ -3,34 +3,327 @@
   "endYear": 2024,
   "people": [
     {
-      "id": "p1",
-      "name": "Alice Chen",
-      "joined": "2020-03-01",
-      "left": null
+      "name": "Pers A",
+      "joined": "2020-11-16"
     },
     {
-      "id": "p2",
-      "name": "Bob Smith",
-      "joined": "2020-06-15",
-      "left": null
+      "name": "Pers B",
+      "joined": "2020-12-01",
+      "left": "2025-04-30"
     },
     {
-      "id": "p3",
-      "name": "Carol Johnson",
-      "joined": "2021-01-10",
-      "left": "2023-08-15"
+      "name": "Pers C",
+      "joined": "2020-12-01"
     },
     {
-      "id": "p4",
-      "name": "David Lee",
-      "joined": "2021-09-01",
-      "left": null
+      "name": "Pers D",
+      "joined": "2021-03-01",
+      "left": "2024-11-30"
     },
     {
-      "id": "p5",
-      "name": "Emma Wilson",
-      "joined": "2022-03-15",
-      "left": null
+      "name": "Pers E",
+      "joined": "2021-05-01",
+      "left": "2023-01-31"
+    },
+    {
+      "name": "Pers F",
+      "joined": "2021-10-01",
+      "left": "2024-06-30"
+    },
+    {
+      "name": "Pers G",
+      "joined": "2021-10-01"
+    },
+    {
+      "name": "Pers H",
+      "joined": "2021-12-01",
+      "left": "2024-12-31"
+    },
+    {
+      "name": "Pers I",
+      "joined": "2021-12-06"
+    },
+    {
+      "name": "Pers J",
+      "joined": "2022-01-01",
+      "left": "2022-06-30"
+    },
+    {
+      "name": "Pers K",
+      "joined": "2022-01-01"
+    },
+    {
+      "name": "Pers L",
+      "joined": "2022-02-01"
+    },
+    {
+      "name": "Pers M",
+      "joined": "2022-03-01"
+    },
+    {
+      "name": "Pers N",
+      "joined": "2022-04-01",
+      "left": "2025-06-24"
+    },
+    {
+      "name": "Pers O",
+      "joined": "2022-04-15"
+    },
+    {
+      "name": "Pers P",
+      "joined": "2022-05-01"
+    },
+    {
+      "name": "Pers Q",
+      "joined": "2022-07-01",
+      "left": "2024-01-31"
+    },
+    {
+      "name": "Pers R",
+      "joined": "2022-07-01"
+    },
+    {
+      "name": "Pers S",
+      "joined": "2022-08-01"
+    },
+    {
+      "name": "Pers T",
+      "joined": "2022-10-01"
+    },
+    {
+      "name": "Pers U",
+      "joined": "2022-10-01"
+    },
+    {
+      "name": "Pers V",
+      "joined": "2022-12-01"
+    },
+    {
+      "name": "Pers W",
+      "joined": "2022-12-01"
+    },
+    {
+      "name": "Pers X",
+      "joined": "2023-01-01"
+    },
+    {
+      "name": "Pers Z",
+      "joined": "2023-01-01"
+    },
+    {
+      "name": "Pers 1",
+      "joined": "2023-01-15"
+    },
+    {
+      "name": "Pers 2",
+      "joined": "2023-01-15"
+    },
+    {
+      "name": "Pers 3",
+      "joined": "2023-02-01"
+    },
+    {
+      "name": "Pers 4",
+      "joined": "2023-02-06"
+    },
+    {
+      "name": "Pers 5",
+      "joined": "2023-02-06"
+    },
+    {
+      "name": "Pers 6",
+      "joined": "2023-02-06"
+    },
+    {
+      "name": "Pers 7",
+      "joined": "2023-02-15",
+      "left": "2023-08-31"
+    },
+    {
+      "name": "Pers 8",
+      "joined": "2023-02-15"
+    },
+    {
+      "name": "Pers 9",
+      "joined": "2023-05-01"
+    },
+    {
+      "name": "Pers 10",
+      "joined": "2023-07-01"
+    },
+    {
+      "name": "Pers 11",
+      "joined": "2023-09-01"
+    },
+    {
+      "name": "Pers 12",
+      "joined": "2023-10-15"
+    },
+    {
+      "name": "Pers 13",
+      "joined": "2023-11-01",
+      "left": "2025-08-31"
+    },
+    {
+      "name": "Pers 14",
+      "joined": "2023-11-01"
+    },
+    {
+      "name": "Pers 15",
+      "joined": "2023-12-01",
+      "left": "2024-05-31"
+    },
+    {
+      "name": "Pers 16",
+      "joined": "2024-01-01"
+    },
+    {
+      "name": "Pers 17",
+      "joined": "2024-01-01"
+    },
+    {
+      "name": "Pers 18",
+      "joined": "2024-01-01"
+    },
+    {
+      "name": "Pers 19",
+      "joined": "2024-02-01"
+    },
+    {
+      "name": "Pers 20",
+      "joined": "2024-04-01"
+    },
+    {
+      "name": "Pers 21",
+      "joined": "2024-05-01",
+      "left": "2025-12-31"
+    },
+    {
+      "name": "Pers 22",
+      "joined": "2024-05-01"
+    },
+    {
+      "name": "Pers 23",
+      "joined": "2024-06-01"
+    },
+    {
+      "name": "Pers 24",
+      "joined": "2024-06-01"
+    },
+    {
+      "name": "Pers 25",
+      "joined": "2024-06-01"
+    },
+    {
+      "name": "Pers 26",
+      "joined": "2024-07-01"
+    },
+    {
+      "name": "Pers 27",
+      "joined": "2024-08-01"
+    },
+    {
+      "name": "Pers 28",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 29",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 30",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 31",
+      "joined": "2024-09-01",
+      "left": "2025-02-14"
+    },
+    {
+      "name": "Pers 32",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 33",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 34",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 35",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 36",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 37",
+      "joined": "2024-12-01",
+      "left": "2025-04-15"
+    },
+    {
+      "name": "Pers 38",
+      "joined": "2024-12-01",
+      "left": "2025-05-12"
+    },
+    {
+      "name": "Pers 39",
+      "joined": "2025-01-01"
+    },
+    {
+      "name": "Pers 40",
+      "joined": "2025-04-01"
+    },
+    {
+      "name": "Pers 41",
+      "joined": "2025-05-01"
+    },
+    {
+      "name": "Pers 42",
+      "joined": "2025-06-01"
+    },
+    {
+      "name": "Pers 43",
+      "joined": "2025-06-15"
+    },
+    {
+      "name": "Pers 44",
+      "joined": "2025-08-01"
+    },
+    {
+      "name": "Pers 45",
+      "joined": "2025-09-01"
+    },
+    {
+      "name": "Pers 46",
+      "joined": "2025-09-01"
+    },
+    {
+      "name": "Pers 47",
+      "joined": "2025-09-01"
+    },
+    {
+      "name": "Pers 48",
+      "joined": "2025-10-01"
+    },
+    {
+      "name": "Pers 49",
+      "joined": "2025-11-01"
+    },
+    {
+      "name": "Pers 50",
+      "joined": "2025-11-01"
+    },
+    {
+      "name": "Pers 51",
+      "joined": "2025-11-01"
+    },
+    {
+      "name": "Pers 52",
+      "joined": "2025-11-01"
     }
   ],
   "projects": [
@@ -113,4 +406,3 @@
     }
   ]
 }
-
