@@ -209,13 +209,13 @@
 ---
 
 ### Phase 4: Keyboard Control State Machine
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 4.1: Refactor `setupKeyboardControls()` in `main.ts`**
+**Task 4.1: Refactor `setupKeyboardControls()` in `main.ts`** ✅ DONE
 - Current behavior is simple manual panning
 - New behavior depends on current scroll state:
 
-**Task 4.2: Implement Space bar state-aware logic**
+**Task 4.2: Implement Space bar state-aware logic** ✅ DONE
 - Space bar behavior:
   ```typescript
   If scrollState === 'idle':
@@ -227,7 +227,7 @@
   ```
 - Call `viewportController.startAutoScroll('forward')`, `togglePause()`, or `resumeAutoScroll()`
 
-**Task 4.3: Implement Right arrow state-aware logic**
+**Task 4.3: Implement Right arrow state-aware logic** ✅ DONE
 - Right arrow behavior:
   ```typescript
   If scrollState === 'idle':
@@ -241,7 +241,7 @@
   ```
 - **Rationale:** Right arrow always means "go forward" or "resume forward"
 
-**Task 4.4: Implement Left arrow state-aware logic**
+**Task 4.4: Implement Left arrow state-aware logic** ✅ DONE
 - Left arrow behavior:
   ```typescript
   If scrollState === 'idle':
@@ -255,7 +255,7 @@
   ```
 - **Rationale:** Left arrow always means "go backward" or "resume backward"
 
-**Task 4.5: Wire up visual pause indicator**
+**Task 4.5: Wire up visual pause indicator** ✅ DONE
 - In keyboard control logic, after state changes:
   - If entering paused state: `timeline.highlightEvent(viewportController.getPausedEventId())`
   - If leaving paused state: `timeline.highlightEvent(null)` (clear highlight)

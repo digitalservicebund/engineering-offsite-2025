@@ -65,28 +65,93 @@ function displayError(error: unknown): void {
 }
 
 /**
- * Setup keyboard event listeners for timeline panning
+ * Setup keyboard event listeners for auto-scroll state machine
  */
-function setupKeyboardControls(viewportController: ViewportController): void {
+function setupKeyboardControls(
+  viewportController: ViewportController,
+  timeline: Timeline
+): void {
   const handleKeyDown = (event: KeyboardEvent): void => {
     const { key } = event;
+    const currentState = viewportController.getScrollState();
+    const currentDirection = viewportController.getScrollDirection();
 
-    // Handle Space bar and Right arrow - pan right
-    if (key === ' ' || key === 'ArrowRight') {
+    // Handle Space bar - state-aware behavior
+    if (key === ' ') {
       event.preventDefault();
-      viewportController.panRight(LAYOUT.scroll.panDistance);
+
+      if (currentState === 'idle') {
+        // Start auto-scroll forward
+        viewportController.startAutoScroll('forward');
+        timeline.highlightEvent(null); // Clear any highlights
+      } else if (currentState === 'scrolling') {
+        // Toggle pause (manual pause)
+        viewportController.togglePause();
+        // Note: Manual pause doesn't highlight event (pausedAtEventId will be null)
+      } else if (currentState === 'paused') {
+        // Resume auto-scroll in current direction
+        timeline.highlightEvent(null); // Clear highlight
+        viewportController.resumeAutoScroll();
+      }
       return;
     }
 
-    // Handle Left arrow - pan left
+    // Handle Right arrow - always forward
+    if (key === 'ArrowRight') {
+      event.preventDefault();
+
+      if (currentState === 'idle') {
+        // Start auto-scroll forward
+        viewportController.startAutoScroll('forward');
+        timeline.highlightEvent(null);
+      } else if (currentState === 'paused') {
+        // Resume auto-scroll forward (change direction if needed)
+        timeline.highlightEvent(null);
+        if (currentDirection === 'backward') {
+          // Switch direction: stop and restart forward
+          viewportController.stopAutoScroll();
+          viewportController.startAutoScroll('forward');
+        } else {
+          viewportController.resumeAutoScroll();
+        }
+      } else if (currentState === 'scrolling' && currentDirection === 'backward') {
+        // Reverse to forward direction
+        viewportController.stopAutoScroll();
+        viewportController.startAutoScroll('forward');
+      }
+      // If already scrolling forward, no-op
+      return;
+    }
+
+    // Handle Left arrow - always backward
     if (key === 'ArrowLeft') {
       event.preventDefault();
-      viewportController.panLeft(LAYOUT.scroll.panDistance);
+
+      if (currentState === 'idle') {
+        // Start auto-scroll backward
+        viewportController.startAutoScroll('backward');
+        timeline.highlightEvent(null);
+      } else if (currentState === 'paused') {
+        // Resume auto-scroll backward (change direction if needed)
+        timeline.highlightEvent(null);
+        if (currentDirection === 'forward') {
+          // Switch direction: stop and restart backward
+          viewportController.stopAutoScroll();
+          viewportController.startAutoScroll('backward');
+        } else {
+          viewportController.resumeAutoScroll();
+        }
+      } else if (currentState === 'scrolling' && currentDirection === 'forward') {
+        // Reverse to backward direction
+        viewportController.stopAutoScroll();
+        viewportController.startAutoScroll('backward');
+      }
+      // If already scrolling backward, no-op
     }
   };
 
   document.addEventListener('keydown', handleKeyDown);
-  console.log('✓ Keyboard controls enabled (Space/Right/Left arrows)');
+  console.log('✓ Auto-scroll keyboard controls enabled (Space/Right/Left arrows)');
 }
 
 /**
@@ -145,7 +210,7 @@ async function init(): Promise<void> {
     );
 
     // Setup keyboard controls
-    setupKeyboardControls(viewportController);
+    setupKeyboardControls(viewportController, timeline);
 
     console.log('✓ Timeline rendered successfully');
   } catch (error) {
