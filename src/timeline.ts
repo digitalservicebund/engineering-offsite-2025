@@ -263,7 +263,8 @@ export class Timeline {
       .selectAll<SVGGElement, Event>('g.event-marker')
       .data(this.sortedEvents)
       .join('g')
-      .attr('class', 'event-marker');
+      .attr('class', 'event-marker')
+      .attr('data-id', (d) => d.id);
 
     // Render vertical marker lines
     eventGroups
@@ -340,5 +341,22 @@ export class Timeline {
         xPosition: xScale(event.date),
       }))
       .sort((a, b) => a.xPosition - b.xPosition);
+  }
+
+  /**
+   * Highlight an event marker (visual pause indicator)
+   * Adds 'paused' class to trigger pulsing animation
+   * @param eventId - ID of event to highlight, or null to clear all highlights
+   */
+  public highlightEvent(eventId: string | null): void {
+    if (eventId === null) {
+      // Clear all highlights
+      this.svg.selectAll('.event-marker').classed('paused', false);
+    } else {
+      // Clear previous highlights first
+      this.svg.selectAll('.event-marker').classed('paused', false);
+      // Add highlight to specific event
+      this.svg.select(`.event-marker[data-id="${eventId}"]`).classed('paused', true);
+    }
   }
 }

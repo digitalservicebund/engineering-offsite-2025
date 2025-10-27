@@ -68,3 +68,20 @@ body {
 svg {
   display: block;
 }
+
+/* Event marker pause indicator - visual feedback when paused at key event */
+.event-marker.paused .marker-line {
+  stroke: #E74C3C; /* Red highlight */
+  stroke-width: 5px; /* Thicker than default 3px */
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Pulse animation for paused event marker */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

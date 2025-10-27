@@ -176,9 +176,9 @@
 ---
 
 ### Phase 3: Visual Pause Indicator
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 3.1: Add pause indicator styling to `style.css`**
+**Task 3.1: Add pause indicator styling to `style.css`** ✅ DONE
 - Create `.event-marker.paused` class:
   ```css
   .event-marker.paused .marker-line {
@@ -195,13 +195,13 @@
 - **Visual encoding:** Pulsing red marker indicates paused state at key event
 - **Rationale:** Clear visual feedback that auto-scroll has paused.
 
-**Task 3.2: Add method to Timeline class: `highlightEvent(eventId: string | null)`**
+**Task 3.2: Add method to Timeline class: `highlightEvent(eventId: string | null)`** ✅ DONE
 - Select event marker by ID: `this.svg.select(\`.event-marker[data-id="${eventId}"]\`)`
 - Add `paused` class to trigger CSS animation
 - If `eventId === null`, remove `paused` class from all markers (clear highlight)
 - **Rationale:** Timeline class owns SVG rendering, including visual indicators.
 
-**Task 3.3: Ensure event markers have data-id attributes**
+**Task 3.3: Ensure event markers have data-id attributes** ✅ DONE
 - Modify `renderEventMarkers()` in Timeline class
 - Add `.attr('data-id', d => d.id)` to event marker groups
 - **Rationale:** Enable selection of specific marker by event ID.
