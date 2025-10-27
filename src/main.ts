@@ -9,7 +9,6 @@ import { CounterCalculator } from './counter-calculator';
 import { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
 import type { Person } from './types';
-import { LAYOUT } from './config';
 import './style.css';
 
 const CONTAINER_ID = 'timeline-container';
@@ -199,6 +198,14 @@ async function init(): Promise<void> {
       counterElements.year.textContent = `Year: ${year}`;
     };
 
+    // Get key event positions for auto-scroll pause detection
+    const keyEventPositions = timeline.getKeyEventPositions();
+
+    // Create key event reached callback (for visual highlight)
+    const handleKeyEventReached = (eventId: string | null): void => {
+      timeline.highlightEvent(eventId);
+    };
+
     // Create viewport controller for panning
     const viewportController = new ViewportController(
       container,
@@ -206,7 +213,9 @@ async function init(): Promise<void> {
       timeline.getXScale(),
       timeline.getStartDate(),
       timeline.getEndDate(),
-      updateCounters
+      keyEventPositions,
+      updateCounters,
+      handleKeyEventReached
     );
 
     // Setup keyboard controls

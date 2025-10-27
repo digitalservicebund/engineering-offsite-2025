@@ -20,6 +20,7 @@ export class ViewportController {
   private readonly startDate: Date;
   private readonly endDate: Date;
   private readonly onViewportChange?: (date: Date) => void;
+  private readonly onKeyEventReached?: (eventId: string | null) => void;
 
   private currentOffset: number;
   private isAnimating = false;
@@ -39,7 +40,9 @@ export class ViewportController {
     xScale: d3.ScaleTime<number, number>,
     startDate: Date,
     endDate: Date,
-    onViewportChange?: (date: Date) => void
+    keyEventPositions: KeyEventPosition[],
+    onViewportChange?: (date: Date) => void,
+    onKeyEventReached?: (eventId: string | null) => void
   ) {
     this.container = container;
     this.timelineWidth = timelineWidth;
@@ -47,7 +50,11 @@ export class ViewportController {
     this.xScale = xScale;
     this.startDate = startDate;
     this.endDate = endDate;
+    this.keyEventPositions = keyEventPositions;
     this.onViewportChange = onViewportChange;
+    this.onKeyEventReached = onKeyEventReached;
+
+    console.log(`ViewportController initialized with ${keyEventPositions.length} key events`);
 
     // Calculate scroll boundaries
     this.minOffset = this.calculateMinOffset();
@@ -135,6 +142,8 @@ export class ViewportController {
 
   /**
    * Pan timeline to the right by specified distance
+   * @deprecated Use auto-scroll methods (startAutoScroll) instead for smooth continuous scrolling
+   * Kept for backward compatibility and potential manual control needs
    */
   public panRight(distance: number): void {
     if (this.isAnimating) return;
@@ -151,6 +160,8 @@ export class ViewportController {
 
   /**
    * Pan timeline to the left by specified distance
+   * @deprecated Use auto-scroll methods (startAutoScroll) instead for smooth continuous scrolling
+   * Kept for backward compatibility and potential manual control needs
    */
   public panLeft(distance: number): void {
     if (this.isAnimating) return;
@@ -310,7 +321,21 @@ export class ViewportController {
     }
 
     // 5. Clamp to boundaries
+    const wasClamped = 
+      (this.scrollDirection === 'forward' && this.currentOffset >= this.maxOffset) ||
+      (this.scrollDirection === 'backward' && this.currentOffset <= this.minOffset);
+    
     this.currentOffset = Math.max(this.minOffset, Math.min(this.maxOffset, this.currentOffset));
+
+    // Check if we hit a boundary - stop auto-scroll
+    if (wasClamped) {
+      this.scrollState = 'idle';
+      this.autoScrollFrameId = null;
+      this.applyTransform(false);
+      this.notifyViewportChange();
+      console.log(`Auto-scroll stopped: reached timeline ${this.scrollDirection === 'forward' ? 'end' : 'start'}`);
+      return;
+    }
 
     // 6. Apply transform without CSS transition (instant update for smooth animation)
     this.applyTransform(false);
@@ -449,6 +474,11 @@ export class ViewportController {
 
       // Final counter update at paused position
       this.notifyViewportChange();
+
+      // Trigger visual highlight
+      if (this.onKeyEventReached) {
+        this.onKeyEventReached(targetKeyEvent.eventId);
+      }
 
       return true; // Pause triggered
     }
