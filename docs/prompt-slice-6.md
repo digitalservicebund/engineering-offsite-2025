@@ -5,14 +5,13 @@ You are implementing an interactive timeline visualization for a presentation. R
 **Goal:** Animated particles with name labels appear when person joins during auto-scroll.
 
 **What to build:**
-1. Detect when auto-scroll crosses a person join date:
-   - Track last processed x-position
-   - Check if any person.joined dates fall between last and current position
+1. Detect when auto-scroll is about to cross a person join date
 2. Spawn particle animation for each join:
-   - Blue circle (8px radius) starting 60px below people lane
+   - Blue circle (8px radius) starting 60px below people lane and 1/3 of LAYOUT.timeline.pixelsPerYear _before_ the join date is reached
    - Text label with person.name positioned 15px to right of circle
    - Animate upward to people lane over 0.5s (ease-out)
    - Circle and label move together as a group
+   - Circle joins lane at exactly the x-position of the join date
 3. On animation completion:
    - Fade out both circle and label (opacity 1 → 0)
    - Trigger people lane width increment by 1px
@@ -22,7 +21,8 @@ You are implementing an interactive timeline visualization for a presentation. R
 During auto-scroll, when timeline reaches a person join date, a blue circle with their name animates upward from below the people lane, then disappears as it merges. The lane grows 1px thicker.
 
 **Success criteria:**
-- Blue particle appears at correct x-position when join date reached
+- Blue particle appears at correct x-position before join date is reached
+- Blue particle merges with people lane exactly at the x-position of the join date
 - Person's name visible next to particle during animation
 - Smooth 0.5s upward motion from 60px below to lane position
 - Particle and label both fade out after reaching lane
