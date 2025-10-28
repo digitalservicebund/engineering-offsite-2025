@@ -13,6 +13,7 @@ export class PhotoController {
   private readonly timelineContainer: HTMLElement;
   private readonly xScale: d3.ScaleTime<number, number>;
   private readonly eventMarkerY: number;
+  private readonly timelineWidth: number;
 
   private currentPhotoState: PhotoState | null = null;
   private thumbnails: Map<string, HTMLElement> = new Map(); // eventId → thumbnail element
@@ -23,17 +24,20 @@ export class PhotoController {
    * @param timelineContainer - The timeline container for positioning thumbnails
    * @param xScale - D3 time scale for x-position calculations
    * @param eventMarkerY - Y-position of events lane for thumbnail anchoring
+   * @param timelineWidth - Total width of the timeline (for edge clamping)
    */
   constructor(
     overlayElement: HTMLElement,
     timelineContainer: HTMLElement,
     xScale: d3.ScaleTime<number, number>,
-    eventMarkerY: number
+    eventMarkerY: number,
+    timelineWidth: number
   ) {
     this.overlayElement = overlayElement;
     this.timelineContainer = timelineContainer;
     this.xScale = xScale;
     this.eventMarkerY = eventMarkerY;
+    this.timelineWidth = timelineWidth;
 
     console.log('✓ PhotoController initialized');
     
@@ -230,7 +234,10 @@ export class PhotoController {
    */
   private calculateThumbnailPosition(markerX: number): { x: number; y: number } {
     // Thumbnail centered horizontally on marker
-    const x = markerX - LAYOUT.photoDisplay.thumbnailSize / 2;
+    let x = markerX - LAYOUT.photoDisplay.thumbnailSize / 2;
+
+    // Clamp x-position to prevent thumbnails from being clipped at timeline edges
+    x = Math.max(0, Math.min(x, this.timelineWidth - LAYOUT.photoDisplay.thumbnailSize));
 
     // Thumbnail positioned BELOW marker line (to avoid obscuring event labels)
     // Position below the events lane bottom edge

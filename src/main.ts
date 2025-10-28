@@ -261,7 +261,8 @@ async function init(): Promise<void> {
       photoOverlay,
       container,
       timeline.getXScale(),
-      LAYOUT.lanes.events.yPosition
+      LAYOUT.lanes.events.yPosition,
+      timeline.getTimelineWidth()
     );
 
     // Create counter calculator (shares people count)

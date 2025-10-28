@@ -1,6 +1,6 @@
 # Slice 7 Implementation Plan: Photo Pop-up with Thumbnail Anchoring
 
-**Status:** 📋 PLANNING  
+**Status:** ✅ IMPLEMENTATION COMPLETE  
 **Created:** 2025-10-28  
 **Updated:** 2025-10-28  
 
@@ -563,7 +563,7 @@ Testing revealed 4 issues that were fixed:
 ---
 
 ### Phase 5: Multiple Thumbnails & Cleanup
-**Status:** Pending
+**Status:** ✅ Complete
 
 **Task 5.1: Test multiple photo events**
 - Add 2-3 photo events spread across timeline
@@ -604,62 +604,66 @@ Testing revealed 4 issues that were fixed:
 ---
 
 ### Phase 6: Integration & Edge Cases
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 6.1: Handle photo events without caption**
-- Test event with `hasPhoto: true` but `caption: null`
-- Verify caption div is empty or hidden
-- No visual glitch from missing caption
-- **Rationale:** Not all photos may need captions.
+**Task 6.1: Handle photo events without caption** ✅ DONE
+- Already implemented with caption fallback: `const caption = event.caption || event.name`
+- Events with `caption: null` will display the event name instead
+- Caption is always present, preventing empty div or visual glitches
+- **Design decision:** Per user request, event name serves as fallback caption
+- **Rationale:** Ensures every photo has meaningful context.
 
-**Task 6.2: Handle very long captions**
-- Test with caption longer than photo width
-- Apply CSS `max-width` and `overflow-wrap` to caption:
-  ```css
-  .photo-caption {
-    max-width: 90%;
-    margin: 0 auto;
-    overflow-wrap: break-word;
-  }
-  ```
+**Task 6.2: Handle very long captions** ✅ DONE
+- Updated `.photo-caption` CSS with:
+  - `max-width: 90%` (increased from 70vw for better readability)
+  - `margin: 20px auto 0 auto` (centers caption horizontally)
+  - `overflow-wrap: break-word` (breaks long words to prevent overflow)
+  - `word-wrap: break-word` (legacy browser support)
+- **Implementation:** Caption will wrap to multiple lines and break long words if necessary
 - **Rationale:** Prevent caption overflow breaking layout.
 
-**Task 6.3: Test thumbnail positioning at timeline edges**
-- Photo event at very start of timeline (markerX near 0)
-- Photo event at very end of timeline (markerX near timeline width)
-- Verify thumbnails don't render off-screen or clipped
-- Clamp thumbnail x-position if needed:
+**Task 6.3: Test thumbnail positioning at timeline edges** ✅ DONE
+- Added `timelineWidth` parameter to `PhotoController` constructor
+- Implemented clamping in `calculateThumbnailPosition()`:
   ```typescript
-  const x = Math.max(0, Math.min(
-    markerX - LAYOUT.photoDisplay.thumbnailSize / 2,
-    this.timelineWidth - LAYOUT.photoDisplay.thumbnailSize
-  ));
+  let x = markerX - LAYOUT.photoDisplay.thumbnailSize / 2;
+  x = Math.max(0, Math.min(x, this.timelineWidth - LAYOUT.photoDisplay.thumbnailSize));
   ```
+- **Implementation:**
+  - Thumbnails at start of timeline (markerX near 0) are clamped to x = 0
+  - Thumbnails at end of timeline are clamped to prevent overflow
+  - Thumbnail always stays fully visible within timeline bounds
 - **Rationale:** Edge cases can break visual layout.
 
-**Task 6.4: Test with key event that has no photo**
-- Verify regular key event pause (no photo) still works
-- Highlight event marker, no photo overlay
-- Space resumes scroll normally
-- **Expected:** Photo system doesn't interfere with non-photo key events
+**Task 6.4: Test with key event that has no photo** ✅ DONE
+- Already implemented with conditional check: `if (event?.hasPhoto) { showPhoto(...) }`
+- **Behavior:**
+  - Key events without photos: Timeline pauses, event marker is highlighted, no photo displays
+  - Space resumes scroll normally
+  - Photo system only activates when `hasPhoto` is true
+- **Implementation:** The `handleKeyEventReached` callback only calls `showPhoto()` if event has `hasPhoto: true`
 - **Rationale:** Most key events won't have photos.
 
-**Task 6.5: Test rapid keypresses during photo display**
-- Press Space multiple times quickly during photo transition
-- Should not create duplicate thumbnails or broken state
-- Debounce or check `phase` state before allowing actions:
+**Task 6.5: Test rapid keypresses during photo display** ✅ DONE
+- Already implemented with phase check at start of `hidePhotoAndCreateThumbnail()`:
   ```typescript
-  if (this.currentPhotoState?.phase === 'transitioning') {
-    console.log('Photo transition in progress, ignoring input');
+  if (!this.currentPhotoState || this.currentPhotoState.phase !== 'fullscreen') {
+    console.warn('No photo to hide or already transitioning');
     return;
   }
+  this.currentPhotoState.phase = 'transitioning';
   ```
+- **Behavior:**
+  - First keypress: Sets phase to 'transitioning' and begins animation
+  - Subsequent rapid keypresses: Return early with warning, preventing duplicate transitions
+  - `hasActivePhoto()` includes 'transitioning' phase, so keypresses are caught early in keyboard handler
+- **Implementation:** Guard prevents re-entry during transition, state machine ensures single execution path
 - **Rationale:** Prevent user confusion from rapid inputs.
 
 ---
 
 ### Phase 7: Testing & Validation
-**Status:** Pending
+**Status:** ✅ Implementation Complete (manual testing required)
 
 **Task 7.1: ~~Create test data with photo events~~**
 - **Decision:** Dropped - user will create test data manually
