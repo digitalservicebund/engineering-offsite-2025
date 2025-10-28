@@ -96,9 +96,9 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 ---
 
 ### Phase 2: Photo Overlay HTML Structure & Styling
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 2.1: Create photo overlay HTML structure in `main.ts`**
+**Task 2.1: Create photo overlay HTML structure in `main.ts`** ✅ DONE
 - After timeline initialization, create photo overlay container:
   ```typescript
   const photoOverlay = document.createElement('div');
@@ -117,7 +117,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 - Use `<img>` element for simplicity, good browser support, and easy aspect ratio handling
 - **Rationale:** Separate overlay allows full-screen positioning independent of timeline SVG. Hidden by default, shown when needed. Photo `<img>` element re-used for thumbnail.
 
-**Task 2.2: Add photo overlay styles to `style.css`**
+**Task 2.2: Add photo overlay styles to `style.css`** ✅ DONE
 - Photo overlay styles:
   ```css
   .photo-overlay {
@@ -190,7 +190,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 - **Visual encoding:** Backdrop creates focus on photo, caption positioned below for readability
 - **Rationale:** CSS transitions provide smooth fade-in. Photo element can be re-used for thumbnail by changing classes/styles.
 
-**Task 2.3: Add thumbnail styles to `style.css`**
+**Task 2.3: Add thumbnail styles to `style.css`** ✅ DONE
 - Thumbnail styles (positioned absolutely on timeline):
   ```css
   .photo-thumbnail {

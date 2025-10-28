@@ -83,3 +83,92 @@ svg {
     opacity: 0.5;
   }
 }
+
+/* Photo overlay - full-screen photo display */
+.photo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none; /* Allow keyboard events to pass through */
+}
+
+.photo-overlay.hidden {
+  display: none;
+}
+
+/* Dark backdrop behind photo */
+.photo-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.photo-overlay.visible .photo-backdrop {
+  opacity: 1;
+}
+
+/* Full-screen photo container */
+.photo-fullscreen {
+  position: relative;
+  max-width: 70vw;
+  max-height: 70vh;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+  border-radius: 4px;
+}
+
+.photo-overlay.visible .photo-fullscreen {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.photo-fullscreen img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+/* Photo caption */
+.photo-caption {
+  position: relative;
+  margin-top: 20px;
+  text-align: center;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 300;
+  font-family: sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  max-width: 70vw;
+}
+
+/* Photo thumbnail - positioned on timeline */
+.photo-thumbnail {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 4px;
+  border: 2px solid #F5A623; /* Orange border matches event color */
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+  object-fit: cover; /* Maintain aspect ratio when element is re-used from overlay */
+}
+
+.photo-thumbnail:hover {
+  transform: scale(1.1);
+}

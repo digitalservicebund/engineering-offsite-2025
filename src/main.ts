@@ -66,6 +66,31 @@ function displayError(error: unknown): void {
 }
 
 /**
+ * Create photo overlay HTML structure
+ */
+function createPhotoOverlay(): HTMLElement {
+  const photoOverlay = document.createElement('div');
+  photoOverlay.id = 'photo-overlay';
+  photoOverlay.className = 'photo-overlay hidden';
+
+  // Create backdrop
+  const backdrop = document.createElement('div');
+  backdrop.className = 'photo-backdrop';
+  photoOverlay.appendChild(backdrop);
+
+  // Create caption
+  const caption = document.createElement('div');
+  caption.className = 'photo-caption';
+  photoOverlay.appendChild(caption);
+
+  // Append to body
+  document.body.appendChild(photoOverlay);
+
+  console.log('✓ Photo overlay created');
+  return photoOverlay;
+}
+
+/**
  * Setup keyboard event listeners for auto-scroll state machine
  */
 function setupKeyboardControls(
@@ -165,6 +190,10 @@ async function init(): Promise<void> {
     // Create and render timeline (with dynamic people lane)
     const timeline = new Timeline(container, data, peopleLanePathGenerator);
     timeline.render();
+
+    // Create photo overlay (will be used by PhotoController in Phase 3)
+    const photoOverlay = createPhotoOverlay();
+    void photoOverlay; // Suppress unused variable warning - will be used in Phase 3
 
     // Create counter calculator (shares people count)
     const counterCalculator = new CounterCalculator(peopleCount, data);
