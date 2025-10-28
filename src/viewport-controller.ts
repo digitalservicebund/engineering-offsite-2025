@@ -24,8 +24,6 @@ export class ViewportController {
   private readonly onParticleUpdate?: (currentPositionX: number) => void;
 
   private currentOffset: number;
-  private isAnimating = false;
-  private animationFrameId: number | null = null;
 
   // Auto-scroll state machine properties
   private scrollState: ScrollState = 'idle';
@@ -64,10 +62,7 @@ export class ViewportController {
 
     // Initialize position and apply transform
     this.currentOffset = this.minOffset;
-    this.applyTransform(false);
-
-    // Setup event listener for animation completion
-    this.setupTransitionEndListener();
+    this.applyTransform();
 
     // Notify initial viewport position
     this.notifyViewportChange();
@@ -88,102 +83,20 @@ export class ViewportController {
   }
 
   /**
-   * Setup listener to reset animation flag when CSS transition completes
-   */
-  private setupTransitionEndListener(): void {
-    this.container.addEventListener('transitionend', () => {
-      this.isAnimating = false;
-      this.stopContinuousUpdate();
-    });
-  }
-
-  /**
-   * Start continuous counter updates during animation
-   */
-  private startContinuousUpdate(): void {
-    // Cancel any existing animation frame
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-
-    const update = (): void => {
-      this.notifyViewportChange();
-
-      // Continue updating while animating
-      if (this.isAnimating) {
-        this.animationFrameId = requestAnimationFrame(update);
-      } else {
-        this.animationFrameId = null;
-      }
-    };
-
-    this.animationFrameId = requestAnimationFrame(update);
-  }
-
-  /**
-   * Stop continuous updates
-   */
-  private stopContinuousUpdate(): void {
-    if (this.animationFrameId !== null) {
-      cancelAnimationFrame(this.animationFrameId);
-      this.animationFrameId = null;
-    }
-    // Final update when animation completes
-    this.notifyViewportChange();
-  }
-
-  /**
-   * Notify callback of current viewport center date
+   * Notify callback of current viewport position date
    */
   private notifyViewportChange(): void {
     if (this.onViewportChange) {
-      const centerDate = this.getCurrentCenterDate();
-      this.onViewportChange(centerDate);
-    }
-  }
-
-  /**
-   * Pan timeline to the right by specified distance
-   * @deprecated Use auto-scroll methods (startAutoScroll) instead for smooth continuous scrolling
-   * Kept for backward compatibility and potential manual control needs
-   */
-  public panRight(distance: number): void {
-    if (this.isAnimating) return;
-
-    const newOffset = Math.min(this.maxOffset, this.currentOffset + distance);
-
-    // Only apply transform if offset actually changes
-    if (newOffset !== this.currentOffset) {
-      this.currentOffset = newOffset;
-      this.applyTransform();
-      this.startContinuousUpdate();
-    }
-  }
-
-  /**
-   * Pan timeline to the left by specified distance
-   * @deprecated Use auto-scroll methods (startAutoScroll) instead for smooth continuous scrolling
-   * Kept for backward compatibility and potential manual control needs
-   */
-  public panLeft(distance: number): void {
-    if (this.isAnimating) return;
-
-    const newOffset = Math.max(this.minOffset, this.currentOffset - distance);
-
-    // Only apply transform if offset actually changes
-    if (newOffset !== this.currentOffset) {
-      this.currentOffset = newOffset;
-      this.applyTransform();
-      this.startContinuousUpdate();
+      const currentDate = this.getCurrentPositionDate();
+      this.onViewportChange(currentDate);
     }
   }
 
   /**
    * Get the date at the current position marker (configured via LAYOUT.scroll.currentPositionRatio)
    * Used for calculating counter values
-   * Reads the actual current transform value during animations for real-time accuracy
    */
-  public getCurrentCenterDate(): Date {
+  public getCurrentPositionDate(): Date {
     const currentPositionX = this.calculateCurrentPositionX();
     const currentDate = this.xScale.invert(currentPositionX);
 
@@ -192,23 +105,9 @@ export class ViewportController {
 
   /**
    * Calculate the x-position at the current position marker
-   * During CSS transitions, reads the actual animated transform value
    */
   private calculateCurrentPositionX(): number {
-    let actualOffset = this.currentOffset;
-
-    // During animation, read the actual transform value from the DOM
-    if (this.isAnimating) {
-      const style = window.getComputedStyle(this.container);
-      const transform = style.transform;
-
-      if (transform && transform !== 'none') {
-        const matrix = new DOMMatrix(transform);
-        actualOffset = -matrix.m41; // m41 is the x translation component
-      }
-    }
-
-    return actualOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    return this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
   }
 
   /**
@@ -224,17 +123,10 @@ export class ViewportController {
    * Apply CSS transform to pan the timeline
    * When currentOffset is negative (initial state), timeline moves right to show left padding
    * When currentOffset is positive (panning right), timeline moves left to reveal content on right
-   * @param animate - If true, uses CSS transitions (for manual panning). If false, instant update (for auto-scroll).
    */
-  private applyTransform(animate = true): void {
-    if (animate) {
-      this.isAnimating = true;
-      // Ensure CSS transition is enabled
-      this.container.style.transition = `transform ${LAYOUT.scroll.transitionDuration}ms ${LAYOUT.scroll.transitionEasing}`;
-    } else {
-      // Disable CSS transition for instant updates (auto-scroll)
-      this.container.style.transition = 'none';
-    }
+  private applyTransform(): void {
+    // Disable CSS transition for instant updates
+    this.container.style.transition = 'none';
 
     // Negate currentOffset to get proper CSS translateX value
     this.container.style.transform = `translateX(${-this.currentOffset}px)`;
@@ -282,7 +174,7 @@ export class ViewportController {
       this.autoScrollLoop(timestamp)
     );
 
-    console.log('Auto-scroll started (forward)');
+    console.log('Auto-scroll started');
   }
 
   /**
@@ -307,7 +199,7 @@ export class ViewportController {
     // Speed: 200px/sec = 0.2px/ms
     const distance = (LAYOUT.autoScroll.speed / 1000) * elapsed;
 
-    // 4. Apply movement (always forward)
+    // 4. Apply movement
     this.currentOffset += distance;
 
     // 5. Clamp to boundaries
@@ -319,14 +211,14 @@ export class ViewportController {
     if (wasClamped) {
       this.scrollState = 'idle';
       this.autoScrollFrameId = null;
-      this.applyTransform(false);
+      this.applyTransform();
       this.notifyViewportChange();
       console.log('Auto-scroll stopped: reached timeline end');
       return;
     }
 
-    // 6. Apply transform without CSS transition (instant update for smooth animation)
-    this.applyTransform(false);
+    // 6. Apply transform for smooth animation
+    this.applyTransform();
 
     // 7. Check if reached key event → pause if within threshold
     const shouldPause = this.checkForKeyEventPause();
@@ -337,13 +229,11 @@ export class ViewportController {
     // 8. Update counters via onViewportChange callback
     this.notifyViewportChange();
 
-    // 8.5. Update particle animations
+    // 9. Update particle animations
     if (this.onParticleUpdate) {
       const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
       this.onParticleUpdate(currentPositionX);
     }
-
-    // 9. Store timestamp already done above (step 2)
 
     // 10. Schedule next frame
     this.autoScrollFrameId = requestAnimationFrame((ts) => this.autoScrollLoop(ts));
@@ -370,7 +260,6 @@ export class ViewportController {
 
   /**
    * Resume auto-scroll from paused state
-   * Continues scrolling in current direction from where we paused
    */
   public resumeAutoScroll(): void {
     // Only resume if currently paused
@@ -388,7 +277,7 @@ export class ViewportController {
       this.autoScrollLoop(timestamp)
     );
 
-    console.log('Auto-scroll resumed (forward)');
+    console.log('Auto-scroll resumed');
   }
 
   /**
@@ -423,7 +312,7 @@ export class ViewportController {
 
     // Reset to initial position
     this.currentOffset = this.minOffset;
-    this.applyTransform(false); // Instant, no transition
+    this.applyTransform();
 
     // Update counters at start position
     this.notifyViewportChange();
@@ -444,7 +333,7 @@ export class ViewportController {
     // Get current position marker x (where we consider "current" to be)
     const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
 
-    // Find next key event ahead (always scrolling forward)
+    // Find next key event ahead
     let targetKeyEvent: KeyEventPosition | null = null;
 
     // Find first key event ahead of current position
@@ -469,7 +358,7 @@ export class ViewportController {
 
       // Snap to exact key event position for precision
       this.currentOffset = targetKeyEvent.xPosition - this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
-      this.applyTransform(false);
+      this.applyTransform();
 
       console.log(`Paused at key event: "${targetKeyEvent.eventName}" (${targetKeyEvent.eventId})`);
 

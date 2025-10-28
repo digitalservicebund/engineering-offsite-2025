@@ -11,9 +11,6 @@ export const LAYOUT = {
     pixelsPerYear: 800,
   },
   scroll: {
-    panDistance: 400, // px - distance to move per keypress
-    transitionDuration: 600, // ms - duration of smooth panning animation
-    transitionEasing: 'ease-out' as const, // CSS easing function for panning
     currentPositionRatio: 0.75, // ratio (0-1) - viewport position used as "current" date marker
   },
   autoScroll: {

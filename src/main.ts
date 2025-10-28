@@ -90,7 +90,7 @@ function setupKeyboardControls(
         viewportController.togglePause();
         // Note: Manual pause doesn't highlight event (pausedAtEventId will be null)
       } else if (currentState === 'paused') {
-        // Resume auto-scroll in current direction
+        // Resume auto-scroll
         timeline.highlightEvent(null); // Clear highlight
         viewportController.resumeAutoScroll();
       }
@@ -106,11 +106,11 @@ function setupKeyboardControls(
         viewportController.startAutoScroll();
         timeline.highlightEvent(null);
       } else if (currentState === 'paused') {
-        // Resume auto-scroll forward
+        // Resume auto-scroll
         timeline.highlightEvent(null);
         viewportController.resumeAutoScroll();
       }
-      // If already scrolling forward, no-op
+      // If already scrolling, no-op
       return;
     }
 

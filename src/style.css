@@ -33,8 +33,6 @@ body {
   width: fit-content; /* Let container be as wide as its content (SVG) */
   height: 100%;
   position: relative;
-  /* CSS transform will be applied here for panning */
-  transition: transform 600ms ease-out;
 }
 
 /* Counters - fixed position in top-right corner */

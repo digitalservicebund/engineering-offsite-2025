@@ -53,10 +53,10 @@ export class ParticleAnimationController {
       .attr('class', 'particle-animations')
       .attr('pointer-events', 'none'); // Particles don't capture mouse events
 
-    // Task 2.2: Precompute viewport height validation
+    // Validate viewport height to ensure particles won't spawn off-screen
     this.validateViewportHeight();
 
-    // Task 2.3: Pre-calculate particle metadata for all people
+    // Pre-calculate particle metadata for all people
     this.precalculateParticleMetadata();
 
     console.log(
@@ -65,7 +65,7 @@ export class ParticleAnimationController {
   }
 
   /**
-   * Task 2.2: Validate that particles won't spawn off-screen
+   * Validate that particles won't spawn off-screen
    * Calculates worst-case spawn point (all people active simultaneously)
    */
   private validateViewportHeight(): void {
@@ -90,7 +90,7 @@ export class ParticleAnimationController {
   }
 
   /**
-   * Task 2.3: Pre-calculate particle metadata for all people
+   * Pre-calculate particle metadata for all people
    * Builds lookup map with spawn positions and lane bottom edge for each person
    */
   private precalculateParticleMetadata(): void {
