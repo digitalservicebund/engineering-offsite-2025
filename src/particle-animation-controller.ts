@@ -264,12 +264,33 @@ export class ParticleAnimationController {
 
   /**
    * Fade out particle after animation completes
-   * Will be implemented in Task 5.1
+   * Fades entire particle container (circle + label) and removes from DOM
    */
   private fadeOutParticle(particle: ParticleAnimation): void {
-    // Task 5.1 will implement fade-out logic here
-    // For now, just log
-    console.log(`Fading out particle: ${particle.personName}`);
+    if (!particle.element) {
+      return;
+    }
+
+    // Find the parent container (2 levels up from animation group)
+    // particle.element is the animation group, parent is particle-container
+    const container = d3.select(particle.element.node()?.parentNode as Element);
+
+    // Fade out entire container
+    container
+      .transition()
+      .duration(LAYOUT.particleAnimations.people.fadeOutDuration)
+      .attr('opacity', 0)
+      .on('end', () => {
+        // Remove from DOM
+        container.remove();
+
+        // Mark particle complete and cleanup tracking
+        particle.isComplete = true;
+        this.activeParticles.delete(particle.personName);
+        this.completedJoins.add(particle.personName);
+
+        console.log(`✓ Particle animation complete: ${particle.personName}`);
+      });
   }
 
   /**

@@ -317,9 +317,9 @@
 ---
 
 ### Phase 5: Fade-Out & Cleanup
-**Status:** Not Started
+**Status:** In Progress
 
-**Task 5.1: Implement `fadeOutParticle(particle: ParticleAnimation)` method**
+**Task 5.1: Implement `fadeOutParticle(particle: ParticleAnimation)` method** ✅ DONE
 - Fade out the entire particle container (circle + text together):
   ```typescript
   private fadeOutParticle(particle: ParticleAnimation): void {
