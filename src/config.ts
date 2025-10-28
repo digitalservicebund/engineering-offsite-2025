@@ -92,8 +92,8 @@ export const LAYOUT = {
     overlayBackdropColor: 'rgba(0, 0, 0, 0.7)', // Dark backdrop behind full-screen photo
     photoMaxWidthPercent: 70, // 60-70% of screen width
     photoMaxHeightPercent: 70, // Similar constraint for height
-    fadeInDuration: 300, // ms - photo fade-in timing
-    fadeOutDuration: 300, // ms - photo fade-out/shrink timing
+    fadeInDuration: 150, // ms - photo fade-in timing
+    fadeOutDuration: 150, // ms - photo fade-out/shrink timing
     captionFontSize: 24, // px - caption text size
     captionFontWeight: 300, // Light weight for elegance
     captionColor: '#FFFFFF', // White text

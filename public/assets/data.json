@@ -356,7 +356,6 @@
       "name": "Company Founded",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -365,7 +364,6 @@
       "name": "First Office Space",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -374,7 +372,6 @@
       "name": "Beta Launch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -383,7 +380,6 @@
       "name": "New Year Kickoff",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -392,7 +388,6 @@
       "name": "First Product Launch",
       "isKeyMoment": true,
       "hasPhoto": true,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -401,7 +396,6 @@
       "name": "Reached 1K Users",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -410,7 +404,6 @@
       "name": "First Hackathon",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -419,7 +412,6 @@
       "name": "Summer BBQ",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -428,7 +420,6 @@
       "name": "API v2 Release",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -436,8 +427,7 @@
       "date": "2021-10-15",
       "name": "First Team Offsite",
       "isKeyMoment": true,
-      "hasPhoto": false,
-      "photoUrl": null,
+      "hasPhoto": true,
       "caption": null
     },
     {
@@ -446,7 +436,6 @@
       "name": "Holiday Party",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -455,7 +444,6 @@
       "name": "Q4 All-Hands",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -464,7 +452,6 @@
       "name": "Engineering Week",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -473,7 +460,6 @@
       "name": "10K Users Milestone",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -482,7 +468,6 @@
       "name": "Security Audit Complete",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -491,7 +476,6 @@
       "name": "Enterprise Launch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -499,8 +483,7 @@
       "date": "2022-06-20",
       "name": "Series A Funding",
       "isKeyMoment": true,
-      "hasPhoto": false,
-      "photoUrl": null,
+      "hasPhoto": true,
       "caption": null
     },
     {
@@ -509,7 +492,6 @@
       "name": "New HQ Opening",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -518,7 +500,6 @@
       "name": "Summer Hackathon",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -527,7 +508,6 @@
       "name": "Mobile App Launch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -536,7 +516,6 @@
       "name": "Halloween Social",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -545,7 +524,6 @@
       "name": "100K Users",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -554,7 +532,6 @@
       "name": "Year-End Celebration",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -563,7 +540,6 @@
       "name": "2023 Kickoff",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -572,7 +548,6 @@
       "name": "Valentine's Team Lunch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -581,7 +556,6 @@
       "name": "Reached 1M Users",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -590,7 +564,6 @@
       "name": "Platform Redesign",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -599,7 +572,6 @@
       "name": "Spring Offsite",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -608,7 +580,6 @@
       "name": "Mid-Year Review",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -617,7 +588,6 @@
       "name": "AI Features Launch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -626,7 +596,6 @@
       "name": "Summer Games",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -635,7 +604,6 @@
       "name": "Q3 All-Hands",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -644,7 +612,6 @@
       "name": "Product Hunt Launch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -652,8 +619,7 @@
       "date": "2023-11-15",
       "name": "Second Annual Offsite",
       "isKeyMoment": true,
-      "hasPhoto": false,
-      "photoUrl": null,
+      "hasPhoto": true,
       "caption": null
     },
     {
@@ -662,7 +628,6 @@
       "name": "5M Users Reached",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -671,7 +636,6 @@
       "name": "Holiday Celebration",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -680,7 +644,6 @@
       "name": "2024 Strategy Session",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -689,7 +652,6 @@
       "name": "Series B Funding",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -698,7 +660,6 @@
       "name": "Spring Launch Event",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -707,7 +668,6 @@
       "name": "Engineering Summit",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -716,7 +676,6 @@
       "name": "Customer Conference",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -725,7 +684,6 @@
       "name": "Summer BBQ 2024",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -734,7 +692,6 @@
       "name": "10M Users Milestone",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -743,7 +700,6 @@
       "name": "Platform v3 Launch",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -752,7 +708,6 @@
       "name": "Third Annual Offsite",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -761,7 +716,6 @@
       "name": "Thanksgiving Social",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -770,7 +724,6 @@
       "name": "End of Year Party",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -779,7 +732,6 @@
       "name": "2025 Kickoff Meeting",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -788,7 +740,6 @@
       "name": "Product Roadmap Review",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -797,7 +748,6 @@
       "name": "International Expansion",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -806,7 +756,6 @@
       "name": "Spring Team Building",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -815,7 +764,6 @@
       "name": "Mid-Year Planning",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -824,7 +772,6 @@
       "name": "Summer Company Picnic",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -833,7 +780,6 @@
       "name": "Tech Conference 2025",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -842,7 +788,6 @@
       "name": "50M Users Milestone",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -851,7 +796,6 @@
       "name": "Q3 All-Hands",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -860,7 +804,6 @@
       "name": "Fourth Annual Offsite",
       "isKeyMoment": true,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     },
     {
@@ -869,7 +812,6 @@
       "name": "Year End Celebration 2025",
       "isKeyMoment": false,
       "hasPhoto": false,
-      "photoUrl": null,
       "caption": null
     }
   ]
