@@ -181,10 +181,10 @@
 ---
 
 ### Phase 3: Particle Spawning & Early Integration
-**Status:** Not Started  
+**Status:** In Progress  
 **🎯 INTEGRATION POINT:** Test static particles visually before implementing animation
 
-**Task 3.1: Create particle SVG group on initialization**
+**Task 3.1: Create particle SVG group on initialization** ✅ DONE (completed in Task 2.1)
 - In constructor, append SVG group for particles:
   ```typescript
   this.particleGroup = svg.append('g')
@@ -194,7 +194,7 @@
 - Group keeps particles organized (easier cleanup)
 - **Rationale:** Separate layer for animation elements.
 
-**Task 3.2: Implement `spawnParticle(particle: ParticleAnimation)` method using group transform**
+**Task 3.2: Implement `spawnParticle(particle: ParticleAnimation)` method using group transform** ✅ DONE
 - Create nested group structure for transform-based animation:
   ```typescript
   // Outer group: positioned at final merge location (joinX, laneBottomY)

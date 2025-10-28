@@ -163,12 +163,50 @@ export class ParticleAnimationController {
 
   /**
    * Spawn a particle by creating SVG elements
-   * Will be implemented in Task 3.2
+   * Creates nested group structure for transform-based animation
+   * 
+   * Visual encoding: Blue circle represents person joining, text label identifies who
    */
   private spawnParticle(particle: ParticleAnimation): void {
-    // Task 3.2 will implement spawning logic here
-    // For now, just log
-    console.log(`Spawning particle: ${particle.personName} at x=${particle.spawnX.toFixed(1)}`);
+    // Outer group: positioned at final merge location (joinX, laneBottomY)
+    const particleContainer = this.particleGroup
+      .append('g')
+      .attr('class', 'particle-container')
+      .attr('data-person-name', particle.personName)
+      .attr('transform', `translate(${particle.joinX}, ${particle.laneBottomY})`);
+
+    // Inner animation group: starts offset (left and down), will animate to (0,0)
+    const offsetX = -(particle.joinX - particle.spawnX); // Negative = left offset
+    const offsetY = LAYOUT.particleAnimations.people.spawnOffsetY; // Positive = down offset
+
+    const animationGroup = particleContainer
+      .append('g')
+      .attr('class', 'particle-animation')
+      .attr('transform', `translate(${offsetX}, ${offsetY})`);
+
+    // Circle at origin (0,0) within animation group
+    animationGroup
+      .append('circle')
+      .attr('cx', 0)
+      .attr('cy', 0)
+      .attr('r', LAYOUT.particleAnimations.people.circleRadius)
+      .attr('fill', LAYOUT.particleAnimations.people.circleColor);
+
+    // Text label to the right of circle
+    animationGroup
+      .append('text')
+      .attr('x', LAYOUT.particleAnimations.people.labelOffsetX)
+      .attr('y', 4) // Vertical centering offset
+      .attr('text-anchor', 'start')
+      .attr('font-size', LAYOUT.particleAnimations.people.labelFontSize)
+      .attr('font-family', LAYOUT.particleAnimations.people.labelFontFamily)
+      .attr('fill', LAYOUT.particleAnimations.people.labelColor)
+      .text(particle.personName);
+
+    // Store reference for animation
+    particle.element = animationGroup;
+
+    console.log(`✓ Spawned particle: ${particle.personName}`);
   }
 
   /**
