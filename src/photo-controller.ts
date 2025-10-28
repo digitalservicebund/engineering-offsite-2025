@@ -11,7 +11,6 @@ import { LAYOUT } from './config';
 export class PhotoController {
   private readonly overlayElement: HTMLElement;
   private readonly timelineContainer: HTMLElement;
-  private readonly xScale: d3.ScaleTime<number, number>;
   private readonly eventMarkerY: number;
   private readonly timelineWidth: number;
 
@@ -22,27 +21,21 @@ export class PhotoController {
    * Create a new PhotoController
    * @param overlayElement - The photo overlay HTML element
    * @param timelineContainer - The timeline container for positioning thumbnails
-   * @param xScale - D3 time scale for x-position calculations
    * @param eventMarkerY - Y-position of events lane for thumbnail anchoring
    * @param timelineWidth - Total width of the timeline (for edge clamping)
    */
   constructor(
     overlayElement: HTMLElement,
     timelineContainer: HTMLElement,
-    xScale: d3.ScaleTime<number, number>,
     eventMarkerY: number,
     timelineWidth: number
   ) {
     this.overlayElement = overlayElement;
     this.timelineContainer = timelineContainer;
-    this.xScale = xScale;
     this.eventMarkerY = eventMarkerY;
     this.timelineWidth = timelineWidth;
 
     console.log('✓ PhotoController initialized');
-    
-    // Suppress unused warnings for properties used in future tasks
-    void this.xScale;
   }
 
   /**
