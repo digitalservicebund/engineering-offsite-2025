@@ -2,6 +2,40 @@
  * Main styles for timeline visualization
  */
 
+:root {
+  /* Color Tokens */
+  --color-text: #2C3E50;
+  --color-bg-light: #F8F9FA;
+  --color-border-light: #E0E0E0;
+  --color-white: #FFFFFF;
+  --color-gray-muted: #BDC3C7;
+  
+  /* Brand Colors - match config.ts */
+  --color-projects: #7ED321; /* Green */
+  --color-events: #F5A623; /* Orange */
+  --color-people: #4A90E2; /* Blue */
+  --color-error: #E74C3C; /* Red */
+  
+  /* Spacing Tokens */
+  --space-xs: 2px;
+  --space-sm: 4px;
+  --space-md: 8px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 40px;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  
+  /* Shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-text: 0 2px 4px rgba(0, 0, 0, 0.8);
+  
+  /* Photo Overlay */
+  --photo-backdrop: rgba(0, 0, 0, 0.7);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -12,7 +46,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-  background: #F8F9FA;
+  background: var(--color-bg-light);
   overflow: hidden;
 }
 
@@ -24,8 +58,8 @@ body {
   max-width: 100vw;
   max-height: 100vh;
   overflow: hidden;
-  border: 1px solid #E0E0E0;
-  background: #F8F9FA;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-light);
 }
 
 /* Timeline container - inner scrollable container that will be transformed */
@@ -38,20 +72,20 @@ body {
 /* Counters - fixed position in top-right corner */
 .counters {
   position: absolute;
-  top: 20px;
-  right: 40px;
+  top: var(--space-xl);
+  right: var(--space-2xl);
   z-index: 100;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-lg);
   font-family: sans-serif;
   font-size: 18px;
   font-weight: 500;
-  color: #2C3E50;
+  color: var(--color-text);
   background: rgba(255, 255, 255, 0.9);
-  padding: 8px 16px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
 }
 
 .counter {
@@ -59,7 +93,7 @@ body {
 }
 
 .counter-separator {
-  color: #E0E0E0;
+  color: var(--color-border-light);
   font-weight: 300;
 }
 
@@ -69,7 +103,7 @@ svg {
 
 /* Event marker pause indicator - visual feedback when paused at key event */
 .event-marker.paused .marker-line {
-  stroke: #E74C3C; /* Red highlight */
+  stroke: var(--color-error); /* Red highlight */
   stroke-width: 5px; /* Thicker than default 3px */
   animation: pulse 2s ease-in-out infinite;
 }
@@ -110,7 +144,7 @@ svg {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: var(--photo-backdrop);
   opacity: 0;
   /* Note: transition is set dynamically in PhotoController using LAYOUT.photoDisplay.fadeInDuration */
 }
@@ -127,7 +161,7 @@ svg {
   opacity: 0;
   transform: scale(0.95);
   /* Note: transition is set dynamically in PhotoController using LAYOUT.photoDisplay.fadeInDuration */
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 .photo-overlay.visible .photo-fullscreen {
@@ -139,19 +173,19 @@ svg {
   width: 100%;
   height: auto;
   display: block;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 
 /* Photo caption */
 .photo-caption {
   position: relative;
-  margin: 20px auto 0 auto;
+  margin: var(--space-xl) auto 0 auto;
   text-align: center;
-  color: #FFFFFF;
+  color: var(--color-white);
   font-size: 24px;
   font-weight: 300;
   font-family: sans-serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: var(--shadow-text);
   max-width: 90%;
   overflow-wrap: break-word;
   word-wrap: break-word; /* Legacy browser support */
@@ -164,8 +198,8 @@ svg {
   max-height: 100px;
   width: auto;
   height: auto;
-  border-radius: 4px;
-  border: 2px solid #F5A623; /* Orange border matches event color */
+  border-radius: var(--radius-sm);
+  border: var(--space-xs) solid var(--color-events); /* Orange border matches event color */
   cursor: pointer;
   transition: transform 0.2s ease;
   pointer-events: auto;
@@ -179,14 +213,14 @@ svg {
 
 /* Error display styles */
 .error-container {
-  padding: 40px;
+  padding: var(--space-2xl);
   text-align: center;
-  color: #E74C3C;
+  color: var(--color-error);
   font-family: sans-serif;
 }
 
 .error-container h2 {
-  margin: 0 0 16px 0;
+  margin: 0 0 var(--space-lg) 0;
 }
 
 .error-container p {
@@ -200,7 +234,7 @@ svg {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #2C3E50;
+  background: var(--color-text);
   color: white;
   display: flex;
   align-items: center;
@@ -211,29 +245,29 @@ svg {
 
 .config-error-content {
   max-width: 600px;
-  padding: 40px;
+  padding: var(--space-2xl);
 }
 
 .config-error-title {
-  color: #E74C3C;
-  margin: 0 0 20px 0;
+  color: var(--color-error);
+  margin: 0 0 var(--space-xl) 0;
   font-size: 32px;
 }
 
 .config-error-messages {
   background: rgba(231, 76, 60, 0.1);
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  padding: var(--space-xl);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-xl);
 }
 
 .config-error-messages p {
   margin: 10px 0;
-  font-size: 16px;
+  font-size: var(--space-lg);
 }
 
 .config-error-footer {
-  color: #BDC3C7;
+  color: var(--color-gray-muted);
   margin: 0;
   font-size: 14px;
 }
