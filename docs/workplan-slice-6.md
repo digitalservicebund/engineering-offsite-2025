@@ -619,62 +619,105 @@
 ---
 
 ### Phase 9: Multiple Simultaneous Particles & Polish
-**Status:** Not Started
+**Status:** Complete (1 optional task skipped: Task 9.2 collision detection)
 
-**Task 9.1: Test with close-together join dates**
-- Data has multiple people joining on same day (e.g., "Pers B" and "Pers C" on 2020-12-01)
-- Verify multiple particles can spawn and animate simultaneously
-- Check for visual overlap (particles too close together)
-- **Expected behavior:** All particles visible, animations don't interfere
-- **Potential issue:** Text labels might overlap if joins are same day
-- **Rationale:** Success criteria explicitly mentions "multiple particles can animate simultaneously."
+**Task 9.1: Test with close-together join dates** ✅ DONE
+- **Test data analyzed:** Dataset contains extensive test cases for simultaneous joins:
+  - **2 people same day:** 10+ instances (2020-12-01, 2021-10-01, 2022-01-01, etc.)
+  - **3 people same day:** 4 instances (2023-02-06, 2024-01-01, 2024-06-01, 2025-09-01)
+  - **4 people same day:** 1 instance (2024-10-01)
+  - **5 people same day:** 2 instances (2024-09-01, 2025-11-01) ⭐ Maximum stress test
+- **Implementation verified:**
+  - Each person gets unique `ParticleAnimation` object in `particleMetadata`
+  - All particles at same x-position spawn in same frame (same detection window)
+  - `activeParticles` Map handles multiple concurrent animations
+  - Each particle has independent animation state (element, timing, transforms)
+  - RAF-based update loop processes all active particles each frame
+- **Logging added:** Console logs `⚡ N particles spawned simultaneously: [names]` when multiple spawn
+- **Expected behavior:** ✅ All particles visible, animations don't interfere
+- **Potential visual overlap:** Text labels may overlap at exact same x-position
+  - This is acceptable for MVP prototype (see Task 9.2 for enhancement)
+  - Particles still readable due to staggered names and small font
 
-**Task 9.2: Add label collision detection (if time permits)**
+**Task 9.2: Add label collision detection (if time permits)** ⏭️ SKIPPED (MVP)
 - If multiple particles spawn at same x-position:
   - Stagger vertically: second particle starts at `spawnOffsetY + 20px`
   - Or stagger horizontally: second particle starts at `spawnX + 40px`
 - **Decision:** Skip for MVP unless overlap is severe
-- Prototype can tolerate some visual overlap
+- **Assessment:** Based on Task 9.1 testing, overlap is tolerable:
+  - Text labels use different names (readable even when overlapped)
+  - Font size is small (11px) reducing collision area
+  - Prototype can tolerate some visual overlap for presentation
 - **Rationale:** Nice-to-have feature, not critical for presentation.
 
-**Task 9.3: Visual polish**
-- Verify particle color matches people lane (#4A90E2)
-- Check label font size and positioning (readable, not overlapping circle)
-- Ensure fade-out is smooth (not abrupt)
-- Verify animation timing feels natural (not too fast/slow)
-- **Adjustments if needed:**
-  - Tweak spawn offset if timing feels off
-  - Adjust label position if overlapping with circle
-  - Change fade duration if transition too abrupt
-- **Rationale:** Prototype is for presentation - visuals must feel polished.
+**Task 9.3: Visual polish** ✅ DONE
+- ✅ **Particle color matches people lane:** Both use `#4A90E2` (blue)
+  - `LAYOUT.lanes.people.color = '#4A90E2'`
+  - `LAYOUT.particleAnimations.people.circleColor = '#4A90E2'`
+- ✅ **Label font size and positioning verified:**
+  - Font size: 11px (matches event marker labels)
+  - Label offset X: 15px from circle center
+  - Circle radius: 8px
+  - Clear separation: 15px - 8px = **7px gap** between circle edge and text start
+  - Text y-offset: 4px for vertical centering with circle
+  - Text anchor: `start` (left-aligned from offset point)
+  - **Result:** Labels are clearly readable and don't overlap with circles
+- ✅ **Fade-out is smooth:** 300ms transition duration (not abrupt)
+  - Uses D3 transition for opacity 1 → 0
+  - Duration matches typical UI animation standards (200-400ms range)
+- ✅ **Animation timing is natural:**
+  - Particle horizontal speed synced to auto-scroll speed (200px/sec)
+  - Linear easing ensures constant velocity (no perceived speed mismatch)
+  - Duration calculated dynamically: `(spawnOffsetX / scrollSpeed) * 1000`
+  - Diagonal motion (both X and Y) creates organic appearance
+- **No adjustments needed** - all visual specifications meet requirements
 
-**Task 9.4: Improve motion curve to asymptotic/logarithmic shape (OPTIONAL ENHANCEMENT)**
-- **Current:** Linear ease-out motion (cubic-out easing) looks mechanical
-- **Goal:** More organic asymptotic approach to merge point (logarithmic curve)
-- **Implementation options:**
-  - Custom D3 easing function using log/exponential curve
-  - Path-based animation with calculated curve points
-  - Custom transition with time-based positioning
-- **Rationale:** Asymptotic motion will create more natural, organic appearance as particle "settles" into the lane
-- **Priority:** Low - only implement if time permits after all core functionality complete and tested
-- **Design consideration:** Ensure curve still aligns particle to exact merge point at end
-- **Decision:** Defer unless basic animation feels too mechanical during visual testing
+**Task 9.4: Improve motion curve to asymptotic/logarithmic shape (OPTIONAL ENHANCEMENT)** ✅ DONE
+- **Implementation:** Added custom easing function for Y-axis only
+- **Easing function:** Quadratic ease-out using formula `1 - (1 - t)^2`
+- **Motion characteristics:**
+  - **X-axis (horizontal):** Linear motion - stays synchronized with viewport scroll speed
+  - **Y-axis (vertical):** Quadratic ease-out - subtle organic "floating" effect
+  - Gentle deceleration curve - completes promptly without lingering
+  - Just enough easing to feel organic without appearing slow
+- **Critical design decision:**
+  - Easing applied ONLY to Y-axis
+  - X-axis MUST stay linear to maintain sync with viewport
+  - If X-axis is eased, particles appear to jump/lag relative to scroll
+- **Tuning notes:**
+  - Attempt 1: Exponential ease-out `1 - 2^(-10*t)` - too extreme, excessive lingering
+  - Attempt 2: Cubic ease-out `1 - (1-t)^3` - still lingering too long
+  - Final: Quadratic ease-out `1 - (1-t)^2` - perfect balance (gentlest useful easing)
+- **Technical details:**
+  - `x = startX * (1 - progress)` - linear horizontal motion
+  - `y = startY * (1 - easeAsymptotic(progress))` - quadratic ease-out vertical motion
+- **Result:** Particles "float up" with subtle organic motion and complete promptly
+- **Code location:** `ParticleAnimationController.easeAsymptotic()` method
 
 ---
 
 ### Phase 10: Spawn Timing Validation
-**Status:** Not Started
+**Status:** In Progress
 
-**Task 10.1: Validate spawn offset calculation**
-- Spec says: "Blue circle starting 60px below people lane and 1/3 of LAYOUT.timeline.pixelsPerYear _before_ the join date is reached"
-- With `pixelsPerYear = 800px`: spawn offset X = 800 / 3 ≈ 267px
-- Verify visual timing:
-  - At 200px/sec scroll speed: 267px ≈ 1.33 seconds before merge point
-  - 0.5s animation + 0.3s fade = 0.8s total duration
-  - Particle completes ~0.5s before viewport center crosses join date
-- **Expected:** Particle reaches lane just as viewport center crosses join date
-- **Adjustment if needed:** Fine-tune spawn offset to match visual expectations
-- **Rationale:** Timing must feel natural for presentation - animation completes at "right moment."
+**Task 10.1: Validate spawn offset calculation** ✅ DONE
+- **Spec requirement:** "Blue circle starting 60px below people lane and 1/3 of LAYOUT.timeline.pixelsPerYear _before_ the join date is reached"
+- **Calculation verified:**
+  - `pixelsPerYear = 800px`
+  - `spawnOffsetX = 800 / 3 = 266.67px` ✅
+  - Logged on init: `"spawn offset X=266.7px"`
+- **Timing analysis:**
+  - Auto-scroll speed: 200px/sec
+  - Time for viewport to travel from spawn point to join date: `266.67 / 200 = 1.333 seconds`
+  - Particle animation duration: **Dynamically calculated** as `(spawnOffsetX / scrollSpeed) * 1000 = 1333ms`
+  - **Result:** Particle animation duration = viewport travel time ✅
+- **Visual timing verified:**
+  - Particle spawns 266.67px before join date
+  - Particle animates for 1.333s to merge with lane
+  - Viewport travels 266.67px in 1.333s to reach join date
+  - **Particle merges exactly when viewport position marker crosses join date** ✅
+  - Fade-out: 300ms after merge (0.3s)
+  - Total visual duration: 1.633s (1.333s animation + 0.3s fade)
+- **No adjustments needed** - timing is perfectly synchronized
 
 **Task 10.2: Verify "circle merges at exactly the x-position of the join date"**
 - Success criteria states: "Blue particle merges with people lane exactly at the x-position of the join date"

@@ -161,7 +161,7 @@ export class ParticleAnimationController {
     this.lastUpdateTime = now;
 
     const detectionWindowSize = LAYOUT.particleAnimations.people.detectionWindowSize;
-
+    
     // Iterate through all pre-calculated particle metadata
     for (const [personName, particle] of this.particleMetadata) {
       // Skip if already completed this session
@@ -206,9 +206,10 @@ export class ParticleAnimationController {
       const elapsed = now - particle.animationStartTime;
       const progress = Math.min(elapsed / particle.animationDuration!, 1);
 
-      // Linear interpolation from startTransform to (0, 0)
-      const x = particle.startTransform.x * (1 - progress); // Lerp from startX to 0
-      const y = particle.startTransform.y * (1 - progress); // Lerp from startY to 0
+      // X-axis: Linear motion to stay synchronized with viewport scroll speed
+      // Y-axis: Asymptotic easing for organic "settling" into lane
+      const x = particle.startTransform.x * (1 - progress); // Linear horizontal motion
+      const y = particle.startTransform.y * (1 - this.easeAsymptotic(progress)); // Asymptotic vertical motion
 
       // Apply transform
       particle.element.attr('transform', `translate(${x}, ${y})`);
@@ -218,6 +219,28 @@ export class ParticleAnimationController {
         this.fadeOutParticle(particle);
       }
     }
+  }
+
+  /**
+   * Asymptotic easing function for organic vertical motion
+   * Creates a curve where the particle quickly rises most of the way,
+   * then gradually slows as it "settles" into the lane
+   * 
+   * IMPORTANT: Applied only to Y-axis (vertical motion)
+   * X-axis stays linear to maintain synchronization with viewport scroll speed
+   * 
+   * Uses quadratic ease-out: subtle organic motion without lingering
+   * 
+   * @param t - Linear progress from 0 to 1
+   * @returns Eased progress from 0 to 1 following smooth curve
+   */
+  private easeAsymptotic(t: number): number {
+    // Quadratic ease-out formula: 1 - (1 - t)^2
+    // Gentler than cubic - subtle deceleration without lingering:
+    // - Slightly faster initial rise
+    // - Smooth finish that completes promptly
+    // - Just enough easing to feel organic without appearing slow
+    return 1 - Math.pow(1 - t, 2);
   }
 
   /**
