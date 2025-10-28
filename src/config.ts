@@ -16,18 +16,6 @@ export const LAYOUT = {
   autoScroll: {
     speed: 200, // px/sec - constant scroll speed per spec
     keyEventPauseThreshold: 5, // px - how close to key event before pausing
-    pausedIndicatorPulseDuration: 2000, // ms - duration of pulse animation
-  },
-  counters: {
-    position: {
-      top: 20, // px - distance from top edge
-      right: 40, // px - distance from right edge
-    },
-    fontSize: 18, // px
-    fontWeight: 500, // Medium weight
-    fontFamily: 'sans-serif' as const,
-    color: '#2C3E50', // Matches textColor
-    separatorSpacing: 16, // px - space around separator (|)
   },
   lanes: {
     projects: {
@@ -89,15 +77,8 @@ export const LAYOUT = {
     },
   },
   photoDisplay: {
-    overlayBackdropColor: 'rgba(0, 0, 0, 0.7)', // Dark backdrop behind full-screen photo
-    photoMaxWidthPercent: 70, // 60-70% of screen width
-    photoMaxHeightPercent: 70, // Similar constraint for height
-    fadeInDuration: 150, // ms - photo fade-in timing
-    fadeOutDuration: 150, // ms - photo fade-out/shrink timing
-    captionFontSize: 24, // px - caption text size
-    captionFontWeight: 300, // Light weight for elegance
-    captionColor: '#FFFFFF', // White text
-    captionOffsetY: 40, // px - distance from bottom of photo to caption
+    fadeInDuration: 150, // ms - photo fade-in timing (applied via JS)
+    fadeOutDuration: 150, // ms - photo fade-out/shrink timing (applied via JS)
     thumbnailSize: 100, // px - thumbnail max width/height
     thumbnailGapBelowLane: 10, // px - gap between lane bottom edge and thumbnail top
   },
