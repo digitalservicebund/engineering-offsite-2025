@@ -124,9 +124,51 @@ export class ParticleAnimationController {
    * @param currentViewportX - The x-position of the viewport position marker (75% point)
    */
   public update(currentViewportX: number): void {
-    // Task 2.4 will implement detection logic here
-    // Stub for now - currentViewportX will be used to detect when to spawn particles
-    void currentViewportX;
+    const detectionWindowSize = LAYOUT.particleAnimations.people.detectionWindowSize;
+
+    // Iterate through all pre-calculated particle metadata
+    for (const [personName, particle] of this.particleMetadata) {
+      // Skip if already completed this session
+      if (this.completedJoins.has(personName)) {
+        continue;
+      }
+
+      // Calculate detection window buffer around spawn point
+      const windowStart = particle.spawnX - detectionWindowSize;
+      const windowEnd = particle.spawnX + detectionWindowSize;
+
+      // Check if viewport position is within detection window
+      const inDetectionWindow =
+        currentViewportX >= windowStart && currentViewportX <= windowEnd;
+
+      if (inDetectionWindow) {
+        // Check if particle already active
+        if (!this.activeParticles.has(personName)) {
+          // Add to active particles (but don't spawn yet)
+          this.activeParticles.set(personName, particle);
+        }
+      }
+
+      // Check if we should spawn the particle
+      // Spawn when viewport crosses the spawn X position
+      if (currentViewportX >= particle.spawnX && !particle.hasSpawned) {
+        // Only spawn if particle is active (was detected in window)
+        if (this.activeParticles.has(personName)) {
+          this.spawnParticle(particle);
+          particle.hasSpawned = true;
+        }
+      }
+    }
+  }
+
+  /**
+   * Spawn a particle by creating SVG elements
+   * Will be implemented in Task 3.2
+   */
+  private spawnParticle(particle: ParticleAnimation): void {
+    // Task 3.2 will implement spawning logic here
+    // For now, just log
+    console.log(`Spawning particle: ${particle.personName} at x=${particle.spawnX.toFixed(1)}`);
   }
 
   /**

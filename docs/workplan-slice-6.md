@@ -52,6 +52,7 @@
     people: {
       spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
       // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
+      detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
       animationDuration: 500, // ms - 0.5s diagonal animation per spec
       animationEasing: 'ease-out' as const, // Easing for upward-right motion
       fadeOutDuration: 300, // ms - fade duration after reaching lane
@@ -85,7 +86,7 @@
 ---
 
 ### Phase 2: Particle Detection & Viewport Height Check
-**Status:** In Progress
+**Status:** ✅ Complete
 
 **Task 2.1: Create `ParticleAnimationController` class in new file `particle-animation-controller.ts`** ✅ DONE
 - Responsibility: Manage particle lifecycle during forward auto-scroll
@@ -157,13 +158,13 @@
 - **Key:** Calculate bottom edge Y using actual lane width at join date (accounts for previous joins)
 - **Rationale:** Pre-calculation avoids expensive lookups during 60fps animation loop.
 
-**Task 2.4: Implement particle detection logic**
+**Task 2.4: Implement particle detection logic** ✅ DONE
 - In `update(currentViewportX: number)` method:
   ```typescript
   Algorithm:
   1. For each person's particle metadata:
      a. Skip if already in completedJoins set (animation done this session)
-     b. Calculate detection window: [spawnX - 50px, spawnX + 50px]
+     b. Calculate detection window: [spawnX - windowSize, spawnX + windowSize]
         (buffer prevents missing spawn due to frame jumps)
      c. If currentViewportX is within detection window:
         - Check if particle already active (in activeParticles map)
@@ -173,7 +174,7 @@
         - Call spawnParticle(particle) to create SVG elements
         - Mark hasSpawned = true
   ```
-- Detection window (50px) prevents missed spawns if frames skip over exact spawnX
+- Detection window size configured in LAYOUT.particleAnimations.people.detectionWindowSize
 - **Critical:** Use `currentViewportX` (viewport position marker at 75%), not raw scroll offset
 - **Rationale:** Robust detection that handles variable frame rates and timing.
 
