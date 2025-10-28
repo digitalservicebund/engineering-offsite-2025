@@ -441,11 +441,101 @@
 
 ---
 
-### Phase 7: Remove Backward Scrolling & Implement Timeline Reset
+### Phase 7: Refactor to RAF-Based Animation for Proper Pause Behavior
+**Status:** Not Started  
+**🎯 CRITICAL FIX:** Particles currently keep animating when auto-scroll pauses
+
+**Context:** D3 transitions run independently of auto-scroll RAF loop. When auto-scroll pauses (at key events), particles keep moving. This breaks the presentation flow.
+
+**Task 7.1: Add animation state fields to ParticleAnimation interface**
+- Update `types.ts`:
+  ```typescript
+  export interface ParticleAnimation {
+    // ... existing fields
+    animationStartTime?: number;     // When animation started (for progress calc)
+    animationDuration?: number;      // Total animation duration in ms
+    startTransform: { x: number; y: number }; // Initial offset position
+  }
+  ```
+- **Rationale:** Need to track animation state for manual interpolation each frame.
+
+**Task 7.2: Refactor animateParticle() to record animation intent**
+- Change from creating D3 transition to storing animation parameters:
+  ```typescript
+  private animateParticle(particle: ParticleAnimation): void {
+    if (!particle.element) {
+      console.error(`Cannot animate particle: element not created for ${particle.personName}`);
+      return;
+    }
+    
+    // Calculate duration based on autoscroll speed
+    const distance = this.spawnOffsetX;
+    const speed = LAYOUT.autoScroll.speed;
+    const duration = (distance / speed) * 1000;
+    
+    // Record animation parameters (don't start D3 transition)
+    particle.animationStartTime = Date.now();
+    particle.animationDuration = duration;
+    particle.startTransform = {
+      x: -(particle.joinX - particle.spawnX),
+      y: LAYOUT.particleAnimations.people.spawnOffsetY
+    };
+  }
+  ```
+- **Rationale:** Animation intent stored, actual interpolation happens in update() loop.
+
+**Task 7.3: Add animation interpolation to update() method**
+- In `update()`, after spawn detection logic, add animation update loop:
+  ```typescript
+  // Update all active particle animations
+  for (const [personName, particle] of this.activeParticles) {
+    if (!particle.animationStartTime || !particle.element) {
+      continue;
+    }
+    
+    // Calculate animation progress
+    const elapsed = Date.now() - particle.animationStartTime;
+    const progress = Math.min(elapsed / particle.animationDuration, 1);
+    
+    // Linear interpolation from startTransform to (0, 0)
+    const x = particle.startTransform.x * (1 - progress); // Lerp from startX to 0
+    const y = particle.startTransform.y * (1 - progress); // Lerp from startY to 0
+    
+    // Apply transform
+    particle.element.attr('transform', `translate(${x}, ${y})`);
+    
+    // Check if animation complete
+    if (progress >= 1) {
+      this.fadeOutParticle(particle);
+    }
+  }
+  ```
+- **Rationale:** Reuses existing RAF loop - when loop pauses, animations pause automatically.
+
+**Task 7.4: Remove D3 transition from spawnParticle()**
+- Remove the `this.animateParticle(particle)` call at end of `spawnParticle()`
+- Animation now happens automatically via update() loop
+- **Rationale:** Single animation pathway - cleaner architecture.
+
+**Task 7.5: Test pause behavior**
+- Start auto-scroll, verify particles animate
+- Pause at key event (Space), verify particles freeze
+- Resume (Space), verify particles continue smoothly from paused position
+- **Expected:** Particles pause/resume in perfect sync with viewport
+- **Rationale:** Validates the core fix - particles must pause with scroll.
+
+**Task 7.6: Update fade-out for RAF-based approach (future)**
+- Note: `fadeOutParticle()` will still use D3 transition (fade-out doesn't need pause)
+- If fade-out during pause is an issue, handle in Phase 8+
+- **Rationale:** Fade-out is quick (300ms), less critical than main animation.
+
+---
+
+### Phase 8: Remove Backward Scrolling & Implement Timeline Reset
 **Status:** Not Started  
 **🎯 SIMPLIFICATION:** Eliminates particle re-spawn complexity
 
-**Task 7.1: Remove backward auto-scroll from ViewportController**
+**Task 8.1: Remove backward auto-scroll from ViewportController**
 - Remove backward scroll logic from `checkForKeyEventPause()`:
   - Only check for forward key events
   - Remove backward direction handling
@@ -461,7 +551,7 @@
 - Remove `scrollDirection` type from being 'backward' | 'forward' (just always 'forward')
 - **Rationale:** Backward scrolling adds complexity without value for presentation use case.
 
-**Task 7.2: Implement timeline reset to start**
+**Task 8.2: Implement timeline reset to start**
 - Add `resetToStart()` method to ViewportController:
   ```typescript
   public resetToStart(): void {
@@ -480,7 +570,7 @@
   ```
 - **Rationale:** Clean slate for presenter to restart presentation.
 
-**Task 7.3: Update keyboard controls in `main.ts` for Left Arrow**
+**Task 8.3: Update keyboard controls in `main.ts` for Left Arrow**
 - Modify `handleKeyDown` function:
   ```typescript
   // Handle Left arrow - reset to timeline start
@@ -502,7 +592,7 @@
 - Remove all backward scroll logic (direction reversals, etc.)
 - **Rationale:** Simple reset behavior easy for presenter to understand.
 
-**Task 7.4: Clean up types and remove backward direction**
+**Task 8.4: Clean up types and remove backward direction**
 - In `types.ts`, simplify or remove `ScrollDirection`:
   - Either keep as `type ScrollDirection = 'forward'` (single value)
   - Or remove entirely if not needed
@@ -511,10 +601,10 @@
 
 ---
 
-### Phase 8: Multiple Simultaneous Particles & Polish
+### Phase 9: Multiple Simultaneous Particles & Polish
 **Status:** Not Started
 
-**Task 8.1: Test with close-together join dates**
+**Task 9.1: Test with close-together join dates**
 - Data has multiple people joining on same day (e.g., "Pers B" and "Pers C" on 2020-12-01)
 - Verify multiple particles can spawn and animate simultaneously
 - Check for visual overlap (particles too close together)
@@ -522,7 +612,7 @@
 - **Potential issue:** Text labels might overlap if joins are same day
 - **Rationale:** Success criteria explicitly mentions "multiple particles can animate simultaneously."
 
-**Task 8.2: Add label collision detection (if time permits)**
+**Task 9.2: Add label collision detection (if time permits)**
 - If multiple particles spawn at same x-position:
   - Stagger vertically: second particle starts at `spawnOffsetY + 20px`
   - Or stagger horizontally: second particle starts at `spawnX + 40px`
@@ -530,7 +620,7 @@
 - Prototype can tolerate some visual overlap
 - **Rationale:** Nice-to-have feature, not critical for presentation.
 
-**Task 8.3: Visual polish**
+**Task 9.3: Visual polish**
 - Verify particle color matches people lane (#4A90E2)
 - Check label font size and positioning (readable, not overlapping circle)
 - Ensure fade-out is smooth (not abrupt)
@@ -541,7 +631,7 @@
   - Change fade duration if transition too abrupt
 - **Rationale:** Prototype is for presentation - visuals must feel polished.
 
-**Task 8.4: Improve motion curve to asymptotic/logarithmic shape (OPTIONAL ENHANCEMENT)**
+**Task 9.4: Improve motion curve to asymptotic/logarithmic shape (OPTIONAL ENHANCEMENT)**
 - **Current:** Linear ease-out motion (cubic-out easing) looks mechanical
 - **Goal:** More organic asymptotic approach to merge point (logarithmic curve)
 - **Implementation options:**
@@ -555,10 +645,10 @@
 
 ---
 
-### Phase 9: Spawn Timing Validation
+### Phase 10: Spawn Timing Validation
 **Status:** Not Started
 
-**Task 9.1: Validate spawn offset calculation**
+**Task 10.1: Validate spawn offset calculation**
 - Spec says: "Blue circle starting 60px below people lane and 1/3 of LAYOUT.timeline.pixelsPerYear _before_ the join date is reached"
 - With `pixelsPerYear = 800px`: spawn offset X = 800 / 3 ≈ 267px
 - Verify visual timing:
@@ -569,7 +659,7 @@
 - **Adjustment if needed:** Fine-tune spawn offset to match visual expectations
 - **Rationale:** Timing must feel natural for presentation - animation completes at "right moment."
 
-**Task 9.2: Verify "circle merges at exactly the x-position of the join date"**
+**Task 10.2: Verify "circle merges at exactly the x-position of the join date"**
 - Success criteria states: "Blue particle merges with people lane exactly at the x-position of the join date"
 - Test procedure:
   1. Add temporary visual marker at join date position
@@ -581,10 +671,10 @@
 
 ---
 
-### Phase 10: Comprehensive Testing & Validation
+### Phase 11: Comprehensive Testing & Validation
 **Status:** Not Started
 
-**Task 10.1: Test particle spawn with first person join**
+**Task 11.1: Test particle spawn with first person join**
 - Start at beginning of timeline (2020-01-01)
 - Press Space to start auto-scroll
 - First join in data is "Pers A" on 2020-11-16
@@ -594,7 +684,7 @@
 - ✓ Particle should fade out after reaching lane
 - ✓ People lane width should be 4px (2 base + 1 person × 2px) after join
 
-**Task 10.2: Test multiple particles with same-day joins**
+**Task 11.2: Test multiple particles with same-day joins**
 - Data has "Pers B" and "Pers C" both joining on 2020-12-01
 - ✓ Two particles should spawn (almost) simultaneously
 - ✓ Both should animate diagonally upward-right
@@ -602,7 +692,7 @@
 - ✓ People lane width should jump to 8px (2 + 3 people × 2px)
 - **Edge case:** If labels overlap severely, might need Task 8.2 (collision detection)
 
-**Task 10.3: Test particles during key event pause**
+**Task 11.3: Test particles during key event pause**
 - Auto-scroll should pause at key events
 - If person join occurs near pause point:
   - Existing particles should complete their animations
@@ -612,7 +702,7 @@
 - ✓ Particles resume spawning when auto-scroll resumes
 - **Rationale:** Validates that particle detection correctly checks scroll state.
 
-**Task 10.4: Test timeline reset (Left Arrow)**
+**Task 11.4: Test timeline reset (Left Arrow)**
 - Scroll forward past several joins
 - Press Left Arrow
 - **Expected behavior:**
@@ -625,7 +715,7 @@
   - ✓ All animations work correctly on second pass
 - **Rationale:** Tests reset functionality and verifies clean state on restart.
 
-**Task 10.5: Test particle cleanup**
+**Task 11.5: Test particle cleanup**
 - Scroll through entire timeline
 - All particles should complete and remove themselves
 - Check DOM: no orphaned particle elements
@@ -633,7 +723,7 @@
 - ✓ No particle elements remain after animations complete
 - **Rationale:** Ensures no memory leaks or DOM bloat.
 
-**Task 10.6: Performance testing with many joins**
+**Task 11.6: Performance testing with many joins**
 - Data has ~60 people joining over 5 years
 - Average ~12 joins per year
 - At 200px/sec, ~4 seconds per year
@@ -644,7 +734,7 @@
 - Monitor DevTools Performance tab during full timeline scroll
 - **Rationale:** Validates system handles realistic data volume.
 
-**Task 10.7: Test spawn Y-position with lane growth**
+**Task 11.7: Test spawn Y-position with lane growth**
 - Verify particles spawn from bottom edge of lane, not center
 - Early joins (few people): particles spawn from ~652px (650 center + 2px)
 - Later joins (many people): particles spawn progressively lower as lane grows
