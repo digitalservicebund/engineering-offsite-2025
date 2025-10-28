@@ -14,23 +14,22 @@ You are implementing an interactive timeline visualization for a presentation. R
    - Display event.caption as text overlay at bottom
    - Use white text (24px, 300 weight) for caption
 3. Auto-resume or manual resume:
-   - Start 2.5s timer when photo appears
-   - Timer expires OR Space keypress → proceed to fade-out
+   - Space keypress → proceed to fade-out
 4. Fade photo to thumbnail:
    - Animate photo from center position to event marker position
-   - Shrink to 150×150px thumbnail
-   - Anchor thumbnail at top of event's vertical line marker
+   - Shrink to 100×100px thumbnail
+   - Anchor thumbnail at top of event's vertical line marker, either above or below the text label (prefer above but do below if easier)
    - Remove backdrop, keep thumbnail visible on timeline
 
 **Expected output:**
-Auto-scroll pauses at photo event → large photo fades in with caption → after 2.5s (or keypress) → photo shrinks and moves to timeline as small thumbnail above the event marker.
+Auto-scroll pauses at photo event → large photo fades in with caption → after keypress → photo shrinks and moves to timeline as small thumbnail above the event marker.
 
 **Success criteria:**
 - Photo fades in smoothly (0.3s) and occupies 60-70% of screen
 - Caption visible and readable below photo
 - Dark backdrop behind photo
-- Auto-resumes after 2.5s OR responds to Space keypress
-- Photo smoothly transitions to 150×150px thumbnail at event marker
+- Responds to Space keypress
+- Photo smoothly transitions to 100×100px thumbnail at event marker
 - Thumbnail persists on timeline at correct position
 - Multiple photo events each leave their own thumbnail
 
