@@ -70,12 +70,12 @@ function displayError(error: unknown): void {
  */
 function setupKeyboardControls(
   viewportController: ViewportController,
-  timeline: Timeline
+  timeline: Timeline,
+  particleAnimationController: ParticleAnimationController
 ): void {
   const handleKeyDown = (event: KeyboardEvent): void => {
     const { key } = event;
     const currentState = viewportController.getScrollState();
-    const currentDirection = viewportController.getScrollDirection();
 
     // Handle Space bar - state-aware behavior
     if (key === ' ') {
@@ -83,7 +83,7 @@ function setupKeyboardControls(
 
       if (currentState === 'idle') {
         // Start auto-scroll forward
-        viewportController.startAutoScroll('forward');
+        viewportController.startAutoScroll();
         timeline.highlightEvent(null); // Clear any highlights
       } else if (currentState === 'scrolling') {
         // Toggle pause (manual pause)
@@ -97,57 +97,37 @@ function setupKeyboardControls(
       return;
     }
 
-    // Handle Right arrow - always forward
+    // Handle Right arrow - start or resume forward scroll
     if (key === 'ArrowRight') {
       event.preventDefault();
 
       if (currentState === 'idle') {
         // Start auto-scroll forward
-        viewportController.startAutoScroll('forward');
+        viewportController.startAutoScroll();
         timeline.highlightEvent(null);
       } else if (currentState === 'paused') {
-        // Resume auto-scroll forward (change direction if needed)
+        // Resume auto-scroll forward
         timeline.highlightEvent(null);
-        if (currentDirection === 'backward') {
-          // Switch direction: stop and restart forward
-          viewportController.stopAutoScroll();
-          viewportController.startAutoScroll('forward');
-        } else {
-          viewportController.resumeAutoScroll();
-        }
-      } else if (currentState === 'scrolling' && currentDirection === 'backward') {
-        // Reverse to forward direction
-        viewportController.stopAutoScroll();
-        viewportController.startAutoScroll('forward');
+        viewportController.resumeAutoScroll();
       }
       // If already scrolling forward, no-op
       return;
     }
 
-    // Handle Left arrow - always backward
+    // Handle Left arrow - reset to timeline start
     if (key === 'ArrowLeft') {
       event.preventDefault();
 
-      if (currentState === 'idle') {
-        // Start auto-scroll backward
-        viewportController.startAutoScroll('backward');
-        timeline.highlightEvent(null);
-      } else if (currentState === 'paused') {
-        // Resume auto-scroll backward (change direction if needed)
-        timeline.highlightEvent(null);
-        if (currentDirection === 'forward') {
-          // Switch direction: stop and restart backward
-          viewportController.stopAutoScroll();
-          viewportController.startAutoScroll('backward');
-        } else {
-          viewportController.resumeAutoScroll();
-        }
-      } else if (currentState === 'scrolling' && currentDirection === 'forward') {
-        // Reverse to backward direction
-        viewportController.stopAutoScroll();
-        viewportController.startAutoScroll('backward');
-      }
-      // If already scrolling backward, no-op
+      // Clean up particle animations
+      particleAnimationController.cleanup();
+
+      // Reset viewport to start
+      viewportController.resetToStart();
+
+      // Clear event highlights
+      timeline.highlightEvent(null);
+
+      return;
     }
   };
 
@@ -236,7 +216,7 @@ async function init(): Promise<void> {
     );
 
     // Setup keyboard controls
-    setupKeyboardControls(viewportController, timeline);
+    setupKeyboardControls(viewportController, timeline, particleAnimationController);
 
     console.log('✓ Timeline rendered successfully');
   } catch (error) {

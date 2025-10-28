@@ -265,10 +265,10 @@ export class ParticleAnimationController {
     // Store reference for animation
     particle.element = animationGroup;
 
-    console.log(`✓ Spawned particle: ${particle.personName}`);
-
-    // Start animation immediately
+    // Record animation intent - actual animation happens in update() loop
     this.animateParticle(particle);
+
+    console.log(`✓ Spawned particle: ${particle.personName}`);
   }
 
   /**
@@ -342,6 +342,17 @@ export class ParticleAnimationController {
     this.activeParticles.clear();
     this.completedJoins.clear();
     this.lastUpdateTime = 0; // Reset frame timing
+
+    // Reset all particle metadata to initial state
+    // This allows particles to spawn fresh after a reset
+    for (const particle of this.particleMetadata.values()) {
+      particle.hasSpawned = false;
+      particle.isComplete = false;
+      particle.element = undefined;
+      particle.animationStartTime = undefined;
+      particle.animationDuration = undefined;
+      particle.startTransform = undefined;
+    }
 
     console.log('Particle animations cleaned up');
   }

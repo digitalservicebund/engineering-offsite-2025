@@ -74,7 +74,6 @@ export interface Event {
 
 // Auto-scroll state machine types
 export type ScrollState = 'idle' | 'scrolling' | 'paused';
-export type ScrollDirection = 'forward' | 'backward';
 
 export interface KeyEventPosition {
   eventId: string;

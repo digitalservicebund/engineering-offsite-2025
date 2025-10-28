@@ -512,10 +512,11 @@
   ```
 - **Rationale:** Reuses existing RAF loop - when loop pauses, animations pause automatically.
 
-**Task 7.4: Remove D3 transition from spawnParticle()**
-- Remove the `this.animateParticle(particle)` call at end of `spawnParticle()`
-- Animation now happens automatically via update() loop
-- **Rationale:** Single animation pathway - cleaner architecture.
+**Task 7.4: Remove D3 transition from spawnParticle()** ✅ DONE
+- ~~Remove the `this.animateParticle(particle)` call at end of `spawnParticle()`~~ 
+- **Note:** `animateParticle()` now just records parameters (no D3 transition), so call remains
+- Animation happens automatically via update() loop (RAF-based interpolation)
+- **Rationale:** D3 transitions removed, RAF-based animation pathway active.
 
 **Task 7.5: Test pause behavior**
 - Start auto-scroll, verify particles animate
@@ -532,10 +533,10 @@
 ---
 
 ### Phase 8: Remove Backward Scrolling & Implement Timeline Reset
-**Status:** Not Started  
+**Status:** In Progress  
 **🎯 SIMPLIFICATION:** Eliminates particle re-spawn complexity
 
-**Task 8.1: Remove backward auto-scroll from ViewportController**
+**Task 8.1: Remove backward auto-scroll from ViewportController** ✅ DONE
 - Remove backward scroll logic from `checkForKeyEventPause()`:
   - Only check for forward key events
   - Remove backward direction handling
@@ -551,7 +552,7 @@
 - Remove `scrollDirection` type from being 'backward' | 'forward' (just always 'forward')
 - **Rationale:** Backward scrolling adds complexity without value for presentation use case.
 
-**Task 8.2: Implement timeline reset to start**
+**Task 8.2: Implement timeline reset to start** ✅ DONE
 - Add `resetToStart()` method to ViewportController:
   ```typescript
   public resetToStart(): void {
@@ -570,7 +571,7 @@
   ```
 - **Rationale:** Clean slate for presenter to restart presentation.
 
-**Task 8.3: Update keyboard controls in `main.ts` for Left Arrow**
+**Task 8.3: Update keyboard controls in `main.ts` for Left Arrow** ✅ DONE
 - Modify `handleKeyDown` function:
   ```typescript
   // Handle Left arrow - reset to timeline start
@@ -592,12 +593,28 @@
 - Remove all backward scroll logic (direction reversals, etc.)
 - **Rationale:** Simple reset behavior easy for presenter to understand.
 
-**Task 8.4: Clean up types and remove backward direction**
+**Task 8.4: Clean up types and remove backward direction** ✅ DONE
 - In `types.ts`, simplify or remove `ScrollDirection`:
   - Either keep as `type ScrollDirection = 'forward'` (single value)
   - Or remove entirely if not needed
 - Update any references to `scrollDirection` in ViewportController
 - **Rationale:** Code cleanup - remove unused complexity.
+
+**Task 8.5: Fix particle metadata reset in cleanup()** ✅ DONE (Bug Fix)
+- **Issue discovered:** `cleanup()` cleared `activeParticles` and `completedJoins` but didn't reset mutable fields on `ParticleAnimation` objects in `particleMetadata`
+- **Symptoms:** After reset, particles with `hasSpawned = true` wouldn't respawn, stale `element` references caused memory leaks
+- **Fix:** Reset all mutable fields in metadata loop:
+  ```typescript
+  for (const particle of this.particleMetadata.values()) {
+    particle.hasSpawned = false;
+    particle.isComplete = false;
+    particle.element = undefined;
+    particle.animationStartTime = undefined;
+    particle.animationDuration = undefined;
+    particle.startTransform = undefined;
+  }
+  ```
+- **Rationale:** Ensures particles can spawn fresh after reset, as if page reloaded.
 
 ---
 

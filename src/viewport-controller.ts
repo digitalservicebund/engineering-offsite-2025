@@ -8,7 +8,7 @@
 
 import type * as d3 from 'd3';
 import { LAYOUT } from './config';
-import type { ScrollState, ScrollDirection, KeyEventPosition } from './types';
+import type { ScrollState, KeyEventPosition } from './types';
 
 export class ViewportController {
   private readonly container: HTMLElement;
@@ -29,7 +29,6 @@ export class ViewportController {
 
   // Auto-scroll state machine properties
   private scrollState: ScrollState = 'idle';
-  private scrollDirection: ScrollDirection = 'forward';
   private keyEventPositions: KeyEventPosition[] = [];
   private lastFrameTimestamp: number | null = null;
   private autoScrollFrameId: number | null = null;
@@ -256,13 +255,6 @@ export class ViewportController {
   }
 
   /**
-   * Get current scroll direction
-   */
-  public getScrollDirection(): ScrollDirection {
-    return this.scrollDirection;
-  }
-
-  /**
    * Get paused event ID (null if not paused at key event)
    */
   public getPausedEventId(): string | null {
@@ -270,13 +262,12 @@ export class ViewportController {
   }
 
   /**
-   * Start auto-scroll in the specified direction
+   * Start auto-scroll (always forward)
    * Entry point for continuous scrolling at fixed speed (200px/sec)
    */
-  public startAutoScroll(direction: ScrollDirection): void {
+  public startAutoScroll(): void {
     // Set state
     this.scrollState = 'scrolling';
-    this.scrollDirection = direction;
     this.lastFrameTimestamp = null; // Will be set on first frame
     this.pausedAtEventId = null;
 
@@ -291,7 +282,7 @@ export class ViewportController {
       this.autoScrollLoop(timestamp)
     );
 
-    console.log(`Auto-scroll started (${direction})`);
+    console.log('Auto-scroll started (forward)');
   }
 
   /**
@@ -316,17 +307,11 @@ export class ViewportController {
     // Speed: 200px/sec = 0.2px/ms
     const distance = (LAYOUT.autoScroll.speed / 1000) * elapsed;
 
-    // 4. Apply movement based on direction
-    if (this.scrollDirection === 'forward') {
-      this.currentOffset += distance;
-    } else {
-      this.currentOffset -= distance;
-    }
+    // 4. Apply movement (always forward)
+    this.currentOffset += distance;
 
     // 5. Clamp to boundaries
-    const wasClamped = 
-      (this.scrollDirection === 'forward' && this.currentOffset >= this.maxOffset) ||
-      (this.scrollDirection === 'backward' && this.currentOffset <= this.minOffset);
+    const wasClamped = this.currentOffset >= this.maxOffset;
     
     this.currentOffset = Math.max(this.minOffset, Math.min(this.maxOffset, this.currentOffset));
 
@@ -336,7 +321,7 @@ export class ViewportController {
       this.autoScrollFrameId = null;
       this.applyTransform(false);
       this.notifyViewportChange();
-      console.log(`Auto-scroll stopped: reached timeline ${this.scrollDirection === 'forward' ? 'end' : 'start'}`);
+      console.log('Auto-scroll stopped: reached timeline end');
       return;
     }
 
@@ -403,7 +388,7 @@ export class ViewportController {
       this.autoScrollLoop(timestamp)
     );
 
-    console.log(`Auto-scroll resumed (${this.scrollDirection})`);
+    console.log('Auto-scroll resumed (forward)');
   }
 
   /**
@@ -429,6 +414,24 @@ export class ViewportController {
   }
 
   /**
+   * Reset timeline to start position
+   * Clean slate for presenter to restart presentation
+   */
+  public resetToStart(): void {
+    // Stop any active auto-scroll
+    this.stopAutoScroll();
+
+    // Reset to initial position
+    this.currentOffset = this.minOffset;
+    this.applyTransform(false); // Instant, no transition
+
+    // Update counters at start position
+    this.notifyViewportChange();
+
+    console.log('Timeline reset to start');
+  }
+
+  /**
    * Check if we've reached a key event and should pause
    * Monitors scroll position and pauses when within threshold of key events
    */
@@ -441,29 +444,18 @@ export class ViewportController {
     // Get current position marker x (where we consider "current" to be)
     const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
 
-    // Find next key event in scroll direction
+    // Find next key event ahead (always scrolling forward)
     let targetKeyEvent: KeyEventPosition | null = null;
 
-    if (this.scrollDirection === 'forward') {
-      // Find first key event ahead of current position
-      for (const keyEvent of this.keyEventPositions) {
-        if (keyEvent.xPosition > currentPositionX) {
-          targetKeyEvent = keyEvent;
-          break;
-        }
-      }
-    } else {
-      // Backward: find last key event behind current position
-      for (let i = this.keyEventPositions.length - 1; i >= 0; i--) {
-        const keyEvent = this.keyEventPositions[i];
-        if (keyEvent.xPosition < currentPositionX) {
-          targetKeyEvent = keyEvent;
-          break;
-        }
+    // Find first key event ahead of current position
+    for (const keyEvent of this.keyEventPositions) {
+      if (keyEvent.xPosition > currentPositionX) {
+        targetKeyEvent = keyEvent;
+        break;
       }
     }
 
-    // No key event found in this direction
+    // No key event found ahead
     if (!targetKeyEvent) {
       return false;
     }
