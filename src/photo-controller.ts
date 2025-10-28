@@ -26,6 +26,43 @@ export class PhotoController {
   private thumbnails: Map<string, HTMLElement> = new Map(); // eventId → thumbnail element
 
   /**
+   * Get photo URL from event ID (convention: assets/photos/{eventId}.jpg)
+   * @param eventId - The event ID
+   * @returns Photo URL path
+   */
+  public static getPhotoUrl(eventId: string): string {
+    return `assets/photos/${eventId}.jpg`;
+  }
+
+  /**
+   * Validate that all photo files exist for events with hasPhoto=true
+   * @param events - Array of events to validate
+   * @returns Array of missing photo paths (empty if all valid)
+   */
+  public static async validatePhotoFiles(
+    events: Array<{ id: string; name: string; hasPhoto: boolean }>
+  ): Promise<string[]> {
+    const photoEvents = events.filter((event) => event.hasPhoto);
+    const missingPhotos: string[] = [];
+
+    for (const event of photoEvents) {
+      const photoUrl = PhotoController.getPhotoUrl(event.id);
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('Failed to load'));
+          img.src = photoUrl;
+        });
+      } catch {
+        missingPhotos.push(`${photoUrl} (event: ${event.name})`);
+      }
+    }
+
+    return missingPhotos;
+  }
+
+  /**
    * Create a new PhotoController
    * @param parentContainer - Parent element to append photo overlay to (typically document.body)
    * @param timelineContainer - The timeline container for positioning thumbnails
@@ -83,7 +120,7 @@ export class PhotoController {
     }
 
     // Derive photo URL from event ID (convention over configuration)
-    const photoUrl = `assets/photos/${event.id}.jpg`;
+    const photoUrl = PhotoController.getPhotoUrl(event.id);
 
     // Determine caption (fallback to event name if not specified)
     const caption = event.caption || event.name;

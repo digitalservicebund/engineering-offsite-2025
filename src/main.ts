@@ -60,7 +60,7 @@ function displayError(error: unknown): void {
   const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
   container.innerHTML = `
-    <div style="padding: 40px; text-align: center; color: #E74C3C; font-family: sans-serif;">
+    <div class="error-container">
       <h2>Error Loading Timeline</h2>
       <p>${errorMessage}</p>
     </div>
@@ -72,58 +72,18 @@ function displayError(error: unknown): void {
  */
 function displayConfigError(title: string, messages: string[]): void {
   document.body.innerHTML = `
-    <div style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #2C3E50;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: sans-serif;
-      z-index: 10000;
-    ">
-      <div style="max-width: 600px; padding: 40px;">
-        <h1 style="color: #E74C3C; margin: 0 0 20px 0; font-size: 32px;">⚠️ ${title}</h1>
-        <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-          ${messages.map((msg) => `<p style="margin: 10px 0; font-size: 16px;">• ${msg}</p>`).join('')}
+    <div class="config-error-overlay">
+      <div class="config-error-content">
+        <h1 class="config-error-title">⚠️ ${title}</h1>
+        <div class="config-error-messages">
+          ${messages.map((msg) => `<p>• ${msg}</p>`).join('')}
         </div>
-        <p style="color: #BDC3C7; margin: 0; font-size: 14px;">
+        <p class="config-error-footer">
           Fix the configuration errors above and reload the page.
         </p>
       </div>
     </div>
   `;
-}
-
-/**
- * Validate that all photo files exist
- * @returns Array of missing photo paths (empty if all valid)
- */
-async function validatePhotoFiles(
-  data: Awaited<ReturnType<typeof loadTimelineData>>
-): Promise<string[]> {
-  const photoEvents = data.events.filter((event) => event.hasPhoto);
-  const missingPhotos: string[] = [];
-
-  for (const event of photoEvents) {
-    const photoUrl = `assets/photos/${event.id}.jpg`;
-    try {
-      await new Promise<void>((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => reject(new Error('Failed to load'));
-        img.src = photoUrl;
-      });
-    } catch {
-      missingPhotos.push(`${photoUrl} (event: ${event.name})`);
-    }
-  }
-
-  return missingPhotos;
 }
 
 /**
@@ -201,7 +161,7 @@ async function init(): Promise<void> {
 
     // Validate photo files before initializing timeline
     console.log('Validating photo files...');
-    const missingPhotos = await validatePhotoFiles(data);
+    const missingPhotos = await PhotoController.validatePhotoFiles(data.events);
     if (missingPhotos.length > 0) {
       displayConfigError('Missing Photo Files', missingPhotos);
       return; // Block timeline initialization

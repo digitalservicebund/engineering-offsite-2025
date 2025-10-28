@@ -176,3 +176,64 @@ svg {
 .photo-thumbnail:hover {
   transform: scale(1.1);
 }
+
+/* Error display styles */
+.error-container {
+  padding: 40px;
+  text-align: center;
+  color: #E74C3C;
+  font-family: sans-serif;
+}
+
+.error-container h2 {
+  margin: 0 0 16px 0;
+}
+
+.error-container p {
+  margin: 0;
+}
+
+/* Config error overlay - full screen blocking error */
+.config-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #2C3E50;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  z-index: 10000;
+}
+
+.config-error-content {
+  max-width: 600px;
+  padding: 40px;
+}
+
+.config-error-title {
+  color: #E74C3C;
+  margin: 0 0 20px 0;
+  font-size: 32px;
+}
+
+.config-error-messages {
+  background: rgba(231, 76, 60, 0.1);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.config-error-messages p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.config-error-footer {
+  color: #BDC3C7;
+  margin: 0;
+  font-size: 14px;
+}
