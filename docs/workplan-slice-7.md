@@ -576,66 +576,26 @@ Testing revealed 4 issues that were fixed:
 - **Expected behavior:** Timeline accumulates thumbnails at each photo event location
 - **Rationale:** Multiple photo events create visual timeline markers.
 
-**Task 5.2: Implement thumbnail removal on timeline reset**
-- Update `cleanup()` method:
-  ```typescript
-  public cleanup(): void {
-    // Hide and remove overlay if active
-    if (this.currentPhotoState) {
-      this.overlayElement.classList.remove('visible');
-      this.overlayElement.classList.add('hidden');
-      this.currentPhotoState = null;
-    }
-    
-    // Remove all thumbnails
-    for (const [eventId, thumbnail] of this.thumbnails) {
-      thumbnail.remove();
-    }
-    this.thumbnails.clear();
-    
-    console.log('✓ Photo controller cleaned up');
-  }
-  ```
-- Call `photoController.cleanup()` in keyboard Left Arrow handler (timeline reset):
-  ```typescript
-  if (key === 'ArrowLeft') {
-    event.preventDefault();
-    
-    // Clean up animations and photos
-    particleAnimationController.cleanup();
-    photoController.cleanup(); // Add this
-    
-    // Reset viewport
-    viewportController.resetToStart();
-    timeline.highlightEvent(null);
-    
-    return;
-  }
-  ```
+**Task 5.2: Implement thumbnail removal on timeline reset** ✅ DONE
+- Updated `cleanup()` method to remove overlay and all thumbnails
+- `photoController.cleanup()` called in Left Arrow handler for timeline reset
+- **Implementation:** Cleanup method properly iterates through thumbnails Map and removes each element from DOM
 - **Rationale:** Reset should clear all visual state for clean restart.
 
-**Task 5.3: Handle missing/broken photo URLs**
-- Update `showPhoto()` error handling:
-  ```typescript
-  // In showPhoto(), after setting img.src:
-  await new Promise((resolve, reject) => {
-    img.onload = resolve;
-    img.onerror = () => {
-      const photoUrl = `assets/photos/${event.id}.jpg`;
-      console.error(`Failed to load photo: ${photoUrl} for event ${event.name}`);
-      // Show placeholder or skip photo
-      reject(new Error('Photo load failed'));
-    };
-  }).catch(error => {
-    // Photo load failed - resume auto-scroll without photo
-    this.currentPhotoState = null;
-    if (this.onPhotoLoadFailed) {
-      this.onPhotoLoadFailed();
-    }
-  });
-  ```
-- If photo load fails, log error with derived URL path and auto-resume scroll
-- **Rationale:** Graceful degradation prevents broken presentation. Convention-based URL makes debugging easier.
+**Task 5.3: Handle missing/broken photo URLs** ✅ DONE
+- **Design decision:** Missing photos are a SERIOUS configuration error and MUST block timeline execution
+- **Implementation:**
+  - Added `validatePhotoFiles()` function in `main.ts` that checks all photo events on startup
+  - Attempts to load each photo file for events with `hasPhoto: true`
+  - Collects all missing files with event names
+  - If any photos are missing:
+    - Displays full-screen blocking error overlay (red warning)
+    - Lists all missing photo files with their event names
+    - Prevents timeline initialization completely
+    - Requires user to fix and reload
+  - Only proceeds if all photo files are validated successfully
+- **Behavior:** Timeline will NOT run if any photo is missing - this is intentional
+- **Rationale:** Configuration errors must be visible and blocking during development/prototyping. Silent failures hide problems.
 
 **Task 5.4: ~~Add thumbnail click interaction~~** 
 - **Decision:** Dropped - not needed for MVP
