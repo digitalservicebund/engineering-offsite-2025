@@ -52,9 +52,8 @@
     people: {
       spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
       // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
+      // Note: animationDuration calculated at runtime to sync with autoscroll speed
       detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
-      animationDuration: 500, // ms - 0.5s diagonal animation per spec
-      animationEasing: 'ease-out' as const, // Easing for upward-right motion
       fadeOutDuration: 300, // ms - fade duration after reaching lane
       circleRadius: 8, // px - particle circle size
       circleColor: '#4A90E2', // Blue - matches people lane color
@@ -65,7 +64,7 @@
     },
   }
   ```
-- **Rationale:** Centralizes all particle animation parameters for easy tuning during testing. Spawn offset X is computed dynamically based on pixelsPerYear.
+- **Rationale:** Centralizes all particle animation parameters for easy tuning during testing. Spawn offset X and animation duration are computed dynamically (spawnOffsetX based on pixelsPerYear, duration synced to autoscroll speed).
 
 **Task 1.2: Add types for particle tracking** ✅ DONE
 - Add to `types.ts`:
@@ -258,9 +257,9 @@
 ---
 
 ### Phase 4: Particle Animation (Diagonal Upward-Right Motion)
-**Status:** Not Started
+**Status:** In Progress
 
-**Task 4.1: Implement `animateParticle(particle: ParticleAnimation)` method**
+**Task 4.1: Implement `animateParticle(particle: ParticleAnimation)` method** ✅ DONE
 - Animate the inner animation group's transform from offset to (0,0):
   ```typescript
   private animateParticle(particle: ParticleAnimation): void {
@@ -269,11 +268,17 @@
       return;
     }
     
+    // Calculate animation duration based on autoscroll speed
+    // Duration = distance / speed (syncs particle X-motion with viewport)
+    const distance = this.spawnOffsetX; // X-axis distance to travel
+    const speed = LAYOUT.autoScroll.speed; // px/sec
+    const duration = (distance / speed) * 1000; // Convert to ms
+    
     // Animate transform from current offset to (0, 0) = merge position
     particle.element
       .transition()
-      .duration(LAYOUT.particleAnimations.people.animationDuration)
-      .ease(d3.easeOut)
+      .duration(duration)
+      .ease(d3.easeCubicOut)
       .attr('transform', 'translate(0, 0)')
       .on('end', () => {
         // Animation complete - start fade-out
@@ -283,10 +288,11 @@
   ```
 - Single transform animates both X (left→right) and Y (down→up) simultaneously
 - Creates diagonal upward-right motion
+- **Duration synced to autoscroll speed** so particle X-velocity matches viewport scroll
 - Use `.on('end')` callback to chain to fade-out phase
-- **Rationale:** Clean, GPU-accelerated transform animation. Perfectly synchronized motion for circle + label.
+- **Rationale:** Clean, GPU-accelerated transform animation. Perfectly synchronized motion for circle + label. Duration calculation ensures particle keeps pace with viewport.
 
-**Task 4.2: Call animation immediately after spawning**
+**Task 4.2: Call animation immediately after spawning** ✅ DONE
 - In `spawnParticle` method, after creating SVG elements:
   ```typescript
   // ...create SVG elements...

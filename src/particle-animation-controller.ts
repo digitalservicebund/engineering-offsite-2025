@@ -226,6 +226,49 @@ export class ParticleAnimationController {
     particle.element = animationGroup;
 
     console.log(`✓ Spawned particle: ${particle.personName}`);
+
+    // Start animation immediately
+    this.animateParticle(particle);
+  }
+
+  /**
+   * Animate particle diagonally upward-right from spawn position to merge point
+   * Animates the inner animation group's transform from offset to (0,0)
+   * Single transform animates both X (left→right) and Y (down→up) simultaneously
+   * Duration synced to autoscroll speed so particle travels with viewport
+   */
+  private animateParticle(particle: ParticleAnimation): void {
+    if (!particle.element) {
+      console.error(`Cannot animate particle: element not created for ${particle.personName}`);
+      return;
+    }
+
+    // Calculate animation duration based on autoscroll speed
+    // Duration = distance / speed (converted to milliseconds)
+    const distance = this.spawnOffsetX; // X-axis distance to travel
+    const speed = LAYOUT.autoScroll.speed; // px/sec
+    const duration = (distance / speed) * 1000; // Convert to ms
+
+    // Animate transform from current offset to (0, 0) = merge position
+    particle.element
+      .transition()
+      .duration(duration)
+      .ease(d3.easeCubicOut)
+      .attr('transform', 'translate(0, 0)')
+      .on('end', () => {
+        // Animation complete - start fade-out
+        this.fadeOutParticle(particle);
+      });
+  }
+
+  /**
+   * Fade out particle after animation completes
+   * Will be implemented in Task 5.1
+   */
+  private fadeOutParticle(particle: ParticleAnimation): void {
+    // Task 5.1 will implement fade-out logic here
+    // For now, just log
+    console.log(`Fading out particle: ${particle.personName}`);
   }
 
   /**

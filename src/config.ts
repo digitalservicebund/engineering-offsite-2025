@@ -82,8 +82,6 @@ export const LAYOUT = {
       spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
       // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
       detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
-      animationDuration: 500, // ms - 0.5s diagonal animation per spec
-      animationEasing: 'ease-out' as const, // Easing for upward-right motion
       fadeOutDuration: 300, // ms - fade duration after reaching lane
       circleRadius: 8, // px - particle circle size
       circleColor: '#4A90E2', // Blue - matches people lane color
