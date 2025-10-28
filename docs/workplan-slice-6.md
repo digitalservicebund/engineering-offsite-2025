@@ -275,10 +275,11 @@
     const duration = (distance / speed) * 1000; // Convert to ms
     
     // Animate transform from current offset to (0, 0) = merge position
+    // Use linear easing so X-velocity matches viewport scroll exactly
     particle.element
       .transition()
       .duration(duration)
-      .ease(d3.easeCubicOut)
+      .ease(d3.easeLinear)
       .attr('transform', 'translate(0, 0)')
       .on('end', () => {
         // Animation complete - start fade-out
@@ -289,8 +290,9 @@
 - Single transform animates both X (left→right) and Y (down→up) simultaneously
 - Creates diagonal upward-right motion
 - **Duration synced to autoscroll speed** so particle X-velocity matches viewport scroll
+- **Linear easing** ensures constant velocity matching viewport (no acceleration/deceleration)
 - Use `.on('end')` callback to chain to fade-out phase
-- **Rationale:** Clean, GPU-accelerated transform animation. Perfectly synchronized motion for circle + label. Duration calculation ensures particle keeps pace with viewport.
+- **Rationale:** Clean, GPU-accelerated transform animation. Perfectly synchronized motion for circle + label. Linear easing prevents perceived speed mismatch with viewport.
 
 **Task 4.2: Call animation immediately after spawning** ✅ DONE
 - In `spawnParticle` method, after creating SVG elements:
@@ -307,9 +309,10 @@
 - Verify 60fps during particle animation + auto-scroll
 - Check that D3 transitions don't conflict with auto-scroll RAF loop
 - Monitor DevTools Performance tab for frame drops
-- **Expected behavior:** Smooth diagonal motion with ease-out curve
+- **Expected behavior:** Smooth diagonal motion with constant horizontal velocity
 - Visual inspection: Particle moves from bottom-left to top-right of its travel path
-- **Rationale:** Performance validation ensures good presentation experience.
+- **Verify:** Particle horizontal velocity matches viewport scroll speed (should appear stationary relative to viewport)
+- **Rationale:** Performance validation ensures good presentation experience. Linear easing ensures particle stays synchronized with viewport.
 
 ---
 
@@ -537,6 +540,18 @@
   - Adjust label position if overlapping with circle
   - Change fade duration if transition too abrupt
 - **Rationale:** Prototype is for presentation - visuals must feel polished.
+
+**Task 8.4: Improve motion curve to asymptotic/logarithmic shape (OPTIONAL ENHANCEMENT)**
+- **Current:** Linear ease-out motion (cubic-out easing) looks mechanical
+- **Goal:** More organic asymptotic approach to merge point (logarithmic curve)
+- **Implementation options:**
+  - Custom D3 easing function using log/exponential curve
+  - Path-based animation with calculated curve points
+  - Custom transition with time-based positioning
+- **Rationale:** Asymptotic motion will create more natural, organic appearance as particle "settles" into the lane
+- **Priority:** Low - only implement if time permits after all core functionality complete and tested
+- **Design consideration:** Ensure curve still aligns particle to exact merge point at end
+- **Decision:** Defer unless basic animation feels too mechanical during visual testing
 
 ---
 

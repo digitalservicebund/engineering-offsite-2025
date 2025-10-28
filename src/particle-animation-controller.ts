@@ -250,10 +250,11 @@ export class ParticleAnimationController {
     const duration = (distance / speed) * 1000; // Convert to ms
 
     // Animate transform from current offset to (0, 0) = merge position
+    // Use linear easing so X-velocity matches viewport scroll exactly
     particle.element
       .transition()
       .duration(duration)
-      .ease(d3.easeCubicOut)
+      .ease(d3.easeLinear)
       .attr('transform', 'translate(0, 0)')
       .on('end', () => {
         // Animation complete - start fade-out
