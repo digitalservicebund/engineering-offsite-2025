@@ -4,9 +4,17 @@
  * and persistent thumbnail management on the timeline.
  */
 
-import type * as d3 from 'd3';
 import type { Event, PhotoState } from './types';
 import { LAYOUT } from './config';
+
+// CSS class name constants
+const PHOTO_OVERLAY_CLASS = 'photo-overlay';
+const PHOTO_FULLSCREEN_CLASS = 'photo-fullscreen';
+const PHOTO_BACKDROP_CLASS = 'photo-backdrop';
+const PHOTO_CAPTION_CLASS = 'photo-caption';
+const PHOTO_THUMBNAIL_CLASS = 'photo-thumbnail';
+const PHOTO_HIDDEN_CLASS = 'hidden';
+const PHOTO_VISIBLE_CLASS = 'visible';
 
 export class PhotoController {
   private readonly overlayElement: HTMLElement;
@@ -19,23 +27,48 @@ export class PhotoController {
 
   /**
    * Create a new PhotoController
-   * @param overlayElement - The photo overlay HTML element
+   * @param parentContainer - Parent element to append photo overlay to (typically document.body)
    * @param timelineContainer - The timeline container for positioning thumbnails
    * @param eventMarkerY - Y-position of events lane for thumbnail anchoring
    * @param timelineWidth - Total width of the timeline (for edge clamping)
    */
   constructor(
-    overlayElement: HTMLElement,
+    parentContainer: HTMLElement,
     timelineContainer: HTMLElement,
     eventMarkerY: number,
     timelineWidth: number
   ) {
-    this.overlayElement = overlayElement;
     this.timelineContainer = timelineContainer;
     this.eventMarkerY = eventMarkerY;
     this.timelineWidth = timelineWidth;
 
+    // Create and append photo overlay
+    this.overlayElement = this.createPhotoOverlay();
+    parentContainer.appendChild(this.overlayElement);
+
     console.log('✓ PhotoController initialized');
+  }
+
+  /**
+   * Create the photo overlay HTML structure
+   * @private
+   */
+  private createPhotoOverlay(): HTMLElement {
+    const overlay = document.createElement('div');
+    overlay.id = 'photo-overlay';
+    overlay.className = `${PHOTO_OVERLAY_CLASS} ${PHOTO_HIDDEN_CLASS}`;
+
+    // Create backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = PHOTO_BACKDROP_CLASS;
+    overlay.appendChild(backdrop);
+
+    // Create caption
+    const caption = document.createElement('div');
+    caption.className = PHOTO_CAPTION_CLASS;
+    overlay.appendChild(caption);
+
+    return overlay;
   }
 
   /**
@@ -66,11 +99,11 @@ export class PhotoController {
     };
 
     // Create or re-use photo img element
-    let img = this.overlayElement.querySelector('.photo-fullscreen') as HTMLImageElement;
+    let img = this.overlayElement.querySelector(`.${PHOTO_FULLSCREEN_CLASS}`) as HTMLImageElement;
     if (!img) {
       img = document.createElement('img');
-      img.className = 'photo-fullscreen';
-      this.overlayElement.insertBefore(img, this.overlayElement.querySelector('.photo-caption'));
+      img.className = PHOTO_FULLSCREEN_CLASS;
+      this.overlayElement.insertBefore(img, this.overlayElement.querySelector(`.${PHOTO_CAPTION_CLASS}`));
     }
 
     // Store reference for later re-use
@@ -89,14 +122,14 @@ export class PhotoController {
     });
 
     // Update caption
-    const captionEl = this.overlayElement.querySelector('.photo-caption') as HTMLElement;
+    const captionEl = this.overlayElement.querySelector(`.${PHOTO_CAPTION_CLASS}`) as HTMLElement;
     captionEl.textContent = caption;
 
     // Show overlay with fade-in
-    this.overlayElement.classList.remove('hidden');
+    this.overlayElement.classList.remove(PHOTO_HIDDEN_CLASS);
     // Trigger reflow for transition
     void this.overlayElement.offsetWidth;
-    this.overlayElement.classList.add('visible');
+    this.overlayElement.classList.add(PHOTO_VISIBLE_CLASS);
 
     this.currentPhotoState.phase = 'fullscreen';
     console.log(`✓ Photo displayed: ${event.name}`);
@@ -158,8 +191,8 @@ export class PhotoController {
     photoElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 
     // Fade out backdrop and caption
-    const backdrop = this.overlayElement.querySelector('.photo-backdrop') as HTMLElement;
-    const caption = this.overlayElement.querySelector('.photo-caption') as HTMLElement;
+    const backdrop = this.overlayElement.querySelector(`.${PHOTO_BACKDROP_CLASS}`) as HTMLElement;
+    const caption = this.overlayElement.querySelector(`.${PHOTO_CAPTION_CLASS}`) as HTMLElement;
     backdrop.style.transition = `opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
     backdrop.style.opacity = '0';
     caption.style.transition = `opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
@@ -172,8 +205,8 @@ export class PhotoController {
     this.convertPhotoToThumbnail(photoElement, eventId, thumbnailPos.x, thumbnailPos.y);
 
     // Hide overlay
-    this.overlayElement.classList.remove('visible');
-    this.overlayElement.classList.add('hidden');
+    this.overlayElement.classList.remove(PHOTO_VISIBLE_CLASS);
+    this.overlayElement.classList.add(PHOTO_HIDDEN_CLASS);
 
     // Reset overlay styles
     backdrop.style.transition = '';
@@ -206,8 +239,8 @@ export class PhotoController {
   public cleanup(): void {
     // Hide and remove overlay if active
     if (this.currentPhotoState) {
-      this.overlayElement.classList.remove('visible');
-      this.overlayElement.classList.add('hidden');
+      this.overlayElement.classList.remove(PHOTO_VISIBLE_CLASS);
+      this.overlayElement.classList.add(PHOTO_HIDDEN_CLASS);
       this.currentPhotoState = null;
     }
 
@@ -265,7 +298,7 @@ export class PhotoController {
     }
 
     // Update element styles for thumbnail display
-    photoElement.className = 'photo-thumbnail';
+    photoElement.className = PHOTO_THUMBNAIL_CLASS;
     photoElement.style.position = 'absolute';
     photoElement.style.left = `${x}px`;
     photoElement.style.top = `${y}px`;

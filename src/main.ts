@@ -14,6 +14,7 @@ import { LAYOUT } from './config';
 import type { Person } from './types';
 import './style.css';
 
+// DOM element IDs
 const CONTAINER_ID = 'timeline-container';
 const COUNTER_ENGINEERS_ID = 'counter-engineers';
 const COUNTER_PROJECTS_ID = 'counter-projects';
@@ -126,31 +127,6 @@ async function validatePhotoFiles(
 }
 
 /**
- * Create photo overlay HTML structure
- */
-function createPhotoOverlay(): HTMLElement {
-  const photoOverlay = document.createElement('div');
-  photoOverlay.id = 'photo-overlay';
-  photoOverlay.className = 'photo-overlay hidden';
-
-  // Create backdrop
-  const backdrop = document.createElement('div');
-  backdrop.className = 'photo-backdrop';
-  photoOverlay.appendChild(backdrop);
-
-  // Create caption
-  const caption = document.createElement('div');
-  caption.className = 'photo-caption';
-  photoOverlay.appendChild(caption);
-
-  // Append to body
-  document.body.appendChild(photoOverlay);
-
-  console.log('✓ Photo overlay created');
-  return photoOverlay;
-}
-
-/**
  * Setup keyboard event listeners for auto-scroll state machine
  */
 function setupKeyboardControls(
@@ -253,14 +229,10 @@ async function init(): Promise<void> {
     const timeline = new Timeline(container, data, peopleLanePathGenerator);
     timeline.render();
 
-    // Create photo overlay
-    const photoOverlay = createPhotoOverlay();
-
-    // Create photo controller
+    // Create photo controller (creates and manages its own overlay)
     const photoController = new PhotoController(
-      photoOverlay,
+      document.body,
       container,
-      timeline.getXScale(),
       LAYOUT.lanes.events.yPosition,
       timeline.getTimelineWidth()
     );
