@@ -34,8 +34,8 @@ export interface EventRaw {
   name: string;
   isKeyMoment: boolean;
   hasPhoto: boolean;
-  photoUrl: string | null;
   caption: string | null;
+  // Note: photoUrl removed - derived from id using pattern: assets/photos/${id}.jpg
 }
 
 // Parsed data types (dates are Date objects, ready for use)
@@ -68,8 +68,9 @@ export interface Event {
   name: string;
   isKeyMoment: boolean;
   hasPhoto: boolean;
-  photoUrl: string | null;
   caption: string | null;
+  // Note: photoUrl removed - derived from id using pattern: assets/photos/${id}.jpg
+  // Note: caption falls back to event name if null
 }
 
 // Auto-scroll state machine types
@@ -95,4 +96,15 @@ export interface ParticleAnimation {
   animationStartTime?: number; // High-res timestamp from performance.now() when animation started
   animationDuration?: number; // Total animation duration in ms
   startTransform?: { x: number; y: number }; // Initial offset position
+}
+
+// Photo display state tracking
+export interface PhotoState {
+  eventId: string;
+  eventName: string; // For caption fallback when caption is null
+  caption: string | null;
+  markerX: number; // x-position of event marker for thumbnail anchoring
+  markerY: number; // y-position of event marker for thumbnail anchoring
+  phase: 'loading' | 'fullscreen' | 'transitioning' | 'thumbnail';
+  photoElement?: HTMLElement; // Reference to photo element (re-used for both overlay and thumbnail)
 }

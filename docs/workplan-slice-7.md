@@ -49,9 +49,9 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 ## Detailed Task Breakdown
 
 ### Phase 1: Configuration & Types
-**Status:** Pending
+**Status:** ✅ Complete
 
-**Task 1.1: Add photo display configuration to `config.ts`**
+**Task 1.1: Add photo display configuration to `config.ts`** ✅ DONE
 - Add photo display settings:
   ```typescript
   photoDisplay: {
@@ -70,7 +70,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
   ```
 - **Rationale:** Centralizes all photo display parameters. Thumbnail size set to 100×100px per prompt. Offset negative to place above marker (easier than below).
 
-**Task 1.2: Add types for photo state tracking**
+**Task 1.2: Add types for photo state tracking** ✅ DONE
 - Add to `types.ts`:
   ```typescript
   export interface PhotoState {
@@ -85,7 +85,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
   ```
 - **Rationale:** Tracks current photo display state and DOM references. Simplified to re-use single photo element for both full-screen and thumbnail. Store eventName for caption fallback.
 
-**Task 1.3: Convention over configuration for photo URLs**
+**Task 1.3: Convention over configuration for photo URLs** ✅ DONE
 - Photo URLs derived from eventId:
   - Pattern: `assets/photos/${eventId}.jpg`
   - Example: event with id "evt-offsite-2021" → `assets/photos/evt-offsite-2021.jpg`

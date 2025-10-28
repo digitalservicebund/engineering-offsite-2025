@@ -88,6 +88,19 @@ export const LAYOUT = {
       labelColor: '#2C3E50', // Matches text color
     },
   },
+  photoDisplay: {
+    overlayBackdropColor: 'rgba(0, 0, 0, 0.7)', // Dark backdrop behind full-screen photo
+    photoMaxWidthPercent: 70, // 60-70% of screen width
+    photoMaxHeightPercent: 70, // Similar constraint for height
+    fadeInDuration: 300, // ms - photo fade-in timing
+    fadeOutDuration: 300, // ms - photo fade-out/shrink timing
+    captionFontSize: 24, // px - caption text size
+    captionFontWeight: 300, // Light weight for elegance
+    captionColor: '#FFFFFF', // White text
+    captionOffsetY: 40, // px - distance from bottom of photo to caption
+    thumbnailSize: 100, // px - thumbnail width/height (square)
+    thumbnailOffsetY: -10, // px - distance above event marker line (negative = above)
+  },
   gridlines: {
     color: '#E0E0E0',
     strokeWidth: 1,
