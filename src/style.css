@@ -112,7 +112,7 @@ svg {
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
   opacity: 0;
-  transition: opacity 0.3s ease-in;
+  /* Note: transition is set dynamically in PhotoController using LAYOUT.photoDisplay.fadeInDuration */
 }
 
 .photo-overlay.visible .photo-backdrop {
@@ -126,7 +126,7 @@ svg {
   max-height: 70vh;
   opacity: 0;
   transform: scale(0.95);
-  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+  /* Note: transition is set dynamically in PhotoController using LAYOUT.photoDisplay.fadeInDuration */
   border-radius: 4px;
 }
 

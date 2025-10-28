@@ -162,6 +162,12 @@ export class PhotoController {
     const captionEl = this.overlayElement.querySelector(`.${PHOTO_CAPTION_CLASS}`) as HTMLElement;
     captionEl.textContent = caption;
 
+    // Apply transition durations from config (before triggering animation)
+    const backdrop = this.overlayElement.querySelector(`.${PHOTO_BACKDROP_CLASS}`) as HTMLElement;
+    img.style.transition = `opacity ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in, transform ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in`;
+    backdrop.style.transition = `opacity ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in`;
+    captionEl.style.transition = `opacity ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in`;
+
     // Show overlay with fade-in
     this.overlayElement.classList.remove(PHOTO_HIDDEN_CLASS);
     // Trigger reflow for transition
