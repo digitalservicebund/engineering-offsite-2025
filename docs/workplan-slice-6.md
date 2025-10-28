@@ -43,9 +43,9 @@
 ## Detailed Task Breakdown
 
 ### Phase 1: Configuration & Types
-**Status:** Not Started
+**Status:** ✅ Complete
 
-**Task 1.1: Add particle animation configuration to `config.ts`** 
+**Task 1.1: Add particle animation configuration to `config.ts`** ✅ DONE 
 - Add particle animation settings:
   ```typescript
   particleAnimations: {
@@ -66,7 +66,7 @@
   ```
 - **Rationale:** Centralizes all particle animation parameters for easy tuning during testing. Spawn offset X is computed dynamically based on pixelsPerYear.
 
-**Task 1.2: Add types for particle tracking**
+**Task 1.2: Add types for particle tracking** ✅ DONE
 - Add to `types.ts`:
   ```typescript
   export interface ParticleAnimation {

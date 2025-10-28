@@ -2,6 +2,8 @@
  * Type definitions for timeline data model
  */
 
+import type * as d3 from 'd3';
+
 // Raw JSON data types (as loaded from file, dates are strings)
 export interface TimelineDataRaw {
   startYear: number;
@@ -78,4 +80,17 @@ export interface KeyEventPosition {
   eventId: string;
   eventName: string;
   xPosition: number;
+}
+
+// Particle animation types
+export interface ParticleAnimation {
+  id: string; // Unique identifier (e.g., 'particle-Alice-join' using person name)
+  personName: string; // Person's name (also serves as unique ID - no duplicates in data)
+  joinDate: Date;
+  joinX: number; // x-position where particle should merge (join date position)
+  spawnX: number; // x-position where particle spawns (joinX - pixelsPerYear/3)
+  laneBottomY: number; // y-position of people lane bottom edge at join date
+  hasSpawned: boolean; // true when particle element created
+  isComplete: boolean; // true when animation finished and cleaned up
+  element?: d3.Selection<SVGGElement, unknown, null, undefined>; // D3 selection reference for animation
 }

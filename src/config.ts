@@ -77,6 +77,21 @@ export const LAYOUT = {
       fontSize: 11,
     },
   },
+  particleAnimations: {
+    people: {
+      spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
+      // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
+      animationDuration: 500, // ms - 0.5s diagonal animation per spec
+      animationEasing: 'ease-out' as const, // Easing for upward-right motion
+      fadeOutDuration: 300, // ms - fade duration after reaching lane
+      circleRadius: 8, // px - particle circle size
+      circleColor: '#4A90E2', // Blue - matches people lane color
+      labelOffsetX: 15, // px - text position to right of circle
+      labelFontSize: 11, // px - matches event marker labels
+      labelFontFamily: 'sans-serif' as const,
+      labelColor: '#2C3E50', // Matches text color
+    },
+  },
   gridlines: {
     color: '#E0E0E0',
     strokeWidth: 1,
