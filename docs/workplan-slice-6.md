@@ -181,7 +181,7 @@
 ---
 
 ### Phase 3: Particle Spawning & Early Integration
-**Status:** In Progress  
+**Status:** ✅ Complete  
 **🎯 INTEGRATION POINT:** Test static particles visually before implementing animation
 
 **Task 3.1: Create particle SVG group on initialization** ✅ DONE (completed in Task 2.1)
@@ -239,7 +239,7 @@
 - **Transform structure:** Outer group at merge point, inner group offset for animation
 - **Rationale:** Clean animation via single transform (both X and Y) rather than individual coordinate updates.
 
-**Task 3.3: Integrate with ViewportController and test static particles**
+**Task 3.3: Integrate with ViewportController and test static particles** ✅ DONE
 - **At this point:** Implement Tasks 6.1-6.4 (integration) so particles spawn but DON'T animate yet
 - Add console.log in spawnParticle: `console.log(\`✓ Spawned particle: ${particle.personName}\`);`
 - **Manual testing:** Start auto-scroll, verify particles appear at correct positions
@@ -247,7 +247,7 @@
 - **Expected:** Static particles appear to the left and below merge point during scroll
 - **Rationale:** Early visual feedback allows manual testing before animation complexity.
 
-**Task 3.4: Handle spawn position edge cases**
+**Task 3.4: Handle spawn position edge cases** ✅ DONE
 - If `spawnX < 0` (join date very early in timeline):
   - Clamp to `spawnX = 0` (particles spawn at timeline start)
   - Animation still targets correct joinX (may appear to move extra distance)
@@ -368,10 +368,10 @@
 ---
 
 ### Phase 6: Integration with ViewportController
-**Status:** Not Started  
-**⚠️ NOTE:** Partially completed during Phase 3, Task 3.3 for early testing
+**Status:** ✅ Complete  
+**⚠️ NOTE:** Completed during Phase 3, Task 3.3 for early testing
 
-**Task 6.1: Add `getSvg()` getter to Timeline class**
+**Task 6.1: Add `getSvg()` getter to Timeline class** ✅ DONE
 - Expose SVG selection for particle controller:
   ```typescript
   public getSvg(): d3.Selection<SVGSVGElement, unknown, null, undefined> {
@@ -381,7 +381,7 @@
 - Simple getter, no logic needed
 - **Rationale:** Encapsulation - Timeline owns SVG but provides controlled access.
 
-**Task 6.2: Instantiate `ParticleAnimationController` in `main.ts`**
+**Task 6.2: Instantiate `ParticleAnimationController` in `main.ts`** ✅ DONE
 - After timeline render and people lane path generator, create particle controller:
   ```typescript
   const particleAnimationController = new ParticleAnimationController(
@@ -395,7 +395,7 @@
 - Store reference for particle updates and cleanup
 - **Rationale:** Particle controller needs access to SVG and lane width callback for calculating spawn positions.
 
-**Task 6.3: Add particle update callback to ViewportController**
+**Task 6.3: Add particle update callback to ViewportController** ✅ DONE
 - Add `onParticleUpdate?: (currentPositionX: number) => void` to constructor parameters
 - In `autoScrollLoop()` method, after counter update (step 8):
   ```typescript
@@ -407,7 +407,7 @@
   ```
 - **Rationale:** Separate callback for particle updates keeps concerns separated from counter updates.
 
-**Task 6.4: Wire up particle update callback in `main.ts`**
+**Task 6.4: Wire up particle update callback in `main.ts`** ✅ DONE
 - Create callback function:
   ```typescript
   const updateParticles = (currentPositionX: number): void => {

@@ -8,6 +8,8 @@ import { ViewportController } from './viewport-controller';
 import { CounterCalculator } from './counter-calculator';
 import { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
+import { ParticleAnimationController } from './particle-animation-controller';
+import { LAYOUT } from './config';
 import type { Person } from './types';
 import './style.css';
 
@@ -206,6 +208,20 @@ async function init(): Promise<void> {
       timeline.highlightEvent(eventId);
     };
 
+    // Create particle animation controller
+    const particleAnimationController = new ParticleAnimationController(
+      timeline.getSvg(),
+      timeline.getXScale(),
+      data.people,
+      (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
+      LAYOUT.lanes.people.yPosition
+    );
+
+    // Create particle update callback
+    const updateParticles = (currentPositionX: number): void => {
+      particleAnimationController.update(currentPositionX);
+    };
+
     // Create viewport controller for panning
     const viewportController = new ViewportController(
       container,
@@ -215,7 +231,8 @@ async function init(): Promise<void> {
       timeline.getEndDate(),
       keyEventPositions,
       updateCounters,
-      handleKeyEventReached
+      handleKeyEventReached,
+      updateParticles
     );
 
     // Setup keyboard controls

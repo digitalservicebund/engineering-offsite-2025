@@ -95,12 +95,31 @@ export class ParticleAnimationController {
   private precalculateParticleMetadata(): void {
     for (const person of this.people) {
       const joinX = this.xScale(person.joined);
-      const spawnX = joinX - this.spawnOffsetX;
+      let spawnX = joinX - this.spawnOffsetX;
+
+      // Edge case: Clamp spawnX to timeline start (0) for very early joins
+      if (spawnX < 0) {
+        console.warn(
+          `⚠️  Particle spawn position clamped for ${person.name}: ` +
+          `spawnX=${spawnX.toFixed(1)} → 0 (join date very early in timeline)`
+        );
+        spawnX = 0;
+      }
 
       // Calculate lane width at join date to find bottom edge
       // This accounts for previous joins (lane grows over time)
       const laneWidthAtJoin = this.getLaneWidthAt(person.joined);
       const laneBottomY = this.peopleLaneCenterY + laneWidthAtJoin / 2;
+
+      // Edge case: Runtime check for particles spawning below viewport
+      const spawnY = laneBottomY + LAYOUT.particleAnimations.people.spawnOffsetY;
+      if (spawnY > LAYOUT.viewport.height) {
+        console.warn(
+          `⚠️  Particle spawn position too low for ${person.name}: ` +
+          `spawnY=${spawnY.toFixed(1)} > viewport.height=${LAYOUT.viewport.height} ` +
+          `(may appear off-screen)`
+        );
+      }
 
       this.particleMetadata.set(person.name, {
         id: `particle-${person.name}`,

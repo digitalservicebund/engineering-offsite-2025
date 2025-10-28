@@ -327,6 +327,10 @@ export class Timeline {
     return new Date(this.data.endYear, 11, 31);
   }
 
+  public getSvg(): d3.Selection<SVGSVGElement, unknown, null, undefined> {
+    return this.svg;
+  }
+
   /**
    * Get x-positions of all key events (where isKeyMoment=true)
    * Pre-calculated for efficient pause detection during auto-scroll

@@ -21,6 +21,7 @@ export class ViewportController {
   private readonly endDate: Date;
   private readonly onViewportChange?: (date: Date) => void;
   private readonly onKeyEventReached?: (eventId: string | null) => void;
+  private readonly onParticleUpdate?: (currentPositionX: number) => void;
 
   private currentOffset: number;
   private isAnimating = false;
@@ -42,7 +43,8 @@ export class ViewportController {
     endDate: Date,
     keyEventPositions: KeyEventPosition[],
     onViewportChange?: (date: Date) => void,
-    onKeyEventReached?: (eventId: string | null) => void
+    onKeyEventReached?: (eventId: string | null) => void,
+    onParticleUpdate?: (currentPositionX: number) => void
   ) {
     this.container = container;
     this.timelineWidth = timelineWidth;
@@ -53,6 +55,7 @@ export class ViewportController {
     this.keyEventPositions = keyEventPositions;
     this.onViewportChange = onViewportChange;
     this.onKeyEventReached = onKeyEventReached;
+    this.onParticleUpdate = onParticleUpdate;
 
     console.log(`ViewportController initialized with ${keyEventPositions.length} key events`);
 
@@ -348,6 +351,12 @@ export class ViewportController {
 
     // 8. Update counters via onViewportChange callback
     this.notifyViewportChange();
+
+    // 8.5. Update particle animations
+    if (this.onParticleUpdate) {
+      const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+      this.onParticleUpdate(currentPositionX);
+    }
 
     // 9. Store timestamp already done above (step 2)
 
