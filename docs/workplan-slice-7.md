@@ -216,10 +216,10 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 ---
 
 ### Phase 3: Photo Display Logic (Photo Controller)
-**Status:** Pending  
+**Status:** In Progress  
 **🎯 INTEGRATION POINT:** Create photo controller and test basic show/hide
 
-**Task 3.1: Create `PhotoController` class in new file `photo-controller.ts`**
+**Task 3.1: Create `PhotoController` class in new file `photo-controller.ts`** ✅ DONE
 - Responsibility: Manage photo overlay display and thumbnail creation
 - Constructor parameters:
   ```typescript
