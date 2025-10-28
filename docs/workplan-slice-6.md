@@ -85,15 +85,15 @@
 ---
 
 ### Phase 2: Particle Detection & Viewport Height Check
-**Status:** Not Started
+**Status:** In Progress
 
-**Task 2.1: Create `ParticleAnimationController` class in new file `particle-animation-controller.ts`**
+**Task 2.1: Create `ParticleAnimationController` class in new file `particle-animation-controller.ts`** ✅ DONE
 - Responsibility: Manage particle lifecycle during forward auto-scroll
 - Constructor parameters:
   - `svg: d3.Selection<SVGSVGElement>` - where to append particles
   - `xScale: d3.ScaleTime<number, number>` - for x-positioning
   - `people: Person[]` - person data with join dates
-  - `peopleLanePathGenerator: PeopleLanePathGenerator` - for calculating lane width at join dates
+  - `getLaneWidthAt: (date: Date) => number` - callback for calculating lane width at join dates
   - `peopleLaneCenterY: number` - y-position of people lane centerline
 - Private properties:
   - `activeParticles: Map<string, ParticleAnimation>` - tracks particles in progress
@@ -106,7 +106,7 @@
 - **Design pattern:** Controller pattern - owns particle state and orchestrates lifecycle
 - **Rationale:** Encapsulates complex particle logic in dedicated class, keeping Timeline and ViewportController clean.
 
-**Task 2.2: Precompute viewport height validation**
+**Task 2.2: Precompute viewport height validation** ✅ DONE
 - In constructor, calculate lowest possible spawn point:
   ```typescript
   // Worst case: all people active simultaneously
@@ -129,7 +129,7 @@
 - With current config (~60 people max): 771px spawn, 800px viewport → 29px margin ✓
 - **Rationale:** Validate canvas dimensions at initialization to prevent off-screen particles.
 
-**Task 2.3: Pre-calculate particle metadata for all people**
+**Task 2.3: Pre-calculate particle metadata for all people** ✅ DONE
 - In constructor, build lookup map with all particle spawn data:
   ```typescript
   this.particleMetadata = new Map<string, ParticleAnimation>();
@@ -139,7 +139,7 @@
     const spawnX = joinX - this.spawnOffsetX;
     
     // Calculate lane width at join date to find bottom edge
-    const laneWidthAtJoin = peopleLanePathGenerator.getStrokeWidthAt(person.joined);
+    const laneWidthAtJoin = getLaneWidthAt(person.joined);
     const laneBottomY = peopleLaneCenterY + (laneWidthAtJoin / 2);
     
     this.particleMetadata.set(person.name, {
@@ -387,12 +387,12 @@
     timeline.getSvg(),
     timeline.getXScale(),
     data.people,
-    peopleLanePathGenerator, // Pass existing instance for width calculations
+    (date) => peopleLanePathGenerator.getStrokeWidthAt(date), // Callback for width calculations
     LAYOUT.lanes.people.yPosition
   );
   ```
 - Store reference for particle updates and cleanup
-- **Rationale:** Particle controller needs access to SVG and lane width calculator.
+- **Rationale:** Particle controller needs access to SVG and lane width callback for calculating spawn positions.
 
 **Task 6.3: Add particle update callback to ViewportController**
 - Add `onParticleUpdate?: (currentPositionX: number) => void` to constructor parameters
@@ -953,14 +953,14 @@ export class ParticleAnimationController {
   private particleGroup: d3.Selection<SVGGElement>;
   private particleMetadata: Map<string, ParticleAnimation>; // Pre-calculated spawn data
   private spawnOffsetX: number; // Computed from pixelsPerYear / 3
-  private readonly peopleLanePathGenerator: PeopleLanePathGenerator;
+  private readonly getLaneWidthAt: (date: Date) => number;
   private readonly peopleLaneCenterY: number;
   
   constructor(
     svg: d3.Selection<SVGSVGElement>,
     xScale: d3.ScaleTime<number, number>,
     people: Person[],
-    peopleLanePathGenerator: PeopleLanePathGenerator, // For calculating lane width
+    getLaneWidthAt: (date: Date) => number, // Callback for calculating lane width
     peopleLaneCenterY: number
   ) { 
     // Validate viewport height (Task 2.2)
@@ -1017,7 +1017,7 @@ const particleAnimationController = new ParticleAnimationController(
   timeline.getSvg(),
   timeline.getXScale(),
   data.people,
-  peopleLanePathGenerator, // Pass existing instance
+  (date) => peopleLanePathGenerator.getStrokeWidthAt(date), // Callback for lane width
   LAYOUT.lanes.people.yPosition
 );
 
