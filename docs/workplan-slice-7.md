@@ -216,7 +216,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 ---
 
 ### Phase 3: Photo Display Logic (Photo Controller)
-**Status:** In Progress  
+**Status:** ✅ Complete  
 **🎯 INTEGRATION POINT:** Create photo controller and test basic show/hide
 
 **Task 3.1: Create `PhotoController` class in new file `photo-controller.ts`** ✅ DONE
@@ -245,7 +245,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 - **Design pattern:** Controller pattern - encapsulates photo display logic
 - **Rationale:** Separate class keeps photo logic isolated from timeline and viewport controllers.
 
-**Task 3.2: Implement `showPhoto()` method**
+**Task 3.2: Implement `showPhoto()` method** ✅ DONE
 - Display full-screen photo with fade-in:
   ```typescript
   public async showPhoto(event: Event, markerX: number): Promise<void> {
@@ -313,7 +313,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 - **Error handling:** Log error and reject promise on image load failure
 - **Rationale:** Simplifies data model, async loading prevents blocking, element re-use enables smooth transition.
 
-**Task 3.3: Implement thumbnail positioning calculation**
+**Task 3.3: Implement thumbnail positioning calculation** ✅ DONE (completed in Task 3.1)
 - Helper method to calculate thumbnail position:
   ```typescript
   private calculateThumbnailPosition(markerX: number): { x: number; y: number } {
@@ -329,12 +329,12 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 - Account for timeline container scroll position (thumbnails positioned absolutely in container)
 - **Rationale:** Centralized calculation ensures consistent positioning across all thumbnails.
 
-**Task 3.4: Simplify integration - move photo display into existing callback**
+**Task 3.4: Simplify integration - move photo display into existing callback** ✅ DONE (design decision - no implementation needed)
 - No changes needed to ViewportController (simpler integration!)
 - Photo display logic moved to `onKeyEventReached` callback in main.ts
 - **Rationale:** Reuse existing callback instead of adding new one. Simpler architecture.
 
-**Task 3.5: Wire up photo display in `main.ts` (simplified integration)**
+**Task 3.5: Wire up photo display in `main.ts` (simplified integration)** ✅ DONE
 - After timeline initialization:
   ```typescript
   // Create photo overlay

@@ -9,6 +9,7 @@ import { CounterCalculator } from './counter-calculator';
 import { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
 import { ParticleAnimationController } from './particle-animation-controller';
+import { PhotoController } from './photo-controller';
 import { LAYOUT } from './config';
 import type { Person } from './types';
 import './style.css';
@@ -96,7 +97,8 @@ function createPhotoOverlay(): HTMLElement {
 function setupKeyboardControls(
   viewportController: ViewportController,
   timeline: Timeline,
-  particleAnimationController: ParticleAnimationController
+  particleAnimationController: ParticleAnimationController,
+  photoController: PhotoController
 ): void {
   const handleKeyDown = (event: KeyboardEvent): void => {
     const { key } = event;
@@ -143,8 +145,9 @@ function setupKeyboardControls(
     if (key === 'ArrowLeft') {
       event.preventDefault();
 
-      // Clean up particle animations
+      // Clean up particle animations and photos
       particleAnimationController.cleanup();
+      photoController.cleanup();
 
       // Reset viewport to start
       viewportController.resetToStart();
@@ -191,9 +194,16 @@ async function init(): Promise<void> {
     const timeline = new Timeline(container, data, peopleLanePathGenerator);
     timeline.render();
 
-    // Create photo overlay (will be used by PhotoController in Phase 3)
+    // Create photo overlay
     const photoOverlay = createPhotoOverlay();
-    void photoOverlay; // Suppress unused variable warning - will be used in Phase 3
+
+    // Create photo controller
+    const photoController = new PhotoController(
+      photoOverlay,
+      container,
+      timeline.getXScale(),
+      LAYOUT.lanes.events.yPosition
+    );
 
     // Create counter calculator (shares people count)
     const counterCalculator = new CounterCalculator(peopleCount, data);
@@ -212,9 +222,19 @@ async function init(): Promise<void> {
     // Get key event positions for auto-scroll pause detection
     const keyEventPositions = timeline.getKeyEventPositions();
 
-    // Create key event reached callback (for visual highlight)
+    // Create key event reached callback (for visual highlight and photo display)
     const handleKeyEventReached = (eventId: string | null): void => {
+      // Highlight event marker (existing logic)
       timeline.highlightEvent(eventId);
+
+      // If event has photo, show it
+      if (eventId) {
+        const event = data.events.find((e) => e.id === eventId);
+        if (event?.hasPhoto) {
+          const markerX = timeline.getXScale()(event.date);
+          photoController.showPhoto(event, markerX);
+        }
+      }
     };
 
     // Create particle animation controller
@@ -245,7 +265,7 @@ async function init(): Promise<void> {
     );
 
     // Setup keyboard controls
-    setupKeyboardControls(viewportController, timeline, particleAnimationController);
+    setupKeyboardControls(viewportController, timeline, particleAnimationController, photoController);
 
     console.log('✓ Timeline rendered successfully');
   } catch (error) {

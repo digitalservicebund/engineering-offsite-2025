@@ -49,8 +49,62 @@ export class PhotoController {
    * @param markerX - X-position of the event marker
    */
   public async showPhoto(event: Event, markerX: number): Promise<void> {
-    // Implementation in next task
-    console.log(`showPhoto called for event: ${event.name} at x=${markerX}`);
+    if (!event.hasPhoto) {
+      console.warn('Event has no photo to display:', event.id);
+      return;
+    }
+
+    // Derive photo URL from event ID (convention over configuration)
+    const photoUrl = `assets/photos/${event.id}.jpg`;
+
+    // Determine caption (fallback to event name if not specified)
+    const caption = event.caption || event.name;
+
+    // Store state
+    this.currentPhotoState = {
+      eventId: event.id,
+      eventName: event.name,
+      caption,
+      markerX,
+      markerY: this.eventMarkerY,
+      phase: 'loading',
+    };
+
+    // Create or re-use photo img element
+    let img = this.overlayElement.querySelector('.photo-fullscreen') as HTMLImageElement;
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'photo-fullscreen';
+      this.overlayElement.insertBefore(img, this.overlayElement.querySelector('.photo-caption'));
+    }
+
+    // Store reference for later re-use
+    this.currentPhotoState.photoElement = img;
+
+    // Load image
+    img.src = photoUrl;
+
+    // Wait for image to load
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => {
+        console.error(`Failed to load photo: ${photoUrl}`);
+        reject(new Error('Photo load failed'));
+      };
+    });
+
+    // Update caption
+    const captionEl = this.overlayElement.querySelector('.photo-caption') as HTMLElement;
+    captionEl.textContent = caption;
+
+    // Show overlay with fade-in
+    this.overlayElement.classList.remove('hidden');
+    // Trigger reflow for transition
+    void this.overlayElement.offsetWidth;
+    this.overlayElement.classList.add('visible');
+
+    this.currentPhotoState.phase = 'fullscreen';
+    console.log(`✓ Photo displayed: ${event.name}`);
   }
 
   /**

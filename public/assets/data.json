@@ -391,7 +391,7 @@
       "date": "2021-02-10",
       "name": "First Product Launch",
       "isKeyMoment": true,
-      "hasPhoto": false,
+      "hasPhoto": true,
       "photoUrl": null,
       "caption": null
     },
