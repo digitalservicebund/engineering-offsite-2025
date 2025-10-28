@@ -25,6 +25,7 @@ export class ParticleAnimationController {
   private completedJoins: Set<string>; // Person names whose join animations completed
   private particleGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
   private particleMetadata: Map<string, ParticleAnimation>; // Pre-calculated spawn data
+  private lastUpdateTime: number = 0; // Track frame timing for pause detection
 
   constructor(
     svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
@@ -143,6 +144,22 @@ export class ParticleAnimationController {
    * @param currentViewportX - The x-position of the viewport position marker (75% point)
    */
   public update(currentViewportX: number): void {
+    const now = performance.now();
+    
+    // Detect resume after pause (gap > 100ms indicates pause)
+    if (this.lastUpdateTime > 0 && now - this.lastUpdateTime > 100) {
+      const pauseDuration = now - this.lastUpdateTime;
+      
+      // Adjust all active animations' start times to exclude pause duration
+      for (const particle of this.activeParticles.values()) {
+        if (particle.animationStartTime) {
+          particle.animationStartTime += pauseDuration;
+        }
+      }
+    }
+    
+    this.lastUpdateTime = now;
+
     const detectionWindowSize = LAYOUT.particleAnimations.people.detectionWindowSize;
 
     // Iterate through all pre-calculated particle metadata
@@ -176,6 +193,29 @@ export class ParticleAnimationController {
           this.spawnParticle(particle);
           particle.hasSpawned = true;
         }
+      }
+    }
+
+    // Update all active particle animations
+    for (const particle of this.activeParticles.values()) {
+      if (!particle.animationStartTime || !particle.element || !particle.startTransform) {
+        continue;
+      }
+
+      // Calculate animation progress
+      const elapsed = now - particle.animationStartTime;
+      const progress = Math.min(elapsed / particle.animationDuration!, 1);
+
+      // Linear interpolation from startTransform to (0, 0)
+      const x = particle.startTransform.x * (1 - progress); // Lerp from startX to 0
+      const y = particle.startTransform.y * (1 - progress); // Lerp from startY to 0
+
+      // Apply transform
+      particle.element.attr('transform', `translate(${x}, ${y})`);
+
+      // Check if animation complete
+      if (progress >= 1) {
+        this.fadeOutParticle(particle);
       }
     }
   }
@@ -232,10 +272,9 @@ export class ParticleAnimationController {
   }
 
   /**
-   * Animate particle diagonally upward-right from spawn position to merge point
-   * Animates the inner animation group's transform from offset to (0,0)
-   * Single transform animates both X (left→right) and Y (down→up) simultaneously
-   * Duration synced to autoscroll speed so particle travels with viewport
+   * Record animation intent for RAF-based animation
+   * Stores animation parameters - actual interpolation happens in update() loop
+   * This allows animations to pause when auto-scroll pauses
    */
   private animateParticle(particle: ParticleAnimation): void {
     if (!particle.element) {
@@ -244,22 +283,17 @@ export class ParticleAnimationController {
     }
 
     // Calculate animation duration based on autoscroll speed
-    // Duration = distance / speed (converted to milliseconds)
-    const distance = this.spawnOffsetX; // X-axis distance to travel
-    const speed = LAYOUT.autoScroll.speed; // px/sec
-    const duration = (distance / speed) * 1000; // Convert to ms
+    const distance = this.spawnOffsetX;
+    const speed = LAYOUT.autoScroll.speed;
+    const duration = (distance / speed) * 1000;
 
-    // Animate transform from current offset to (0, 0) = merge position
-    // Use linear easing so X-velocity matches viewport scroll exactly
-    particle.element
-      .transition()
-      .duration(duration)
-      .ease(d3.easeLinear)
-      .attr('transform', 'translate(0, 0)')
-      .on('end', () => {
-        // Animation complete - start fade-out
-        this.fadeOutParticle(particle);
-      });
+    // Record animation parameters (don't start D3 transition)
+    particle.animationStartTime = performance.now();
+    particle.animationDuration = duration;
+    particle.startTransform = {
+      x: -(particle.joinX - particle.spawnX),
+      y: LAYOUT.particleAnimations.people.spawnOffsetY
+    };
   }
 
   /**
@@ -307,6 +341,7 @@ export class ParticleAnimationController {
     // Clear tracking state
     this.activeParticles.clear();
     this.completedJoins.clear();
+    this.lastUpdateTime = 0; // Reset frame timing
 
     console.log('Particle animations cleaned up');
   }

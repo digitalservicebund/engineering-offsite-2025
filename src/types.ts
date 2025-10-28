@@ -93,4 +93,7 @@ export interface ParticleAnimation {
   hasSpawned: boolean; // true when particle element created
   isComplete: boolean; // true when animation finished and cleaned up
   element?: d3.Selection<SVGGElement, unknown, null, undefined>; // D3 selection reference for animation
+  animationStartTime?: number; // High-res timestamp from performance.now() when animation started
+  animationDuration?: number; // Total animation duration in ms
+  startTransform?: { x: number; y: number }; // Initial offset position
 }

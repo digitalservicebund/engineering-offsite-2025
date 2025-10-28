@@ -317,7 +317,7 @@
 ---
 
 ### Phase 5: Fade-Out & Cleanup
-**Status:** In Progress
+**Status:** ✅ Complete
 
 **Task 5.1: Implement `fadeOutParticle(particle: ParticleAnimation)` method** ✅ DONE
 - Fade out the entire particle container (circle + text together):
@@ -352,7 +352,7 @@
 - Callback removes particle from DOM and updates tracking state
 - **Rationale:** Fade provides visual feedback that particle has "merged" into lane.
 
-**Task 5.2: Implement `cleanup()` method for timeline reset**
+**Task 5.2: Implement `cleanup()` method for timeline reset** ✅ DONE (already implemented)
 - Interrupt all transitions and remove all particles:
   ```typescript
   public cleanup(): void {
@@ -442,12 +442,12 @@
 ---
 
 ### Phase 7: Refactor to RAF-Based Animation for Proper Pause Behavior
-**Status:** Not Started  
+**Status:** In Progress  
 **🎯 CRITICAL FIX:** Particles currently keep animating when auto-scroll pauses
 
 **Context:** D3 transitions run independently of auto-scroll RAF loop. When auto-scroll pauses (at key events), particles keep moving. This breaks the presentation flow.
 
-**Task 7.1: Add animation state fields to ParticleAnimation interface**
+**Task 7.1: Add animation state fields to ParticleAnimation interface** ✅ DONE
 - Update `types.ts`:
   ```typescript
   export interface ParticleAnimation {
@@ -459,7 +459,7 @@
   ```
 - **Rationale:** Need to track animation state for manual interpolation each frame.
 
-**Task 7.2: Refactor animateParticle() to record animation intent**
+**Task 7.2: Refactor animateParticle() to record animation intent** ✅ DONE
 - Change from creating D3 transition to storing animation parameters:
   ```typescript
   private animateParticle(particle: ParticleAnimation): void {
@@ -484,7 +484,7 @@
   ```
 - **Rationale:** Animation intent stored, actual interpolation happens in update() loop.
 
-**Task 7.3: Add animation interpolation to update() method**
+**Task 7.3: Add animation interpolation to update() method** ✅ DONE
 - In `update()`, after spawn detection logic, add animation update loop:
   ```typescript
   // Update all active particle animations
