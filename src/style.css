@@ -158,15 +158,17 @@ svg {
 /* Photo thumbnail - positioned on timeline */
 .photo-thumbnail {
   position: absolute;
-  width: 100px;
-  height: 100px;
+  max-width: 100px;
+  max-height: 100px;
+  width: auto;
+  height: auto;
   border-radius: 4px;
   border: 2px solid #F5A623; /* Orange border matches event color */
-  overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease;
   pointer-events: auto;
-  object-fit: cover; /* Maintain aspect ratio when element is re-used from overlay */
+  object-fit: contain; /* Maintain aspect ratio, fit within bounds */
+  display: block;
 }
 
 .photo-thumbnail:hover {

@@ -381,9 +381,9 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 ---
 
 ### Phase 4: Photo-to-Thumbnail Transition Animation
-**Status:** Pending
+**Status:** ✅ Complete (Task 4.4 is testing)
 
-**Task 4.1: Implement `hidePhotoAndCreateThumbnail()` method with element re-use**
+**Task 4.1: Implement `hidePhotoAndCreateThumbnail()` method with element re-use** ✅ DONE
 - Animate photo from center to thumbnail position, re-using same img element:
   ```typescript
   public async hidePhotoAndCreateThumbnail(): Promise<void> {
@@ -460,7 +460,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
   - ⚠️ Con: Need to handle element reparenting carefully
 - **Rationale:** Re-using element creates seamless visual transition and avoids image reloading.
 
-**Task 4.2: Implement `convertPhotoToThumbnail()` method (element re-use)**
+**Task 4.2: Implement `convertPhotoToThumbnail()` method (element re-use)** ✅ DONE (completed in Task 3.1)
 - Convert existing photo element to thumbnail at calculated position:
   ```typescript
   private convertPhotoToThumbnail(photoElement: HTMLElement, eventId: string, x: number, y: number): void {
@@ -500,7 +500,7 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
 - **Note:** Need `object-fit: cover` CSS for thumbnail to maintain aspect ratio within fixed size
 - **Rationale:** Re-using element provides seamless transition, no image reload needed.
 
-**Task 4.3: Handle Space keypress during photo display**
+**Task 4.3: Handle Space keypress during photo display** ✅ DONE
 - Modify keyboard controls in `main.ts` to check for active photo:
   ```typescript
   const handleKeyDown = (event: KeyboardEvent): void => {
@@ -537,6 +537,28 @@ Implement full-screen photo display for key events with `hasPhoto=true`. Photos 
   - Auto-scroll resumes after transition
   - Thumbnail persists on timeline
 - **Rationale:** Visual validation critical for smooth user experience.
+
+**Task 4.5: Bug fixes from user testing** ✅ DONE
+Testing revealed 4 issues that were fixed:
+
+1. **Right arrow didn't trigger photo dismissal** - Fixed by adding same photo check to Right arrow handler that Space bar had
+2. **Animation target position incorrect** - Fixed by accounting for timeline scroll offset when calculating screen position:
+   - Added `currentScrollOffset` parameter to `hidePhotoAndCreateThumbnail()`
+   - Calculate screen position: `thumbnailScreenX = thumbnailPos.x - currentScrollOffset`
+   - Use screen position (not timeline position) for transform calculation
+3. **Square 100x100 didn't work for non-square images** - Fixed by maintaining aspect ratio:
+   - Changed CSS: `width: auto; height: auto; max-width: 100px; max-height: 100px`
+   - Changed CSS: `object-fit: contain` (was `cover`)
+   - Updated JS: `height: 'auto'` with `maxHeight` constraint
+4. **Thumbnails obscured event labels** - Fixed by repositioning below event lane:
+   - Changed `calculateThumbnailPosition()` to place thumbnails 10px below lane bottom edge
+   - No longer uses negative `thumbnailOffsetY` (above marker)
+
+- **Technical decisions:**
+  - Element re-use strategy maintained (same img for overlay and thumbnail)
+  - Aspect ratio maintained while constraining both width and height to 100px max
+  - Thumbnails now positioned below event lane to avoid label collisions
+- **Rationale:** Improve usability and visual quality based on real-world testing.
 
 ---
 

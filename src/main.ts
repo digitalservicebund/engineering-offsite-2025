@@ -100,44 +100,35 @@ function setupKeyboardControls(
   particleAnimationController: ParticleAnimationController,
   photoController: PhotoController
 ): void {
-  const handleKeyDown = (event: KeyboardEvent): void => {
+  const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
     const { key } = event;
     const currentState = viewportController.getScrollState();
 
-    // Handle Space bar - state-aware behavior
-    if (key === ' ') {
+    // Handle Space bar or Right arrow - unified behavior
+    if (key === ' ' || key === 'ArrowRight') {
       event.preventDefault();
 
+      // If photo is displayed, dismiss it and resume scrolling
+      if (photoController.hasActivePhoto()) {
+        await photoController.hidePhotoAndCreateThumbnail();
+        timeline.highlightEvent(null);
+        viewportController.resumeAutoScroll();
+        return;
+      }
+
+      // State-aware scroll control
       if (currentState === 'idle') {
         // Start auto-scroll forward
         viewportController.startAutoScroll();
-        timeline.highlightEvent(null); // Clear any highlights
+        timeline.highlightEvent(null);
       } else if (currentState === 'scrolling') {
         // Toggle pause (manual pause)
         viewportController.togglePause();
-        // Note: Manual pause doesn't highlight event (pausedAtEventId will be null)
-      } else if (currentState === 'paused') {
-        // Resume auto-scroll
-        timeline.highlightEvent(null); // Clear highlight
-        viewportController.resumeAutoScroll();
-      }
-      return;
-    }
-
-    // Handle Right arrow - start or resume forward scroll
-    if (key === 'ArrowRight') {
-      event.preventDefault();
-
-      if (currentState === 'idle') {
-        // Start auto-scroll forward
-        viewportController.startAutoScroll();
-        timeline.highlightEvent(null);
       } else if (currentState === 'paused') {
         // Resume auto-scroll
         timeline.highlightEvent(null);
         viewportController.resumeAutoScroll();
       }
-      // If already scrolling, no-op
       return;
     }
 

@@ -98,8 +98,8 @@ export const LAYOUT = {
     captionFontWeight: 300, // Light weight for elegance
     captionColor: '#FFFFFF', // White text
     captionOffsetY: 40, // px - distance from bottom of photo to caption
-    thumbnailSize: 100, // px - thumbnail width/height (square)
-    thumbnailOffsetY: -10, // px - distance above event marker line (negative = above)
+    thumbnailSize: 100, // px - thumbnail max width/height
+    thumbnailGapBelowLane: 10, // px - gap between lane bottom edge and thumbnail top
   },
   gridlines: {
     color: '#E0E0E0',

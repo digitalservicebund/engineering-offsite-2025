@@ -37,10 +37,8 @@ export class PhotoController {
 
     console.log('✓ PhotoController initialized');
     
-    // Suppress unused warnings for properties/methods used in future tasks
+    // Suppress unused warnings for properties used in future tasks
     void this.xScale;
-    void this.calculateThumbnailPosition;
-    void this.convertPhotoToThumbnail;
   }
 
   /**
@@ -111,8 +109,86 @@ export class PhotoController {
    * Hide the full-screen photo and create a thumbnail at the event marker position
    */
   public async hidePhotoAndCreateThumbnail(): Promise<void> {
-    // Implementation in Phase 4
-    console.log('hidePhotoAndCreateThumbnail called');
+    if (!this.currentPhotoState || this.currentPhotoState.phase !== 'fullscreen') {
+      console.warn('No photo to hide or already transitioning');
+      return;
+    }
+
+    this.currentPhotoState.phase = 'transitioning';
+
+    const { markerX, eventId, photoElement } = this.currentPhotoState;
+    if (!photoElement) {
+      console.error('Photo element not found');
+      return;
+    }
+
+    const thumbnailPos = this.calculateThumbnailPosition(markerX);
+
+    // Get current photo position and size
+    const photoRect = photoElement.getBoundingClientRect();
+
+    // Calculate where thumbnail will appear on screen
+    // Timeline container position + thumbnail position within container = screen position
+    const containerRect = this.timelineContainer.getBoundingClientRect();
+    const thumbnailScreenX = containerRect.left + thumbnailPos.x;
+    const thumbnailScreenY = containerRect.top + thumbnailPos.y;
+
+    // Calculate actual thumbnail dimensions based on natural image size
+    // This ensures we match exactly what the browser will render
+    const imgElement = photoElement as HTMLImageElement;
+    const naturalAspectRatio = imgElement.naturalHeight / imgElement.naturalWidth;
+    const actualThumbnailWidth = LAYOUT.photoDisplay.thumbnailSize;
+    const actualThumbnailHeight = actualThumbnailWidth * naturalAspectRatio;
+
+    // Calculate scale factor based on displayed size
+    const scale = LAYOUT.photoDisplay.thumbnailSize / photoRect.width;
+
+    // Calculate where thumbnail CENTER will be on screen
+    const thumbnailCenterX = thumbnailScreenX + actualThumbnailWidth / 2;
+    const thumbnailCenterY = thumbnailScreenY + actualThumbnailHeight / 2;
+
+    // Get actual current photo center (not assumed screen center)
+    // The photo may not be perfectly centered due to caption below it
+    const currentPhotoCenterX = photoRect.left + photoRect.width / 2;
+    const currentPhotoCenterY = photoRect.top + photoRect.height / 2;
+
+    // Calculate translation: move photo center to thumbnail center
+    const translateX = thumbnailCenterX - currentPhotoCenterX;
+    const translateY = thumbnailCenterY - currentPhotoCenterY;
+
+    // Apply transform animation via CSS
+    photoElement.style.transition = `transform ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out, opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
+    photoElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+    // Fade out backdrop and caption
+    const backdrop = this.overlayElement.querySelector('.photo-backdrop') as HTMLElement;
+    const caption = this.overlayElement.querySelector('.photo-caption') as HTMLElement;
+    backdrop.style.transition = `opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
+    backdrop.style.opacity = '0';
+    caption.style.transition = `opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
+    caption.style.opacity = '0';
+
+    // Wait for animation to complete
+    await new Promise((resolve) => setTimeout(resolve, LAYOUT.photoDisplay.fadeOutDuration));
+
+    // Move photo element to thumbnail position (re-use same element)
+    this.convertPhotoToThumbnail(photoElement, eventId, thumbnailPos.x, thumbnailPos.y);
+
+    // Hide overlay
+    this.overlayElement.classList.remove('visible');
+    this.overlayElement.classList.add('hidden');
+
+    // Reset overlay styles
+    backdrop.style.transition = '';
+    backdrop.style.opacity = '';
+    caption.style.transition = '';
+    caption.style.opacity = '';
+
+    // Clear state
+    this.currentPhotoState.phase = 'thumbnail';
+    this.currentPhotoState = null;
+
+    console.log(`✓ Photo transitioned to thumbnail: ${eventId}`);
   }
 
   /**
@@ -151,17 +227,15 @@ export class PhotoController {
    * Calculate thumbnail position relative to event marker
    * @param markerX - X-position of event marker
    * @returns Object with x and y coordinates for thumbnail
-   * Note: Will be used in Phase 4 for photo-to-thumbnail transition
    */
   private calculateThumbnailPosition(markerX: number): { x: number; y: number } {
     // Thumbnail centered horizontally on marker
     const x = markerX - LAYOUT.photoDisplay.thumbnailSize / 2;
 
-    // Thumbnail positioned above marker line
-    const y =
-      this.eventMarkerY +
-      LAYOUT.photoDisplay.thumbnailOffsetY -
-      LAYOUT.photoDisplay.thumbnailSize;
+    // Thumbnail positioned BELOW marker line (to avoid obscuring event labels)
+    // Position below the events lane bottom edge
+    const laneBottomEdge = this.eventMarkerY + LAYOUT.lanes.events.strokeWidth / 2;
+    const y = laneBottomEdge + LAYOUT.photoDisplay.thumbnailGapBelowLane;
 
     return { x, y };
   }
@@ -172,7 +246,6 @@ export class PhotoController {
    * @param eventId - Event ID for tracking
    * @param x - X-position for thumbnail
    * @param y - Y-position for thumbnail
-   * Note: Will be used in Phase 4 for photo-to-thumbnail transition
    */
   private convertPhotoToThumbnail(
     photoElement: HTMLElement,
@@ -197,7 +270,8 @@ export class PhotoController {
     photoElement.style.left = `${x}px`;
     photoElement.style.top = `${y}px`;
     photoElement.style.width = `${LAYOUT.photoDisplay.thumbnailSize}px`;
-    photoElement.style.height = `${LAYOUT.photoDisplay.thumbnailSize}px`;
+    photoElement.style.height = 'auto'; // Maintain aspect ratio
+    photoElement.style.maxHeight = `${LAYOUT.photoDisplay.thumbnailSize}px`; // Constrain height too
     photoElement.style.transform = ''; // Clear transform
     photoElement.style.transition = '';
     photoElement.style.opacity = '1';
