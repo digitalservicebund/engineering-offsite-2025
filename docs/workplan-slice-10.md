@@ -1,8 +1,9 @@
 # Slice 10 Implementation Plan: Departure Particles (People & Projects)
 
-**Status:** Ready for Implementation  
+**Status:** ✅ IMPLEMENTATION COMPLETE  
 **Created:** 2025-10-29  
-**Estimated Time:** 2-3 hours (high code reuse)
+**Completed:** 2025-10-29  
+**Actual Time:** ~3 hours (including bug fixes and design iterations)
 
 ---
 
@@ -313,6 +314,30 @@ From `data.json`:
 
 ---
 
-**Document Status:** Ready for Implementation  
-**Next Step:** Task 1.1 - Add color helper function
+## Implementation Summary
+
+**Status:** ✅ FULLY COMPLETE
+
+**What Was Built:**
+- 4 particle animation controllers (joining, leaving, starting, ending)
+- Departure particles with 👋 emoji, subdued opacity, and extended travel distance
+- Opacity fade animation (1.0 → 0.6 during departure)
+- All controllers integrated into viewport update and cleanup lifecycle
+
+**Challenges Overcome:**
+- Bug #1: Wrong Y-direction (particles joining from above instead of departing)
+- Bug #2: Wrong X-direction (particles moving backward instead of forward)
+- Bug #3: Particles not appearing (spawn position calculation issue)
+- Design iterations: Opacity animation direction, Y-distance tuning (1.4x)
+
+**Final State:**
+- Build: 86.77 kB (27.46 kB gzipped)
+- All functionality working as specified
+- Code follows established patterns from Slices 6 & 9
+- Ready for user testing
+
+---
+
+**Document Status:** ✅ IMPLEMENTATION COMPLETE  
+**Completed:** 2025-10-29
 
