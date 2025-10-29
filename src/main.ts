@@ -93,7 +93,9 @@ function setupKeyboardControls(
   viewportController: ViewportController,
   timeline: Timeline,
   peopleParticleController: ParticleAnimationController<Person>,
+  peopleLeavingController: ParticleAnimationController<Person>,
   projectParticleController: ParticleAnimationController<Project>,
+  projectsEndingController: ParticleAnimationController<Project>,
   photoController: PhotoController
 ): void {
   const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
@@ -134,7 +136,9 @@ function setupKeyboardControls(
 
       // Clean up particle animations and photos
       peopleParticleController.cleanup();
+      peopleLeavingController.cleanup();
       projectParticleController.cleanup();
+      projectsEndingController.cleanup();
       photoController.cleanup();
 
       // Reset viewport to start
@@ -271,6 +275,19 @@ async function init(): Promise<void> {
       }
     );
 
+    const peopleLeavingController = new ParticleAnimationController<Person>(
+      timeline.getSvg(),
+      timeline.getXScale(),
+      data.people.filter(p => p.left !== null),
+      (person) => person.left!,
+      (person) => person.name,
+      (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
+      {
+        laneCenterY: LAYOUT.lanes.people.yPosition,
+        ...LAYOUT.particleAnimations.people.leaving,
+      }
+    );
+
     const projectParticleController = new ParticleAnimationController<Project>(
       timeline.getSvg(),
       timeline.getXScale(),
@@ -284,10 +301,25 @@ async function init(): Promise<void> {
       }
     );
 
+    const projectsEndingController = new ParticleAnimationController<Project>(
+      timeline.getSvg(),
+      timeline.getXScale(),
+      data.projects.filter(p => p.end !== null),
+      (project) => project.end!,
+      (project) => project.name,
+      (date) => projectLanePathGenerator.getStrokeWidthAt(date),
+      {
+        laneCenterY: LAYOUT.lanes.projects.yPosition,
+        ...LAYOUT.particleAnimations.projects.ending,
+      }
+    );
+
     // Create particle update callback
     const updateParticles = (currentPositionX: number): void => {
       peopleParticleController.update(currentPositionX);
+      peopleLeavingController.update(currentPositionX);
       projectParticleController.update(currentPositionX);
+      projectsEndingController.update(currentPositionX);
     };
 
     // Create viewport controller for panning
@@ -304,7 +336,7 @@ async function init(): Promise<void> {
     );
 
     // Setup keyboard controls
-    setupKeyboardControls(viewportController, timeline, peopleParticleController, projectParticleController, photoController);
+    setupKeyboardControls(viewportController, timeline, peopleParticleController, peopleLeavingController, projectParticleController, projectsEndingController, photoController);
 
     console.log('✓ Timeline rendered successfully');
   } catch (error) {

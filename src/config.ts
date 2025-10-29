@@ -97,7 +97,8 @@ export const LAYOUT = {
         labelColor: COLORS.text,
       },
       leaving: {
-        spawnOffsetY: -60, // px - NEGATIVE = below lane, animates upward away from lane
+        spawnOffsetY: 60, // px - below lane (same side as joining) - particles separate downward
+        animateTowardLane: false, // Animate away from lane (departure)
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for joining)
         circleRadius: 8, // px - particle circle size
@@ -121,7 +122,8 @@ export const LAYOUT = {
         labelColor: COLORS.text,
       },
       ending: {
-        spawnOffsetY: 60, // px - POSITIVE = above lane, animates upward away from lane
+        spawnOffsetY: -60, // px - above lane (same side as starting) - particles separate upward
+        animateTowardLane: false, // Animate away from lane (departure)
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for starting)
         circleRadius: 8, // px - particle circle size

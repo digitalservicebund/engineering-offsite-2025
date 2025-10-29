@@ -33,6 +33,7 @@ export class ParticleAnimationController<T> {
     labelColor: string;
     detectionWindowSize: number;
     fadeOutDuration: number;
+    animateTowardLane?: boolean; // true = toward lane (joining), false = away from lane (leaving). Default: true
   };
   private readonly spawnOffsetX: number;
 
@@ -60,6 +61,7 @@ export class ParticleAnimationController<T> {
       labelColor: string;
       detectionWindowSize: number;
       fadeOutDuration: number;
+      animateTowardLane?: boolean; // true = toward lane (joining), false = away from lane (leaving). Default: true
     }
   ) {
     this.xScale = xScale;
@@ -122,7 +124,12 @@ export class ParticleAnimationController<T> {
       const entityDate = this.getEntityDate(entity);
       
       const joinX = this.xScale(entityDate);
-      let spawnX = joinX - this.spawnOffsetX;
+      const animateTowardLane = this.config.animateTowardLane ?? true;
+      
+      // Calculate spawn position based on animation direction
+      // Joining: spawn to the left (particle approaches from behind)
+      // Leaving: spawn at event position (particle departs from lane)
+      let spawnX = animateTowardLane ? joinX - this.spawnOffsetX : joinX;
 
       // Edge case: Clamp spawnX to timeline start (0) for very early events
       if (spawnX < 0) {
@@ -237,13 +244,37 @@ export class ParticleAnimationController<T> {
       const elapsed = now - particle.animationStartTime;
       const progress = Math.min(elapsed / particle.animationDuration!, 1);
 
+      const animateTowardLane = this.config.animateTowardLane ?? true;
+      
       // X-axis: Linear motion to stay synchronized with viewport scroll speed
-      // Y-axis: Asymptotic easing for organic "settling" into lane
-      const x = particle.startTransform.x * (1 - progress); // Linear horizontal motion
-      const y = particle.startTransform.y * (1 - this.easeAsymptotic(progress)); // Asymptotic vertical motion
+      // Y-axis: Asymptotic easing for organic "settling" into/away from lane
+      let x: number;
+      let y: number;
+      
+      if (animateTowardLane) {
+        // Joining: animate FROM offset TO (0,0) - lane center
+        // startTransform.x is negative (left offset), moves rightward toward 0
+        x = particle.startTransform.x * (1 - progress);
+        y = particle.startTransform.y * (1 - this.easeAsymptotic(progress));
+      } else {
+        // Leaving: animate FROM (0,0) TO forward offset - away from lane
+        // startTransform.x is positive (forward distance to travel)
+        x = particle.startTransform.x * progress;
+        y = particle.startTransform.y * this.easeAsymptotic(progress);
+      }
 
       // Apply transform
       particle.element.attr('transform', `translate(${x}, ${y})`);
+      
+      // For departure particles, fade out the opacity as they leave
+      if (!animateTowardLane) {
+        const targetOpacity = LAYOUT.particleAnimations.subduedOpacity;
+        const currentOpacity = targetOpacity + (1 - progress) * (1 - targetOpacity); // Fade out: start at 1, end at targetOpacity
+        
+        // Apply to both circle and label
+        particle.element.select('circle').attr('fill-opacity', currentOpacity);
+        particle.element.select('text').attr('fill-opacity', currentOpacity);
+      }
 
       // Check if animation complete
       if (progress >= 1) {
@@ -288,17 +319,23 @@ export class ParticleAnimationController<T> {
       .attr('data-entity-name', particle.entityName)
       .attr('transform', `translate(${particle.joinX}, ${particle.laneEdgeY})`);
 
-    // Inner animation group: starts offset (left and down), will animate to (0,0)
+    // Inner animation group: position depends on animation direction
     const offsetX = -(particle.joinX - particle.spawnX); // Negative = left offset
     const offsetY = this.config.spawnOffsetY; // Positive = down offset
+    const animateTowardLane = this.config.animateTowardLane ?? true; // Default to true (joining behavior)
+    
+    // For joining (toward lane): start at offset, animate to (0,0)
+    // For leaving (away from lane): start at (0,0), animate to offset
+    const initialX = animateTowardLane ? offsetX : 0;
+    const initialY = animateTowardLane ? offsetY : 0;
 
     const animationGroup = particleContainer
       .append('g')
       .attr('class', 'particle-animation')
-      .attr('transform', `translate(${offsetX}, ${offsetY})`);
+      .attr('transform', `translate(${initialX}, ${initialY})`);
 
     // Circle at origin (0,0) within animation group
-    animationGroup
+    const circle = animationGroup
       .append('circle')
       .attr('cx', 0)
       .attr('cy', 0)
@@ -306,7 +343,10 @@ export class ParticleAnimationController<T> {
       .attr('fill', this.config.circleColor);
 
     // Text label to the right of circle
-    animationGroup
+    // Append 👋 emoji for departure particles to improve visibility
+    const labelText = animateTowardLane ? particle.entityName : `${particle.entityName} 👋`;
+    
+    const label = animationGroup
       .append('text')
       .attr('x', this.config.labelOffsetX)
       .attr('y', 4) // Vertical centering offset
@@ -314,7 +354,13 @@ export class ParticleAnimationController<T> {
       .attr('font-size', this.config.labelFontSize)
       .attr('font-family', this.config.labelFontFamily)
       .attr('fill', this.config.labelColor)
-      .text(particle.entityName);
+      .text(labelText);
+    
+    // For departure particles, start with subdued opacity (will fade out during animation)
+    if (!animateTowardLane) {
+      circle.attr('fill-opacity', LAYOUT.particleAnimations.subduedOpacity);
+      label.attr('fill-opacity', LAYOUT.particleAnimations.subduedOpacity);
+    }
 
     // Store reference for animation
     particle.element = animationGroup;
@@ -344,9 +390,16 @@ export class ParticleAnimationController<T> {
     // Record animation parameters (don't start D3 transition)
     particle.animationStartTime = performance.now();
     particle.animationDuration = duration;
+    
+    const animateTowardLane = this.config.animateTowardLane ?? true;
+    
+    // Store the offset values - animation direction determines whether we move from offset to (0,0) or vice versa
+    // Joining: x = -(joinX - spawnX) which is negative (left offset)
+    // Leaving: x = spawnOffsetX which is positive (forward distance to travel)
+    // Y-offset: For leaving, extend 20% further for better visibility
     particle.startTransform = {
-      x: -(particle.joinX - particle.spawnX),
-      y: this.config.spawnOffsetY
+      x: animateTowardLane ? -(particle.joinX - particle.spawnX) : this.spawnOffsetX,
+      y: animateTowardLane ? this.config.spawnOffsetY : this.config.spawnOffsetY * 1.4
     };
   }
 

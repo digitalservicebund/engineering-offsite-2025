@@ -4,7 +4,8 @@
   "people": [
     {
       "name": "Pers A",
-      "joined": "2020-11-16"
+      "joined": "2020-03-16",
+      "left": "2020-09-30"
     },
     {
       "name": "Pers B",
@@ -331,8 +332,8 @@
       "id": "proj1",
       "name": "Platform v1",
       "start": "2020-06-01",
-      "end": null,
-      "widthIncrement": 3
+      "end": "2021-02-28",
+      "widthIncrement": 7
     },
     {
       "id": "proj2",
