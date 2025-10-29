@@ -162,13 +162,7 @@ export class PhotoController {
     const captionEl = this.overlayElement.querySelector(`.${PHOTO_CAPTION_CLASS}`) as HTMLElement;
     captionEl.textContent = caption;
 
-    // Apply transition durations from config (before triggering animation)
-    const backdrop = this.overlayElement.querySelector(`.${PHOTO_BACKDROP_CLASS}`) as HTMLElement;
-    img.style.transition = `opacity ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in, transform ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in`;
-    backdrop.style.transition = `opacity ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in`;
-    captionEl.style.transition = `opacity ${LAYOUT.photoDisplay.fadeInDuration}ms ease-in`;
-
-    // Show overlay with fade-in
+    // Show overlay with fade-in (CSS transitions handle animation)
     this.overlayElement.classList.remove(PHOTO_HIDDEN_CLASS);
     // Trigger reflow for transition
     void this.overlayElement.offsetWidth;
@@ -229,16 +223,17 @@ export class PhotoController {
     const translateX = thumbnailCenterX - currentPhotoCenterX;
     const translateY = thumbnailCenterY - currentPhotoCenterY;
 
-    // Apply transform animation via CSS
-    photoElement.style.transition = `transform ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out, opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
-    photoElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-
-    // Fade out backdrop and caption
+    // Add fade-out classes for CSS transitions
     const backdrop = this.overlayElement.querySelector(`.${PHOTO_BACKDROP_CLASS}`) as HTMLElement;
     const caption = this.overlayElement.querySelector(`.${PHOTO_CAPTION_CLASS}`) as HTMLElement;
-    backdrop.style.transition = `opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
+    
+    photoElement.classList.add('fading-out');
+    backdrop.classList.add('fading-out');
+    caption.classList.add('fading-out');
+
+    // Apply transform and fade out
+    photoElement.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     backdrop.style.opacity = '0';
-    caption.style.transition = `opacity ${LAYOUT.photoDisplay.fadeOutDuration}ms ease-out`;
     caption.style.opacity = '0';
 
     // Wait for animation to complete
@@ -251,10 +246,11 @@ export class PhotoController {
     this.overlayElement.classList.remove(PHOTO_VISIBLE_CLASS);
     this.overlayElement.classList.add(PHOTO_HIDDEN_CLASS);
 
-    // Reset overlay styles
-    backdrop.style.transition = '';
+    // Reset styles and classes
+    photoElement.classList.remove('fading-out');
+    backdrop.classList.remove('fading-out');
+    caption.classList.remove('fading-out');
     backdrop.style.opacity = '';
-    caption.style.transition = '';
     caption.style.opacity = '';
 
     // Clear state

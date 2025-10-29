@@ -3,37 +3,43 @@
  */
 
 :root {
-  /* Color Tokens */
-  --color-text: #2C3E50;
-  --color-bg-light: #F8F9FA;
-  --color-border-light: #E0E0E0;
+  /* Color Tokens - CSS-only presentation values */
+  --color-text: #2C3E50; /* Duplicates LAYOUT.textColor (used for SVG labels) */
+  --color-bg-light: #F8F9FA; /* Duplicates LAYOUT.background (used for SVG bg) */
+  --color-border-light: #E0E0E0; /* Duplicates LAYOUT.gridlines.color */
   --color-white: #FFFFFF;
   --color-gray-muted: #BDC3C7;
+  --color-error: #E74C3C; /* Red - pause indicator, errors */
   
-  /* Brand Colors - match config.ts */
-  --color-projects: #7ED321; /* Green */
-  --color-events: #F5A623; /* Orange */
-  --color-people: #4A90E2; /* Blue */
-  --color-error: #E74C3C; /* Red */
-  
-  /* Spacing Tokens */
+  /* Spacing Tokens - CSS-only */
   --space-xs: 2px;
-  --space-sm: 4px;
   --space-md: 8px;
   --space-lg: 16px;
   --space-xl: 20px;
   --space-2xl: 40px;
   
-  /* Border Radius */
+  /* Border Radius - CSS-only */
   --radius-sm: 4px;
   --radius-md: 8px;
   
-  /* Shadows */
+  /* Shadows - CSS-only */
   --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-text: 0 2px 4px rgba(0, 0, 0, 0.8);
   
-  /* Photo Overlay */
+  /* Photo Overlay - CSS-only */
   --photo-backdrop: rgba(0, 0, 0, 0.7);
+  
+  /* ====================================================================
+     INJECTED VARIABLES (from config.ts at runtime)
+     These values are used by BOTH TypeScript and CSS
+     ==================================================================== */
+  
+  /* Animation Durations (TS: setTimeout, CSS: transitions) */
+  --anim-photo-fade-in: 150ms; /* Injected from LAYOUT.photoDisplay.fadeInDuration */
+  --anim-photo-fade-out: 150ms; /* Injected from LAYOUT.photoDisplay.fadeOutDuration */
+  
+  /* Brand Colors (TS: D3 SVG rendering, CSS: styling) */
+  --color-events: #F5A623; /* Orange - Injected from LAYOUT.lanes.events.color */
 }
 
 * {
@@ -146,7 +152,7 @@ svg {
   height: 100%;
   background: var(--photo-backdrop);
   opacity: 0;
-  /* Note: transition is set dynamically in PhotoController using LAYOUT.photoDisplay.fadeInDuration */
+  transition: opacity var(--anim-photo-fade-in) ease-in;
 }
 
 .photo-overlay.visible .photo-backdrop {
@@ -160,13 +166,25 @@ svg {
   max-height: 70vh;
   opacity: 0;
   transform: scale(0.95);
-  /* Note: transition is set dynamically in PhotoController using LAYOUT.photoDisplay.fadeInDuration */
+  transition: opacity var(--anim-photo-fade-in) ease-in, 
+              transform var(--anim-photo-fade-in) ease-in;
   border-radius: var(--radius-sm);
 }
 
 .photo-overlay.visible .photo-fullscreen {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Photo fade-out transition (when dismissing) */
+.photo-fullscreen.fading-out {
+  transition: opacity var(--anim-photo-fade-out) ease-out,
+              transform var(--anim-photo-fade-out) ease-out;
+}
+
+.photo-backdrop.fading-out,
+.photo-caption.fading-out {
+  transition: opacity var(--anim-photo-fade-out) ease-out;
 }
 
 .photo-fullscreen img {
@@ -189,6 +207,7 @@ svg {
   max-width: 90%;
   overflow-wrap: break-word;
   word-wrap: break-word; /* Legacy browser support */
+  transition: opacity var(--anim-photo-fade-in) ease-in;
 }
 
 /* Photo thumbnail - positioned on timeline */

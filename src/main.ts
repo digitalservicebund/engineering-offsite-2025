@@ -10,7 +10,7 @@ import { PeopleLanePathGenerator } from './people-lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
 import { ParticleAnimationController } from './particle-animation-controller';
 import { PhotoController } from './photo-controller';
-import { LAYOUT } from './config';
+import { LAYOUT, injectCSSVariables } from './config';
 import type { Person } from './types';
 import './style.css';
 
@@ -154,6 +154,9 @@ function setupKeyboardControls(
  */
 async function init(): Promise<void> {
   try {
+    // Inject CSS variables from config before any DOM creation
+    injectCSSVariables();
+
     console.log('Loading timeline data...');
 
     const data = await loadTimelineData();

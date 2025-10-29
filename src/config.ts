@@ -2,6 +2,22 @@
  * Layout configuration constants
  */
 
+/**
+ * Color Palette
+ * All colors used throughout the application
+ */
+const COLORS = {
+  // Brand/Lane Colors
+  projects: '#7ED321',   // Green - projects lane
+  events: '#F5A623',     // Orange - events lane, markers, thumbnails
+  people: '#4A90E2',     // Blue - people lane, particles
+  
+  // UI Colors
+  text: '#2C3E50',       // Dark gray - text labels, counters
+  background: '#F8F9FA', // Light gray - timeline background
+  gridlines: '#E0E0E0',  // Medium gray - gridlines, borders
+} as const;
+
 export const LAYOUT = {
   viewport: {
     width: 1200,
@@ -21,21 +37,19 @@ export const LAYOUT = {
     projects: {
       yPosition: 150,
       initialStrokeWidth: 2,
-      color: '#7ED321', // Green
+      color: COLORS.projects,
     },
     events: {
       yPosition: 400,
       strokeWidth: 8,
-      color: '#F5A623', // Orange
+      color: COLORS.events,
     },
     people: {
       yPosition: 650,
       initialStrokeWidth: 2,
-      color: '#4A90E2', // Blue
+      color: COLORS.people,
       baseStrokeWidth: 2, // px - minimum width before any people join
       pixelsPerPerson: 2, // px - width increment per active person
-      widthTransitionDuration: 300, // ms - duration of lane width growth animation (0.3s per spec)
-      widthTransitionEasing: 'ease-out' as const, // D3 easing for lane width changes
       // Path generation parameters for smooth organic curves
       minEventSpacing: 50, // px - minimum distance between width changes; closer events are consolidated
       bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
@@ -45,11 +59,11 @@ export const LAYOUT = {
   eventMarkers: {
     lineHeight: 30, // px - extends upward from top edge of lane
     lineWidth: 3, // px - stroke width
-    color: '#F5A623', // Orange - matches events lane
+    color: COLORS.events,
     label: {
       fontSize: 11, // px
       fontFamily: 'sans-serif' as const,
-      color: '#2C3E50', // Matches textColor
+      color: COLORS.text,
       offsetY: -5, // px - space between bottom edge of text and marker top
       maxWidth: 100, // px - text wraps within this width
     },
@@ -69,11 +83,11 @@ export const LAYOUT = {
       detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
       fadeOutDuration: 300, // ms - fade duration after reaching lane
       circleRadius: 8, // px - particle circle size
-      circleColor: '#4A90E2', // Blue - matches people lane color
+      circleColor: COLORS.people,
       labelOffsetX: 15, // px - text position to right of circle
       labelFontSize: 11, // px - matches event marker labels
       labelFontFamily: 'sans-serif' as const,
-      labelColor: '#2C3E50', // Matches text color
+      labelColor: COLORS.text,
     },
   },
   photoDisplay: {
@@ -83,12 +97,35 @@ export const LAYOUT = {
     thumbnailGapBelowLane: 10, // px - gap between lane bottom edge and thumbnail top
   },
   gridlines: {
-    color: '#E0E0E0',
+    color: COLORS.gridlines,
     strokeWidth: 1,
   },
-  background: '#F8F9FA',
-  textColor: '#2C3E50',
+  background: COLORS.background,
+  textColor: COLORS.text,
 } as const;
 
 export type LayoutConfig = typeof LAYOUT;
+
+/**
+ * Inject CSS custom properties (variables) from config at runtime
+ * 
+ * INJECTION POLICY: Only inject values that are actively used by BOTH:
+ * 1. TypeScript code (calculations, setTimeout, D3 rendering)
+ * 2. CSS rules (transitions, styling)
+ * 
+ * Do NOT inject TS-only values (e.g., pixelsPerPerson, scroll speed)
+ * Do NOT inject CSS-only values (e.g., border-radius, shadows)
+ */
+export function injectCSSVariables(): void {
+  const root = document.documentElement;
+
+  // Photo animation durations (TS: setTimeout, CSS: transitions)
+  root.style.setProperty('--anim-photo-fade-in', `${LAYOUT.photoDisplay.fadeInDuration}ms`);
+  root.style.setProperty('--anim-photo-fade-out', `${LAYOUT.photoDisplay.fadeOutDuration}ms`);
+
+  // Event color (TS: D3 SVG lane rendering, CSS: thumbnail border)
+  root.style.setProperty('--color-events', LAYOUT.lanes.events.color);
+
+  console.log('✓ CSS variables injected from config');
+}
 
