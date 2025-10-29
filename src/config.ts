@@ -8,14 +8,14 @@
  */
 const COLORS = {
   // Brand/Lane Colors
-  projects: '#7ED321',   // Green - projects lane
-  events: '#F5A623',     // Orange - events lane, markers, thumbnails
-  people: '#4A90E2',     // Blue - people lane, particles
+  projects: '#F0B7D5',   // projects lane
+  events: '#81878E',     // events lane, markers, thumbnails
+  people: '#60CFFF',     // people lane, particles
   
   // UI Colors
-  text: '#2C3E50',       // Dark gray - text labels, counters
-  background: '#F8F9FA', // Light gray - timeline background
-  gridlines: '#E0E0E0',  // Medium gray - gridlines, borders
+  text: '#2A2B2D',       // Dark gray - text labels, counters
+  background: '#E9EEF3', // Light gray - timeline background
+  gridlines: '#C7CED4',  // Medium gray - gridlines, borders
 } as const;
 
 export const LAYOUT = {

@@ -4,12 +4,12 @@
 
 :root {
   /* Color Tokens - CSS-only presentation values */
-  --color-text: #2C3E50; /* Duplicates LAYOUT.textColor (used for SVG labels) */
-  --color-bg-light: #F8F9FA; /* Duplicates LAYOUT.background (used for SVG bg) */
-  --color-border-light: #E0E0E0; /* Duplicates LAYOUT.gridlines.color */
+  --color-text: #2A2B2D; /* Duplicates LAYOUT.textColor (used for SVG labels) */
+  --color-bg-light: #E9EEF3; /* Duplicates LAYOUT.background (used for SVG bg) */
+  --color-border-light: #C7CED4; /* Duplicates LAYOUT.gridlines.color */
   --color-white: #FFFFFF;
-  --color-gray-muted: #BDC3C7;
-  --color-error: #E74C3C; /* Red - pause indicator, errors */
+  --color-gray-muted: #C7CED4;
+  --color-error: #FF823C; /* Red - pause indicator, errors */
   
   /* Spacing Tokens - CSS-only */
   --space-xs: 2px;
@@ -39,7 +39,7 @@
   --anim-photo-fade-out: 150ms; /* Injected from LAYOUT.photoDisplay.fadeOutDuration */
   
   /* Brand Colors (TS: D3 SVG rendering, CSS: styling) */
-  --color-events: #F5A623; /* Orange - Injected from LAYOUT.lanes.events.color */
+  --color-events: #E0F0FF;
 }
 
 * {
