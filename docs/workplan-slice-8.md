@@ -57,7 +57,7 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
 ## Detailed Task Breakdown
 
 ### Phase 1: Configuration & Planning
-**Status:** Pending  
+**Status:** In Progress  
 **🎯 INTEGRATION POINT:** Complete configuration before coding
 
 **Task 1.1: Study existing people lane implementation** ✅ (for implementer)
@@ -67,7 +67,7 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
 - Identify what's generic vs. what's people-specific
 - **Rationale:** Understanding existing code is prerequisite for effective reuse
 
-**Task 1.2: Add project lane width configuration to `config.ts`** 
+**Task 1.2: Add project lane width configuration to `config.ts`** ✅
 - Add to `LAYOUT.lanes.projects`:
   ```typescript
   projects: {

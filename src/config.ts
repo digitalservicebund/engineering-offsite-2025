@@ -38,6 +38,11 @@ export const LAYOUT = {
       yPosition: 150,
       initialStrokeWidth: 2,
       color: COLORS.projects,
+      baseStrokeWidth: 2, // px - minimum width before any projects start
+      // Path generation parameters for smooth organic curves
+      minEventSpacing: 50, // px - minimum distance between width changes; closer events are consolidated
+      bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
+      bezierVerticalTension: 0.8, // 0-1 - vertical interpolation for S-curves (higher = tighter curves)
     },
     events: {
       yPosition: 400,
