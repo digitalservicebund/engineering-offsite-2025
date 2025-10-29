@@ -92,7 +92,8 @@ function displayConfigError(title: string, messages: string[]): void {
 function setupKeyboardControls(
   viewportController: ViewportController,
   timeline: Timeline,
-  particleAnimationController: ParticleAnimationController<Person>,
+  peopleParticleController: ParticleAnimationController<Person>,
+  projectParticleController: ParticleAnimationController<Project>,
   photoController: PhotoController
 ): void {
   const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
@@ -132,7 +133,8 @@ function setupKeyboardControls(
       event.preventDefault();
 
       // Clean up particle animations and photos
-      particleAnimationController.cleanup();
+      peopleParticleController.cleanup();
+      projectParticleController.cleanup();
       photoController.cleanup();
 
       // Reset viewport to start
@@ -255,8 +257,8 @@ async function init(): Promise<void> {
       }
     };
 
-    // Create particle animation controller
-    const particleAnimationController = new ParticleAnimationController<Person>(
+    // Create particle animation controllers
+    const peopleParticleController = new ParticleAnimationController<Person>(
       timeline.getSvg(),
       timeline.getXScale(),
       data.people,
@@ -269,9 +271,23 @@ async function init(): Promise<void> {
       }
     );
 
+    const projectParticleController = new ParticleAnimationController<Project>(
+      timeline.getSvg(),
+      timeline.getXScale(),
+      data.projects,
+      (project) => project.start,
+      (project) => project.name,
+      (date) => projectLanePathGenerator.getStrokeWidthAt(date),
+      {
+        laneCenterY: LAYOUT.lanes.projects.yPosition,
+        ...LAYOUT.particleAnimations.projects,
+      }
+    );
+
     // Create particle update callback
     const updateParticles = (currentPositionX: number): void => {
-      particleAnimationController.update(currentPositionX);
+      peopleParticleController.update(currentPositionX);
+      projectParticleController.update(currentPositionX);
     };
 
     // Create viewport controller for panning
@@ -288,7 +304,7 @@ async function init(): Promise<void> {
     );
 
     // Setup keyboard controls
-    setupKeyboardControls(viewportController, timeline, particleAnimationController, photoController);
+    setupKeyboardControls(viewportController, timeline, peopleParticleController, projectParticleController, photoController);
 
     console.log('✓ Timeline rendered successfully');
   } catch (error) {

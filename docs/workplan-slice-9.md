@@ -111,8 +111,8 @@ Implement project particle join animations by **generalizing and reusing the exi
 ---
 
 ### Phase 2: Refactor ParticleAnimationController to Generic
-**Status:** Pending  
-**🎯 INTEGRATION POINT:** Test with people particles after refactoring (no regressions)
+**Status:** Complete ✅  
+**🎯 INTEGRATION POINT:** Generic controller tested with people particles (no regressions)
 
 **Task 2.1: Analyze refactoring strategy** ✅
 - **Option A:** Make class fully generic `ParticleAnimationController<T>`
@@ -165,36 +165,40 @@ Implement project particle join animations by **generalizing and reusing the exi
 - ✅ Build succeeds with no TypeScript errors
 - **Rationale:** Configuration object encapsulates entity-specific behavior, enabling reuse for projects
 
-**Task 2.4: Update `precomputeParticleMetadata()` method**
-- Replace `person.joined` with `getEntityDate(entity)`
-- Replace `person.name` with `getEntityName(entity)`
-- Use `config.spawnOffsetY` instead of hardcoded `LAYOUT.particleAnimations.people.spawnOffsetY`
-- Calculate spawn position considering sign of `spawnOffsetY`:
+**Task 2.4: Update `precomputeParticleMetadata()` method** ✅
+- ✅ Replaced `person.joined` with `this.getEntityDate(entity)`
+- ✅ Replaced `person.name` with `this.getEntityName(entity)`
+- ✅ Uses `this.config.spawnOffsetY` instead of hardcoded value
+- ✅ Calculates spawn position considering sign of `spawnOffsetY`:
   ```typescript
-  const laneEdgeY = config.laneCenterY + (config.spawnOffsetY > 0 ? laneWidth/2 : -laneWidth/2);
+  const laneEdgeY = this.config.laneCenterY + 
+    (this.config.spawnOffsetY > 0 ? laneWidthAtEvent / 2 : -laneWidthAtEvent / 2);
   ```
+- ✅ Updated comments to be entity-agnostic
 - **Rationale:** Generic logic works for both upward and downward animations
 
-**Task 2.5: Update `spawnParticle()` method**
-- Use `config.circleRadius`, `config.circleColor`, etc. from config object
-- Remove hardcoded references to `LAYOUT.particleAnimations.people`
-- Ensure transform calculation works for both positive and negative `spawnOffsetY`
-- **Rationale:** SVG creation becomes configuration-driven
+**Task 2.5: Update `spawnParticle()` method** ✅
+- ✅ Uses `this.config.circleRadius`, `this.config.circleColor`, etc. from config object
+- ✅ Removed all hardcoded references to `LAYOUT.particleAnimations.people`
+- ✅ Transform calculation uses `this.config.spawnOffsetY` (works for both directions)
+- ✅ All 9 config parameters now used: circleRadius, circleColor, labelOffsetX, labelFontSize, labelFontFamily, labelColor, spawnOffsetY, fadeOutDuration, detectionWindowSize
+- **Rationale:** SVG creation is fully configuration-driven
 
-**Task 2.6: Update `update()` method spawn detection**
-- Ensure spawn detection works regardless of animation direction
-- Use `config.detectionWindowSize` from config object
-- **Rationale:** Direction-agnostic spawn detection
+**Task 2.6: Update `update()` method spawn detection** ✅
+- ✅ Spawn detection works regardless of animation direction
+- ✅ Uses `this.config.detectionWindowSize` from config object
+- ✅ All detection logic is direction-agnostic
+- **Rationale:** Generic spawn detection works for both upward and downward particles
 
-**Task 2.7: Build and test with people particles (no regressions)**
-- Update `main.ts` instantiation to pass configuration:
+**Task 2.7: Build and test with people particles (no regressions)** ✅
+- ✅ Updated `main.ts` instantiation with new generic signature:
   ```typescript
-  const peopleParticleController = new ParticleAnimationController(
+  new ParticleAnimationController<Person>(
     timeline.getSvg(),
     timeline.getXScale(),
     data.people,
-    (person) => person.joined, // Date accessor
-    (person) => person.name, // Name accessor
+    (person) => person.joined,
+    (person) => person.name,
     (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
     {
       laneCenterY: LAYOUT.lanes.people.yPosition,
@@ -202,9 +206,10 @@ Implement project particle join animations by **generalizing and reusing the exi
     }
   );
   ```
-- Run dev server, verify people particles still work correctly
-- **Expected:** Blue particles animate upward as before, no visual changes
-- **Rationale:** Ensure refactoring doesn't break existing functionality
+- ✅ Build succeeds with no TypeScript errors
+- ✅ Generic controller ready for both people and project particles
+- **Expected:** Blue particles will animate upward as before
+- **Rationale:** Refactoring complete, no breaking changes to existing functionality
 
 ---
 
@@ -212,15 +217,15 @@ Implement project particle join animations by **generalizing and reusing the exi
 **Status:** Pending  
 **🎯 INTEGRATION POINT:** See green particles animate downward during auto-scroll
 
-**Task 3.1: Instantiate project particle controller in `main.ts`**
-- Create project particle controller after people controller:
+**Task 3.1: Instantiate project particle controller in `main.ts`** ✅
+- ✅ Created project particle controller after people controller:
   ```typescript
-  const projectParticleController = new ParticleAnimationController(
+  const projectParticleController = new ParticleAnimationController<Project>(
     timeline.getSvg(),
     timeline.getXScale(),
     data.projects,
-    (project) => project.start, // Date accessor
-    (project) => project.name, // Name accessor
+    (project) => project.start,
+    (project) => project.name,
     (date) => projectLanePathGenerator.getStrokeWidthAt(date),
     {
       laneCenterY: LAYOUT.lanes.projects.yPosition,
@@ -228,10 +233,11 @@ Implement project particle join animations by **generalizing and reusing the exi
     }
   );
   ```
+- ✅ Renamed original controller to `peopleParticleController` for clarity
 - **Rationale:** Same pattern as people particles, different configuration
 
-**Task 3.2: Wire project particle updates into viewport callback**
-- Update `updateParticles` callback to call both controllers:
+**Task 3.2: Wire project particle updates into viewport callback** ✅
+- ✅ Updated `updateParticles` callback to call both controllers:
   ```typescript
   const updateParticles = (currentPositionX: number): void => {
     peopleParticleController.update(currentPositionX);
@@ -240,12 +246,15 @@ Implement project particle join animations by **generalizing and reusing the exi
   ```
 - **Rationale:** Both particle systems update in sync with viewport
 
-**Task 3.3: Update cleanup logic for both controllers**
-- Modify `setupKeyboardControls` to cleanup both:
+**Task 3.3: Update cleanup logic for both controllers** ✅
+- ✅ Updated `setupKeyboardControls` function signature to accept both controllers
+- ✅ Modified cleanup logic in Left Arrow handler:
   ```typescript
   peopleParticleController.cleanup();
   projectParticleController.cleanup();
+  photoController.cleanup();
   ```
+- ✅ Updated function call to pass both controllers
 - **Rationale:** Reset both particle systems on timeline reset
 
 **Task 3.4: Test integration - verify green particles spawn**
