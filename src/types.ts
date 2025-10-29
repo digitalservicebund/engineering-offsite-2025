@@ -82,14 +82,14 @@ export interface KeyEventPosition {
   xPosition: number;
 }
 
-// Particle animation types
+// Particle animation types (generic for people, projects, etc.)
 export interface ParticleAnimation {
-  id: string; // Unique identifier (e.g., 'particle-Alice-join' using person name)
-  personName: string; // Person's name (also serves as unique ID - no duplicates in data)
-  joinDate: Date;
-  joinX: number; // x-position where particle should merge (join date position)
+  id: string; // Unique identifier (e.g., 'particle-Alice-join' or 'particle-Platform v1-start')
+  entityName: string; // Entity name (person.name or project.name) - serves as unique ID within entity type
+  joinDate: Date; // Generic trigger date (person.joined or project.start)
+  joinX: number; // x-position where particle should merge (trigger date position)
   spawnX: number; // x-position where particle spawns (joinX - pixelsPerYear/3)
-  laneBottomY: number; // y-position of people lane bottom edge at join date
+  laneEdgeY: number; // y-position of lane edge at trigger date (bottom for people, top for projects)
   hasSpawned: boolean; // true when particle element created
   isComplete: boolean; // true when animation finished and cleaned up
   element?: d3.Selection<SVGGElement, unknown, null, undefined>; // D3 selection reference for animation

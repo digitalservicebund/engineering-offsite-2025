@@ -63,8 +63,8 @@ Implement project particle join animations by **generalizing and reusing the exi
 ## Detailed Task Breakdown
 
 ### Phase 1: Configuration & Planning
-**Status:** Pending  
-**🎯 INTEGRATION POINT:** Complete configuration before refactoring code
+**Status:** Complete ✅  
+**🎯 INTEGRATION POINT:** Configuration complete, ready for refactoring
 
 **Task 1.1: Study existing people particle implementation** (for implementer)
 - Read `particle-animation-controller.ts` - understand spawn detection, SVG creation, animation loop
@@ -73,8 +73,8 @@ Implement project particle join animations by **generalizing and reusing the exi
 - Identify hardcoded people-specific values (color, spawnOffsetY, date field, name field)
 - **Rationale:** Understanding existing code is prerequisite for effective refactoring
 
-**Task 1.2: Add project particle configuration to `config.ts`**
-- Add to `LAYOUT.particleAnimations`:
+**Task 1.2: Add project particle configuration to `config.ts`** ✅
+- ✅ Added to `LAYOUT.particleAnimations`:
   ```typescript
   projects: {
     spawnOffsetY: -60, // px - NEGATIVE = above lane (vs. people: 60 = below)
@@ -88,11 +88,13 @@ Implement project particle join animations by **generalizing and reusing the exi
     labelColor: COLORS.text, // Dark gray - same as people
   }
   ```
-- **Note:** `spawnOffsetY` is negative (above) for projects vs. positive (below) for people
+- ✅ `spawnOffsetY` is negative (above) for projects vs. positive (below) for people
+- ✅ Configuration mirrors people structure for consistency
+- ✅ Build succeeds with no errors
 - **Rationale:** Centralizes configuration, makes values tunable, mirrors people structure
 
-**Task 1.3: Map implementation patterns (mental model)**
-- Document parallels between people and project particles:
+**Task 1.3: Map implementation patterns (mental model)** ✅
+- ✅ Documented parallels between people and project particles:
   ```
   People Particles              → Project Particles
   ─────────────────────────────────────────────────────
@@ -112,36 +114,30 @@ Implement project particle join animations by **generalizing and reusing the exi
 **Status:** Pending  
 **🎯 INTEGRATION POINT:** Test with people particles after refactoring (no regressions)
 
-**Task 2.1: Analyze refactoring strategy**
+**Task 2.1: Analyze refactoring strategy** ✅
 - **Option A:** Make class fully generic `ParticleAnimationController<T>`
   - Pros: Type-safe, mirrors `LanePathGenerator<T>` pattern from Slice 8
   - Cons: More refactoring, need to update `ParticleAnimation` interface
 - **Option B:** Accept configuration object with accessor functions
   - Pros: Simpler, no type parameter needed
   - Cons: Less type-safe, configuration object can be verbose
-- **Decision:** Use Option A (generic class) following Slice 8's successful pattern
-- **Rationale:** Type safety + consistency with project architecture
+- ✅ **Decision:** Use hybrid approach - generic interface + configuration-driven constructor
+- ✅ Renamed fields in `ParticleAnimation` to be entity-agnostic
+- **Rationale:** Type safety + consistency with project architecture + simplicity
 
-**Task 2.2: Update `ParticleAnimation` interface in `types.ts`**
-- Make interface generic or remove entity-specific fields:
-  ```typescript
-  export interface ParticleAnimation<T = unknown> {
-    id: string; // Unique identifier (e.g., 'particle-{name}-join')
-    entityName: string; // Generic name field (person.name or project.name)
-    joinDate: Date; // Generic trigger date (person.joined or project.start)
-    joinX: number;
-    spawnX: number;
-    laneBottomY: number; // For people (below), or laneTopY for projects (above)
-    hasSpawned: boolean;
-    isComplete: boolean;
-    element?: d3.Selection<SVGGElement, unknown, null, undefined>;
-    animationStartTime?: number;
-    animationDuration?: number;
-    startTransform?: { x: number; y: number };
-  }
-  ```
-- OR: Rename `personName` → `entityName` and keep interface simple
-- **Rationale:** Generic interface supports both entity types
+**Task 2.2: Update `ParticleAnimation` interface in `types.ts`** ✅
+- ✅ Renamed entity-specific fields to be generic:
+  - `personName` → `entityName` (supports person.name or project.name)
+  - `laneBottomY` → `laneEdgeY` (supports bottom edge for people, top edge for projects)
+- ✅ Updated comments to reflect generic usage:
+  - "Generic trigger date (person.joined or project.start)"
+  - "Entity name (person.name or project.name)"
+- ✅ Updated `ParticleAnimationController` to use new field names:
+  - All references to `personName` changed to `entityName`
+  - All references to `laneBottomY` changed to `laneEdgeY`
+  - Data attribute `data-person-name` changed to `data-entity-name`
+- ✅ Build succeeds with no TypeScript errors
+- **Rationale:** Generic interface supports both entity types without code duplication
 
 **Task 2.3: Refactor ParticleAnimationController constructor**
 - Change signature to accept generic parameters:

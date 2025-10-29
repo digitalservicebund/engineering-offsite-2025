@@ -110,10 +110,10 @@ export class ParticleAnimationController {
       // Calculate lane width at join date to find bottom edge
       // This accounts for previous joins (lane grows over time)
       const laneWidthAtJoin = this.getLaneWidthAt(person.joined);
-      const laneBottomY = this.peopleLaneCenterY + laneWidthAtJoin / 2;
+      const laneEdgeY = this.peopleLaneCenterY + laneWidthAtJoin / 2;
 
       // Edge case: Runtime check for particles spawning below viewport
-      const spawnY = laneBottomY + LAYOUT.particleAnimations.people.spawnOffsetY;
+      const spawnY = laneEdgeY + LAYOUT.particleAnimations.people.spawnOffsetY;
       if (spawnY > LAYOUT.viewport.height) {
         console.warn(
           `⚠️  Particle spawn position too low for ${person.name}: ` +
@@ -124,11 +124,11 @@ export class ParticleAnimationController {
 
       this.particleMetadata.set(person.name, {
         id: `particle-${person.name}`,
-        personName: person.name,
+        entityName: person.name,
         joinDate: person.joined,
         joinX,
         spawnX,
-        laneBottomY,
+        laneEdgeY,
         hasSpawned: false,
         isComplete: false,
       });
@@ -163,9 +163,9 @@ export class ParticleAnimationController {
     const detectionWindowSize = LAYOUT.particleAnimations.people.detectionWindowSize;
     
     // Iterate through all pre-calculated particle metadata
-    for (const [personName, particle] of this.particleMetadata) {
+    for (const [entityName, particle] of this.particleMetadata) {
       // Skip if already completed this session
-      if (this.completedJoins.has(personName)) {
+      if (this.completedJoins.has(entityName)) {
         continue;
       }
 
@@ -179,9 +179,9 @@ export class ParticleAnimationController {
 
       if (inDetectionWindow) {
         // Check if particle already active
-        if (!this.activeParticles.has(personName)) {
+        if (!this.activeParticles.has(entityName)) {
           // Add to active particles (but don't spawn yet)
-          this.activeParticles.set(personName, particle);
+          this.activeParticles.set(entityName, particle);
         }
       }
 
@@ -189,7 +189,7 @@ export class ParticleAnimationController {
       // Spawn when viewport crosses the spawn X position
       if (currentViewportX >= particle.spawnX && !particle.hasSpawned) {
         // Only spawn if particle is active (was detected in window)
-        if (this.activeParticles.has(personName)) {
+        if (this.activeParticles.has(entityName)) {
           this.spawnParticle(particle);
           particle.hasSpawned = true;
         }
@@ -250,12 +250,12 @@ export class ParticleAnimationController {
    * Visual encoding: Blue circle represents person joining, text label identifies who
    */
   private spawnParticle(particle: ParticleAnimation): void {
-    // Outer group: positioned at final merge location (joinX, laneBottomY)
+    // Outer group: positioned at final merge location (joinX, laneEdgeY)
     const particleContainer = this.particleGroup
       .append('g')
       .attr('class', 'particle-container')
-      .attr('data-person-name', particle.personName)
-      .attr('transform', `translate(${particle.joinX}, ${particle.laneBottomY})`);
+      .attr('data-entity-name', particle.entityName)
+      .attr('transform', `translate(${particle.joinX}, ${particle.laneEdgeY})`);
 
     // Inner animation group: starts offset (left and down), will animate to (0,0)
     const offsetX = -(particle.joinX - particle.spawnX); // Negative = left offset
@@ -283,7 +283,7 @@ export class ParticleAnimationController {
       .attr('font-size', LAYOUT.particleAnimations.people.labelFontSize)
       .attr('font-family', LAYOUT.particleAnimations.people.labelFontFamily)
       .attr('fill', LAYOUT.particleAnimations.people.labelColor)
-      .text(particle.personName);
+      .text(particle.entityName);
 
     // Store reference for animation
     particle.element = animationGroup;
@@ -291,7 +291,7 @@ export class ParticleAnimationController {
     // Record animation intent - actual animation happens in update() loop
     this.animateParticle(particle);
 
-    console.log(`✓ Spawned particle: ${particle.personName}`);
+    console.log(`✓ Spawned particle: ${particle.entityName}`);
   }
 
   /**
@@ -301,7 +301,7 @@ export class ParticleAnimationController {
    */
   private animateParticle(particle: ParticleAnimation): void {
     if (!particle.element) {
-      console.error(`Cannot animate particle: element not created for ${particle.personName}`);
+      console.error(`Cannot animate particle: element not created for ${particle.entityName}`);
       return;
     }
 
@@ -343,10 +343,10 @@ export class ParticleAnimationController {
 
         // Mark particle complete and cleanup tracking
         particle.isComplete = true;
-        this.activeParticles.delete(particle.personName);
-        this.completedJoins.add(particle.personName);
+        this.activeParticles.delete(particle.entityName);
+        this.completedJoins.add(particle.entityName);
 
-        console.log(`✓ Particle animation complete: ${particle.personName}`);
+        console.log(`✓ Particle animation complete: ${particle.entityName}`);
       });
   }
 

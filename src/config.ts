@@ -94,6 +94,17 @@ export const LAYOUT = {
       labelFontFamily: 'sans-serif' as const,
       labelColor: COLORS.text,
     },
+    projects: {
+      spawnOffsetY: -60, // px - NEGATIVE = above lane
+      detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
+      fadeOutDuration: 300, // ms - fade duration after reaching lane
+      circleRadius: 8, // px - particle circle size
+      circleColor: COLORS.projects, // Green - matches project lane
+      labelOffsetX: 15, // px - text position to right of circle
+      labelFontSize: 11, // px - matches event marker labels
+      labelFontFamily: 'sans-serif' as const,
+      labelColor: COLORS.text,
+    },
   },
   photoDisplay: {
     fadeInDuration: 150, // ms - photo fade-in timing (applied via JS)
