@@ -71,6 +71,12 @@ export const LAYOUT = {
       color: COLORS.text,
       offsetY: -5, // px - space between bottom edge of text and marker top
       maxWidth: 100, // px - text wraps within this width
+      // Label stacking configuration to avoid overlaps
+      stack: {
+        minHorizontalGap: 12, // px - extra gap between adjacent label boxes
+        tierHeight: 40, // px - vertical distance between stacked tiers (accommodates multi-line text)
+        maxTiers: 4, // maximum number of tiers above the lane
+      },
     },
     keyMoment: {
       fontWeight: 700, // Bold weight for emphasis

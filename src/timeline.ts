@@ -254,30 +254,13 @@ export class Timeline {
   }
 
   /**
-   * Apply label styles to a div element
+   * Apply label class and content to a div element
    */
   private applyLabelStyles(
     div: d3.Selection<d3.BaseType, Event, d3.BaseType, unknown>
   ): void {
     div
-      .style('width', '100%')
-      .style('height', '100%')
-      .style('display', 'flex')
-      .style('flex-direction', 'column')
-      .style('justify-content', 'flex-end')
-      .style('text-align', 'center')
-      .style('font-size', `${LAYOUT.eventMarkers.label.fontSize}px`)
-      .style('font-family', LAYOUT.eventMarkers.label.fontFamily)
-      .style('font-weight', (d) =>
-        d.isKeyMoment
-          ? LAYOUT.eventMarkers.keyMoment.fontWeight
-          : LAYOUT.eventMarkers.regular.fontWeight
-      )
-      .style('color', LAYOUT.eventMarkers.label.color)
-      .style('line-height', '1.2')
-      .style('word-wrap', 'break-word')
-      .style('overflow-wrap', 'break-word')
-      .style('hyphens', 'auto')
+      .attr('class', (d) => d.isKeyMoment ? 'event-label key-moment' : 'event-label')
       .text((d) => d.name);
   }
 
@@ -289,37 +272,100 @@ export class Timeline {
     const xScale = this.getXScaleOrThrow();
     const { laneTopEdge, markerTopY } = this.calculateMarkerPositions();
 
+    // Pre-compute non-overlapping label tiers using simple greedy stacking
+    const halfWidth = LAYOUT.eventMarkers.label.maxWidth / 2;
+    const minGap = LAYOUT.eventMarkers.label.stack.minHorizontalGap;
+    const tierHeight = LAYOUT.eventMarkers.label.stack.tierHeight;
+    const maxTiers = LAYOUT.eventMarkers.label.stack.maxTiers;
+
+    // Calculate base label Y position
+    // Account for potential text wrapping by using a more generous height estimate
+    const estimatedLabelHeight = 30; // Approximate height for 2-3 lines of text
+    const baseLabelTopY = markerTopY + LAYOUT.eventMarkers.label.offsetY - estimatedLabelHeight;
+
+    // Track all labels in each tier for proper collision detection
+    const labelsByTier: Array<{ left: number; right: number; eventId: string }>[] = [];
+    // Map event id to assigned tier index
+    const labelTierByEventId = new Map<string, number>();
+
+    for (const ev of this.sortedEvents) {
+      const x = xScale(ev.date);
+      const left = x - halfWidth;
+      const right = x + halfWidth;
+
+      // Find first tier where this label fits without horizontal overlap
+      let assignedTier = -1;
+      for (let t = 0; t < labelsByTier.length; t++) {
+        const tierLabels = labelsByTier[t];
+        let hasOverlap = false;
+        
+        // Check against all existing labels in this tier
+        for (const existingLabel of tierLabels) {
+          if (!(right + minGap <= existingLabel.left || left >= existingLabel.right + minGap)) {
+            hasOverlap = true;
+            break;
+          }
+        }
+        
+        if (!hasOverlap) {
+          assignedTier = t;
+          break;
+        }
+      }
+      
+      // If none found, open a new tier if allowed
+      if (assignedTier === -1) {
+        if (labelsByTier.length < maxTiers) {
+          labelsByTier.push([]);
+          assignedTier = labelsByTier.length - 1;
+        } else {
+          // Fallback: place in the last tier (may overlap in extreme density)
+          assignedTier = labelsByTier.length - 1;
+        }
+      }
+      
+      // Add this label to the assigned tier
+      labelsByTier[assignedTier].push({ left, right, eventId: ev.id });
+      labelTierByEventId.set(ev.id, assignedTier);
+    }
+
+    // Render markers first (behind)
     const markersGroup = this.svg.append('g').attr('class', 'event-markers');
-
-    const eventGroups = markersGroup
-      .selectAll<SVGGElement, Event>('g.event-marker')
+    
+    markersGroup
+      .selectAll<SVGLineElement, Event>('line.marker-line')
       .data(this.sortedEvents)
-      .join('g')
-      .attr('class', 'event-marker')
-      .attr('data-id', (d) => d.id);
-
-    // Render vertical marker lines
-    eventGroups
-      .append('line')
+      .join('line')
       .attr('class', 'marker-line')
       .attr('x1', (d) => xScale(d.date))
       .attr('x2', (d) => xScale(d.date))
       .attr('y1', laneTopEdge)
-      .attr('y2', markerTopY)
+      .attr('y2', (d) => {
+        const tier = labelTierByEventId.get(d.id) ?? 0;
+        // Extend per tier while maintaining original margin (offsetY) between marker and label
+        return markerTopY - tier * tierHeight;
+      })
       .attr('stroke', LAYOUT.eventMarkers.color)
       .attr('stroke-width', LAYOUT.eventMarkers.lineWidth)
       .attr('stroke-linecap', 'round');
 
-    // Render event name labels using foreignObject for text wrapping
-    const labelContainers = eventGroups
-      .append('foreignObject')
+    // Render labels second (in front) in separate group
+    const labelsGroup = this.svg.append('g').attr('class', 'event-labels');
+    
+    const labelContainers = labelsGroup
+      .selectAll<SVGForeignObjectElement, Event>('foreignObject.marker-label-container')
+      .data(this.sortedEvents)
+      .join('foreignObject')
       .attr('class', (d) =>
         d.isKeyMoment ? 'marker-label-container key-moment' : 'marker-label-container'
       )
       .attr('x', (d) => xScale(d.date) - LAYOUT.eventMarkers.label.maxWidth / 2)
-      .attr('y', markerTopY + LAYOUT.eventMarkers.label.offsetY - 100)
+      .attr('y', (d) => {
+        const tier = labelTierByEventId.get(d.id) ?? 0;
+        return baseLabelTopY - tier * tierHeight;
+      })
       .attr('width', LAYOUT.eventMarkers.label.maxWidth)
-      .attr('height', 100);
+      .attr('height', estimatedLabelHeight);
 
     const divs = labelContainers.append('xhtml:div');
     this.applyLabelStyles(divs);
