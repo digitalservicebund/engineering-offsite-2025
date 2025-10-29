@@ -137,8 +137,7 @@ svg {
 .lane-label {
   text-anchor: start;
   dominant-baseline: middle;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 18px;
   font-family: sans-serif;
   fill: var(--color-text);
 }
