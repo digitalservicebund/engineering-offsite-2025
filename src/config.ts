@@ -180,6 +180,7 @@ export function injectCSSVariables(): void {
 
   // Event color (TS: D3 SVG lane rendering, CSS: thumbnail border)
   root.style.setProperty('--color-events', LAYOUT.lanes.events.color);
+  root.style.setProperty('--timeline-marker-ratio', `${LAYOUT.scroll.currentPositionRatio}`);
 
   console.log('✓ CSS variables injected from config');
 }

@@ -1,8 +1,4 @@
-- visual marker for current date
-- lanes pulsing when particle merges
 - use a gradient overlay to fade out future lanes/events beyond the current date marker
-- add subtle gradient backgrounds behind lanes or curved shadow under each lane for depth
-- switch colors to DS brand colors
 - optimize particle size
 - animation after final event: lanes merge + morph together, followed by huge fireworks / confetti
 - 🌟 emoji for key events

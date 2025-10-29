@@ -75,6 +75,25 @@ body {
   position: relative;
 }
 
+/* Overlay layer for viewport-aligned decorations (e.g., current date marker) */
+.timeline-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.current-date-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--timeline-marker-ratio, 0.75) * 100%);
+  width: 1px;
+  transform: translateX(-50%);
+  background: #FF823C;
+  opacity: 0.4;
+}
+
 /* Counters - fixed position in top-right corner */
 .counters {
   position: absolute;
