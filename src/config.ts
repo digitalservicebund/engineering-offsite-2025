@@ -82,28 +82,55 @@ export const LAYOUT = {
     },
   },
   particleAnimations: {
+    subduedOpacity: 0.6, // Applied via fill-opacity for departure particles (leaving/ending)
     people: {
-      spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
-      // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
-      detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
-      fadeOutDuration: 300, // ms - fade duration after reaching lane
-      circleRadius: 8, // px - particle circle size
-      circleColor: COLORS.people,
-      labelOffsetX: 15, // px - text position to right of circle
-      labelFontSize: 11, // px - matches event marker labels
-      labelFontFamily: 'sans-serif' as const,
-      labelColor: COLORS.text,
+      joining: {
+        spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
+        // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
+        detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
+        fadeOutDuration: 300, // ms - fade duration after reaching lane
+        circleRadius: 8, // px - particle circle size
+        circleColor: COLORS.people,
+        labelOffsetX: 15, // px - text position to right of circle
+        labelFontSize: 11, // px - matches event marker labels
+        labelFontFamily: 'sans-serif' as const,
+        labelColor: COLORS.text,
+      },
+      leaving: {
+        spawnOffsetY: -60, // px - NEGATIVE = below lane, animates upward away from lane
+        detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
+        fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for joining)
+        circleRadius: 8, // px - particle circle size
+        circleColor: COLORS.people, // Same color, subdued via fill-opacity
+        labelOffsetX: 15, // px - text position to right of circle
+        labelFontSize: 11, // px - matches event marker labels
+        labelFontFamily: 'sans-serif' as const,
+        labelColor: COLORS.text,
+      },
     },
     projects: {
-      spawnOffsetY: -60, // px - NEGATIVE = above lane
-      detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
-      fadeOutDuration: 300, // ms - fade duration after reaching lane
-      circleRadius: 8, // px - particle circle size
-      circleColor: COLORS.projects, // Green - matches project lane
-      labelOffsetX: 15, // px - text position to right of circle
-      labelFontSize: 11, // px - matches event marker labels
-      labelFontFamily: 'sans-serif' as const,
-      labelColor: COLORS.text,
+      starting: {
+        spawnOffsetY: -60, // px - NEGATIVE = above lane
+        detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
+        fadeOutDuration: 300, // ms - fade duration after reaching lane
+        circleRadius: 8, // px - particle circle size
+        circleColor: COLORS.projects, // Green - matches project lane
+        labelOffsetX: 15, // px - text position to right of circle
+        labelFontSize: 11, // px - matches event marker labels
+        labelFontFamily: 'sans-serif' as const,
+        labelColor: COLORS.text,
+      },
+      ending: {
+        spawnOffsetY: 60, // px - POSITIVE = above lane, animates upward away from lane
+        detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
+        fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for starting)
+        circleRadius: 8, // px - particle circle size
+        circleColor: COLORS.projects, // Same color, subdued via fill-opacity
+        labelOffsetX: 15, // px - text position to right of circle
+        labelFontSize: 11, // px - matches event marker labels
+        labelFontFamily: 'sans-serif' as const,
+        labelColor: COLORS.text,
+      },
     },
   },
   photoDisplay: {

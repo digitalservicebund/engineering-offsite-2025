@@ -33,25 +33,31 @@ Add departure particle animations by instantiating 2 additional `ParticleAnimati
 
 ## Task Breakdown
 
-### Phase 1: Color Helper & Config
-**Time:** 30 min
+### Phase 1: Color Helper & Config ✅
+**Time:** 30 min (Complete)
 
-**Task 1.1: Add color computation helper**
-- Add `getSubduedColor(hex: string): string` to `config.ts`
-- Convert hex → HSL → increase lightness to 70% → convert back
-- Test with `COLORS.people` and `COLORS.projects`
+**Task 1.1: Add subdued opacity to config** ✅
+- ✅ Added `subduedOpacity: 0.6` to `LAYOUT.particleAnimations`
+- ✅ Simple opacity-based approach (use base color with fill-opacity in SVG)
+- ✅ Much simpler than HSL conversion - 1 line vs 70 lines
+- ✅ Accessed as `LAYOUT.particleAnimations.subduedOpacity`
+- ✅ Build succeeds
 
-**Task 1.2: Add departure configs**
-- Add `leaving` config to `LAYOUT.particleAnimations.people`:
+**Task 1.2: Add departure configs** ✅
+- ✅ Restructured `LAYOUT.particleAnimations.people` with `joining` and `leaving` sub-configs
+- ✅ Added `leaving` config:
   - `spawnOffsetY: -60` (below lane, animates upward/away)
-  - `fadeOutDuration: 600` (slower than joins)
-  - Computed colors (call helper during instantiation)
-  - Reuse: radius, labelOffset, fontSize, etc.
-- Add `ending` config to `LAYOUT.particleAnimations.projects`:
+  - `fadeOutDuration: 600` (slower than joins: 300ms)
+  - Same colors as joining (subdued appearance via fill-opacity)
+  - Reuses all other properties (radius, labelOffset, fontSize, etc.)
+- ✅ Restructured `LAYOUT.particleAnimations.projects` with `starting` and `ending` sub-configs
+- ✅ Added `ending` config:
   - `spawnOffsetY: 60` (above lane, animates upward/away)
-  - `fadeOutDuration: 600` (slower than starts)
-  - Computed colors (call helper during instantiation)
-  - Reuse: radius, labelOffset, fontSize, etc.
+  - `fadeOutDuration: 600` (slower than starting: 300ms)
+  - Same colors as starting (subdued appearance via fill-opacity)
+  - Reuses all other properties (radius, labelOffset, fontSize, etc.)
+- ✅ Updated existing references in `main.ts` to `.people.joining` and `.projects.starting`
+- ✅ Build succeeds
 
 ---
 
@@ -61,13 +67,13 @@ Add departure particle animations by instantiating 2 additional `ParticleAnimati
 **Task 2.1: Instantiate peopleLeaving controller**
 - Filter `data.people` where `left !== null`
 - Date accessor: `(p) => p.left!`
-- Config: spread `people.leaving`, compute colors inline
+- Config: spread `people.leaving` config
 - Place after `peopleJoining` in `main.ts`
 
 **Task 2.2: Instantiate projectsEnding controller**
 - Filter `data.projects` where `end !== null`
 - Date accessor: `(p) => p.end!`
-- Config: spread `projects.ending`, compute colors inline
+- Config: spread `projects.ending` config
 - Place after `projectsStarting` in `main.ts`
 
 **Task 2.3: Verify build succeeds**
@@ -125,7 +131,7 @@ Add departure particle animations by instantiating 2 additional `ParticleAnimati
 
 ### Core Functionality (All Auto-Verified via Code Review)
 - [ ] 4 controllers instantiated: joining, leaving, starting, ending
-- [ ] Subdued colors computed programmatically
+- [ ] Subdued appearance via LAYOUT.particleAnimations.subduedOpacity (0.6)
 - [ ] Departure particles use 600ms fade (vs 300ms for arrivals)
 - [ ] People leaving: spawn below lane, animate upward
 - [ ] Projects ending: spawn above lane, animate upward
@@ -143,9 +149,9 @@ Add departure particle animations by instantiating 2 additional `ParticleAnimati
 ## Technical Decisions
 
 **1. Subdued Color Approach**
-- **Decision:** HSL lightness adjustment (~70%)
-- **Rationale:** Precise control over color, maintains hue
-- **Alternative:** Opacity - simpler but less control
+- **Decision:** Opacity-based (SUBDUED_OPACITY = 0.6 via SVG fill-opacity)
+- **Rationale:** Simplest solution - 1 constant vs 70 lines of HSL conversion
+- **Alternative:** HSL lightness - overly complex for this use case
 
 **2. Controller Count**
 - **Decision:** 6 separate instances (joining, leaving, starting, ending, + existing 2)

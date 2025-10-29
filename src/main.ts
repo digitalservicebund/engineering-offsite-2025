@@ -267,7 +267,7 @@ async function init(): Promise<void> {
       (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
       {
         laneCenterY: LAYOUT.lanes.people.yPosition,
-        ...LAYOUT.particleAnimations.people,
+        ...LAYOUT.particleAnimations.people.joining,
       }
     );
 
@@ -280,7 +280,7 @@ async function init(): Promise<void> {
       (date) => projectLanePathGenerator.getStrokeWidthAt(date),
       {
         laneCenterY: LAYOUT.lanes.projects.yPosition,
-        ...LAYOUT.particleAnimations.projects,
+        ...LAYOUT.particleAnimations.projects.starting,
       }
     );
 
