@@ -4,15 +4,16 @@
  */
 
 import * as d3 from 'd3';
-import type { TimelineData, Event, KeyEventPosition } from './types';
-import type { PeopleLanePathGenerator } from './people-lane-path-generator';
+import type { TimelineData, Event, KeyEventPosition, Person, Project } from './types';
+import type { LanePathGenerator } from './lane-path-generator';
 import { LAYOUT } from './config';
 
 export class Timeline {
   private readonly data: TimelineData;
   private readonly svg: d3.Selection<SVGSVGElement, unknown, null, undefined>;
   private readonly sortedEvents: Event[];
-  private readonly peopleLanePathGenerator: PeopleLanePathGenerator | null;
+  private readonly peopleLanePathGenerator: LanePathGenerator<Person> | null;
+  private readonly projectLanePathGenerator: LanePathGenerator<Project> | null;
 
   private timelineWidth = 0;
   private xScale: d3.ScaleTime<number, number> | null = null;
@@ -20,11 +21,13 @@ export class Timeline {
   constructor(
     container: HTMLElement,
     data: TimelineData,
-    peopleLanePathGenerator?: PeopleLanePathGenerator
+    peopleLanePathGenerator?: LanePathGenerator<Person>,
+    projectLanePathGenerator?: LanePathGenerator<Project>
   ) {
     this.data = data;
     this.sortedEvents = this.sortEventsByDate(data.events);
     this.peopleLanePathGenerator = peopleLanePathGenerator || null;
+    this.projectLanePathGenerator = projectLanePathGenerator || null;
     this.svg = this.createSvgElement(container);
   }
 
@@ -154,14 +157,8 @@ export class Timeline {
   private renderLanes(): void {
     const lanesGroup = this.svg.append('g').attr('class', 'lanes');
 
-    // Projects lane (top, green)
-    this.renderLane(
-      lanesGroup,
-      'lane-projects',
-      LAYOUT.lanes.projects.yPosition,
-      LAYOUT.lanes.projects.initialStrokeWidth,
-      LAYOUT.lanes.projects.color
-    );
+    // Projects lane (top, green) - rendered as filled path with variable width
+    this.renderProjectLane(lanesGroup);
 
     // Events lane (middle, orange)
     this.renderLane(
@@ -174,6 +171,41 @@ export class Timeline {
 
     // People lane (bottom, blue) - rendered as filled path with variable width
     this.renderPeopleLane(lanesGroup);
+  }
+
+  /**
+   * Render the project lane as a filled path with variable width
+   * Width grows/shrinks based on active projects over time
+   */
+  private renderProjectLane(
+    lanesGroup: d3.Selection<SVGGElement, unknown, null, undefined>
+  ): void {
+    if (!this.projectLanePathGenerator) {
+      // Fallback: render as simple line if path generator not provided
+      this.renderLane(
+        lanesGroup,
+        'lane-projects',
+        LAYOUT.lanes.projects.yPosition,
+        LAYOUT.lanes.projects.initialStrokeWidth,
+        LAYOUT.lanes.projects.color
+      );
+      return;
+    }
+
+    const xScale = this.getXScaleOrThrow();
+    const pathData = this.projectLanePathGenerator.generateLanePath(
+      xScale,
+      LAYOUT.lanes.projects.yPosition,
+      this.getStartDate(),
+      this.getEndDate()
+    );
+
+    lanesGroup
+      .append('path')
+      .attr('class', 'lane-projects')
+      .attr('d', pathData)
+      .attr('fill', LAYOUT.lanes.projects.color)
+      .attr('stroke', 'none');
   }
 
   /**

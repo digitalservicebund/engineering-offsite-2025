@@ -6,7 +6,7 @@ import { loadTimelineData } from './data-loader';
 import { Timeline } from './timeline';
 import { ViewportController } from './viewport-controller';
 import { CounterCalculator } from './counter-calculator';
-import { PeopleLanePathGenerator } from './people-lane-path-generator';
+import { LanePathGenerator } from './lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
 import { ParticleAnimationController } from './particle-animation-controller';
 import { PhotoController } from './photo-controller';
@@ -197,14 +197,22 @@ async function init(): Promise<void> {
       (project) => project.widthIncrement, // Custom start delta: add widthIncrement
       (project) => -project.widthIncrement // Custom end delta: subtract widthIncrement (parallel to people)
     );
-    // TODO: Wire up projectWidthCalculator to ProjectLanePathGenerator in next task
-    void projectWidthCalculator; // Suppress unused variable warning
 
-    // Create lane path generator (for people lane path generation)
-    const peopleLanePathGenerator = new PeopleLanePathGenerator(peopleCount);
+    // Create lane path generators using generic implementation
+    const peopleLanePathGenerator = new LanePathGenerator<Person>(
+      peopleCount,
+      LAYOUT.lanes.people,
+      (count) => LAYOUT.lanes.people.baseStrokeWidth + count * LAYOUT.lanes.people.pixelsPerPerson
+    );
 
-    // Create and render timeline (with dynamic people lane)
-    const timeline = new Timeline(container, data, peopleLanePathGenerator);
+    const projectLanePathGenerator = new LanePathGenerator<Project>(
+      projectWidthCalculator,
+      LAYOUT.lanes.projects,
+      (count) => LAYOUT.lanes.projects.baseStrokeWidth + count
+    );
+
+    // Create and render timeline (with dynamic people and project lanes)
+    const timeline = new Timeline(container, data, peopleLanePathGenerator, projectLanePathGenerator);
     timeline.render();
 
     // Create photo controller (creates and manages its own overlay)

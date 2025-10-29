@@ -1,43 +1,53 @@
 /**
- * PeopleLanePathGenerator - Generates SVG path for people lane with variable width
+ * LanePathGenerator - Generic SVG path generator for lanes with variable width
  *
  * Application layer: Composes domain logic (ActiveCountCalculator) with presentation concerns (SVG path generation).
+ * Generic implementation that can be configured for different lane types (people, projects, etc.)
  */
 
 import type * as d3 from 'd3';
-import type { Person } from './types';
-import { LAYOUT } from './config';
 import { ActiveCountCalculator } from './active-count-calculator';
 
-export class PeopleLanePathGenerator {
-  private readonly activeCount: ActiveCountCalculator<Person>;
+interface LaneConfig {
+  baseStrokeWidth: number;
+  minEventSpacing: number;
+  bezierTension: number;
+  bezierVerticalTension: number;
+}
 
-  constructor(activeCount: ActiveCountCalculator<Person>) {
-    // Inject people count calculator (shared with CounterCalculator)
+export class LanePathGenerator<T> {
+  private readonly activeCount: ActiveCountCalculator<T>;
+  private readonly config: LaneConfig;
+  private readonly calculateWidth: (count: number) => number;
+
+  constructor(
+    activeCount: ActiveCountCalculator<T>,
+    config: LaneConfig,
+    calculateWidth: (count: number) => number
+  ) {
     this.activeCount = activeCount;
+    this.config = config;
+    this.calculateWidth = calculateWidth;
   }
 
   /**
-   * Get cumulative headcount at a specific date
+   * Get cumulative count at a specific date
    */
-  public getHeadcountAt(date: Date): number {
+  public getCountAt(date: Date): number {
     return this.activeCount.getCountAt(date);
   }
 
   /**
-   * Calculate stroke width at a specific date
-   * Formula: baseStrokeWidth + (headcount × pixelsPerPerson)
+   * Calculate stroke width at a specific date using the provided width calculation function
    */
   public getStrokeWidthAt(date: Date): number {
-    const headcount = this.getHeadcountAt(date);
-    return (
-      LAYOUT.lanes.people.baseStrokeWidth + headcount * LAYOUT.lanes.people.pixelsPerPerson
-    );
+    const count = this.getCountAt(date);
+    return this.calculateWidth(count);
   }
 
   /**
-   * Generate SVG path data for the people lane as a filled shape
-   * The lane grows in thickness from left to right as people join/leave
+   * Generate SVG path data for the lane as a filled shape
+   * The lane grows in thickness from left to right as entities start/end
    * Uses smooth Bezier curves for organic, flowing transitions
    * 
    * @param xScale D3 time scale for x-positioning
@@ -52,23 +62,22 @@ export class PeopleLanePathGenerator {
     timelineStart: Date,
     timelineEnd: Date
   ): string {
-    // Get timeline points (dates where headcount changes)
+    // Get timeline points (dates where count changes)
     const timeline = this.activeCount.getTimeline();
     
     // Build array of width change points
     const pathPoints: Array<{ x: number; width: number }> = [];
     
-    // Start of timeline (before any joins)
-    const startWidth = LAYOUT.lanes.people.baseStrokeWidth;
+    // Start of timeline
+    const startWidth = this.config.baseStrokeWidth;
     pathPoints.push({
       x: xScale(timelineStart),
       width: startWidth,
     });
     
-    // Add point at each headcount change with the NEW width
+    // Add point at each count change with the NEW width
     for (const point of timeline) {
-      const width = LAYOUT.lanes.people.baseStrokeWidth + 
-                    point.count * LAYOUT.lanes.people.pixelsPerPerson;
+      const width = this.calculateWidth(point.count);
       pathPoints.push({
         x: xScale(point.date),
         width,
@@ -85,7 +94,7 @@ export class PeopleLanePathGenerator {
     // Consolidate points that are too close together (causes jagged curves)
     const consolidatedPoints = this.consolidateClosePoints(
       pathPoints,
-      LAYOUT.lanes.people.minEventSpacing
+      this.config.minEventSpacing
     );
     
     // Construct smooth path with Bezier curves
@@ -94,8 +103,8 @@ export class PeopleLanePathGenerator {
 
   /**
    * Consolidate points that are too close together
-   * When someone leaves on month-end and someone joins on month-start,
-   * the curve becomes jagged. Average nearby points for smoothness.
+   * When events happen on nearby dates, the curve becomes jagged.
+   * Average nearby points for smoothness.
    */
   private consolidateClosePoints(
     points: Array<{ x: number; width: number }>,
@@ -157,10 +166,10 @@ export class PeopleLanePathGenerator {
       const dx = curr.x - prev.x;
       const dy = currY - prevY;
       
-      const cp1x = prev.x + dx * LAYOUT.lanes.people.bezierTension;
-      const cp1y = prevY + dy * LAYOUT.lanes.people.bezierVerticalTension;
-      const cp2x = curr.x - dx * LAYOUT.lanes.people.bezierTension;
-      const cp2y = currY - dy * LAYOUT.lanes.people.bezierVerticalTension;
+      const cp1x = prev.x + dx * this.config.bezierTension;
+      const cp1y = prevY + dy * this.config.bezierVerticalTension;
+      const cp2x = curr.x - dx * this.config.bezierTension;
+      const cp2y = currY - dy * this.config.bezierVerticalTension;
       
       topEdge.push(`C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${currY}`);
     }
@@ -181,10 +190,10 @@ export class PeopleLanePathGenerator {
         const dx = next.x - curr.x;
         const dy = currY - nextY;
         
-        const cp1x = next.x - dx * LAYOUT.lanes.people.bezierTension;
-        const cp1y = nextY + dy * LAYOUT.lanes.people.bezierVerticalTension;
-        const cp2x = curr.x + dx * LAYOUT.lanes.people.bezierTension;
-        const cp2y = currY - dy * LAYOUT.lanes.people.bezierVerticalTension;
+        const cp1x = next.x - dx * this.config.bezierTension;
+        const cp1y = nextY + dy * this.config.bezierVerticalTension;
+        const cp2x = curr.x + dx * this.config.bezierTension;
+        const cp2y = currY - dy * this.config.bezierVerticalTension;
         
         bottomEdge.push(`C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${currY}`);
       }
