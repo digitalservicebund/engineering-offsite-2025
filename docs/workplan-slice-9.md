@@ -139,31 +139,31 @@ Implement project particle join animations by **generalizing and reusing the exi
 - ✅ Build succeeds with no TypeScript errors
 - **Rationale:** Generic interface supports both entity types without code duplication
 
-**Task 2.3: Refactor ParticleAnimationController constructor**
-- Change signature to accept generic parameters:
+**Task 2.3: Refactor ParticleAnimationController constructor** ✅
+- ✅ Made class generic: `ParticleAnimationController<T>`
+- ✅ Changed constructor signature to accept:
+  - Generic entity array: `entities: T[]`
+  - Date accessor: `getEntityDate: (entity: T) => Date`
+  - Name accessor: `getEntityName: (entity: T) => string`
+  - Configuration object with all animation parameters
+- ✅ Updated class properties:
+  - `people` → `entities`
+  - `peopleLaneCenterY` → removed (now in config)
+  - Added `config` object property
+  - Added `getEntityDate` and `getEntityName` accessors
+- ✅ Replaced all hardcoded `LAYOUT.particleAnimations.people.*` with `this.config.*`
+- ✅ Updated `main.ts` instantiation with new signature:
   ```typescript
-  constructor<T>(
-    svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
-    xScale: d3.ScaleTime<number, number>,
-    entities: T[], // Generic entity array
-    getEntityDate: (entity: T) => Date, // Date accessor function
-    getEntityName: (entity: T) => string, // Name accessor function
-    getLaneWidthAt: (date: Date) => number,
-    config: {
-      laneCenterY: number,
-      spawnOffsetY: number, // Positive = below, Negative = above
-      circleRadius: number,
-      circleColor: string,
-      labelOffsetX: number,
-      labelFontSize: number,
-      labelFontFamily: string,
-      labelColor: string,
-      detectionWindowSize: number,
-      fadeOutDuration: number,
-    }
-  ) { ... }
+  new ParticleAnimationController<Person>(
+    svg, xScale, data.people,
+    (person) => person.joined,
+    (person) => person.name,
+    getLaneWidthAt,
+    { laneCenterY: ..., ...LAYOUT.particleAnimations.people }
+  )
   ```
-- **Rationale:** Configuration object encapsulates entity-specific behavior
+- ✅ Build succeeds with no TypeScript errors
+- **Rationale:** Configuration object encapsulates entity-specific behavior, enabling reuse for projects
 
 **Task 2.4: Update `precomputeParticleMetadata()` method**
 - Replace `person.joined` with `getEntityDate(entity)`

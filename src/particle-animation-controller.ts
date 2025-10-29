@@ -1,28 +1,43 @@
 /**
  * ParticleAnimationController - Manages particle lifecycle during forward auto-scroll
  * 
+ * Generic controller that works for any entity type (Person, Project, etc.)
+ * 
  * Responsibilities:
- * - Detect when person joins are about to appear during auto-scroll
- * - Spawn particle animations (blue circles with name labels)
- * - Animate particles diagonally upward-right from below lane to merge point
+ * - Detect when entity events are about to appear during auto-scroll
+ * - Spawn particle animations (colored circles with name labels)
+ * - Animate particles (upward or downward) from spawn point to lane merge point
  * - Fade out particles after reaching lane
  * - Clean up completed particles
  */
 
 import * as d3 from 'd3';
-import type { Person, ParticleAnimation } from './types';
+import type { ParticleAnimation } from './types';
 import { LAYOUT } from './config';
 
-export class ParticleAnimationController {
+export class ParticleAnimationController<T> {
   // Private properties
   private readonly xScale: d3.ScaleTime<number, number>;
-  private readonly people: Person[];
+  private readonly entities: T[];
+  private readonly getEntityDate: (entity: T) => Date;
+  private readonly getEntityName: (entity: T) => string;
   private readonly getLaneWidthAt: (date: Date) => number;
-  private readonly peopleLaneCenterY: number;
+  private readonly config: {
+    laneCenterY: number;
+    spawnOffsetY: number; // Positive = below, Negative = above
+    circleRadius: number;
+    circleColor: string;
+    labelOffsetX: number;
+    labelFontSize: number;
+    labelFontFamily: string;
+    labelColor: string;
+    detectionWindowSize: number;
+    fadeOutDuration: number;
+  };
   private readonly spawnOffsetX: number;
 
   private activeParticles: Map<string, ParticleAnimation>; // Tracks particles in progress
-  private completedJoins: Set<string>; // Person names whose join animations completed
+  private completedJoins: Set<string>; // Entity names whose join animations completed
   private particleGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
   private particleMetadata: Map<string, ParticleAnimation>; // Pre-calculated spawn data
   private lastUpdateTime: number = 0; // Track frame timing for pause detection
@@ -30,14 +45,29 @@ export class ParticleAnimationController {
   constructor(
     svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
     xScale: d3.ScaleTime<number, number>,
-    people: Person[],
+    entities: T[],
+    getEntityDate: (entity: T) => Date,
+    getEntityName: (entity: T) => string,
     getLaneWidthAt: (date: Date) => number,
-    peopleLaneCenterY: number
+    config: {
+      laneCenterY: number;
+      spawnOffsetY: number; // Positive = below, Negative = above
+      circleRadius: number;
+      circleColor: string;
+      labelOffsetX: number;
+      labelFontSize: number;
+      labelFontFamily: string;
+      labelColor: string;
+      detectionWindowSize: number;
+      fadeOutDuration: number;
+    }
   ) {
     this.xScale = xScale;
-    this.people = people;
+    this.entities = entities;
+    this.getEntityDate = getEntityDate;
+    this.getEntityName = getEntityName;
     this.getLaneWidthAt = getLaneWidthAt;
-    this.peopleLaneCenterY = peopleLaneCenterY;
+    this.config = config;
 
     // Compute spawn offset X (1/3 of pixels per year)
     this.spawnOffsetX = LAYOUT.timeline.pixelsPerYear / 3;
@@ -56,76 +86,77 @@ export class ParticleAnimationController {
     // Validate viewport height to ensure particles won't spawn off-screen
     this.validateViewportHeight();
 
-    // Pre-calculate particle metadata for all people
+    // Pre-calculate particle metadata for all entities
     this.precalculateParticleMetadata();
 
     console.log(
-      `ParticleAnimationController initialized: ${people.length} people, spawn offset X=${this.spawnOffsetX.toFixed(1)}px`
+      `ParticleAnimationController initialized: ${entities.length} entities, spawn offset X=${this.spawnOffsetX.toFixed(1)}px`
     );
   }
 
   /**
    * Validate that particles won't spawn off-screen
-   * Calculates worst-case spawn point (all people active simultaneously)
+   * Note: Simplified check - detailed validation done during metadata precalculation
    */
   private validateViewportHeight(): void {
-    // Worst case: all people active simultaneously
-    const maxPeopleCount = this.people.length;
-    const maxLaneWidth =
-      LAYOUT.lanes.people.baseStrokeWidth +
-      maxPeopleCount * LAYOUT.lanes.people.pixelsPerPerson;
-    const maxBottomEdgeY = this.peopleLaneCenterY + maxLaneWidth / 2;
-    const lowestSpawnY = maxBottomEdgeY + LAYOUT.particleAnimations.people.spawnOffsetY;
-
-    // Check against viewport
-    if (lowestSpawnY > LAYOUT.viewport.height) {
+    // Basic validation: Check if spawn position could be off-screen
+    const spawnEdgeY = this.config.laneCenterY + this.config.spawnOffsetY;
+    
+    if (spawnEdgeY < 0 || spawnEdgeY > LAYOUT.viewport.height) {
       console.warn(
-        `⚠️ Particles may spawn off-screen! Lowest spawn: ${lowestSpawnY}px, ` +
-          `viewport: ${LAYOUT.viewport.height}px. Consider reducing spawnOffsetY.`
+        `⚠️ Particles may spawn off-screen! Spawn edge Y: ${spawnEdgeY}px, ` +
+          `viewport: ${LAYOUT.viewport.height}px. Check spawnOffsetY configuration.`
       );
     } else {
-      const margin = LAYOUT.viewport.height - lowestSpawnY;
-      console.log(`✓ Viewport height OK: ${margin.toFixed(0)}px margin`);
+      console.log(`✓ Spawn position within viewport: Y=${spawnEdgeY.toFixed(0)}px`);
     }
   }
 
   /**
-   * Pre-calculate particle metadata for all people
-   * Builds lookup map with spawn positions and lane bottom edge for each person
+   * Pre-calculate particle metadata for all entities
+   * Builds lookup map with spawn positions and lane edge for each entity
    */
   private precalculateParticleMetadata(): void {
-    for (const person of this.people) {
-      const joinX = this.xScale(person.joined);
+    for (const entity of this.entities) {
+      const entityName = this.getEntityName(entity);
+      const entityDate = this.getEntityDate(entity);
+      
+      const joinX = this.xScale(entityDate);
       let spawnX = joinX - this.spawnOffsetX;
 
-      // Edge case: Clamp spawnX to timeline start (0) for very early joins
+      // Edge case: Clamp spawnX to timeline start (0) for very early events
       if (spawnX < 0) {
         console.warn(
-          `⚠️  Particle spawn position clamped for ${person.name}: ` +
-          `spawnX=${spawnX.toFixed(1)} → 0 (join date very early in timeline)`
+          `⚠️  Particle spawn position clamped for ${entityName}: ` +
+          `spawnX=${spawnX.toFixed(1)} → 0 (event date very early in timeline)`
         );
         spawnX = 0;
       }
 
-      // Calculate lane width at join date to find bottom edge
-      // This accounts for previous joins (lane grows over time)
-      const laneWidthAtJoin = this.getLaneWidthAt(person.joined);
-      const laneEdgeY = this.peopleLaneCenterY + laneWidthAtJoin / 2;
+      // Calculate lane width at event date to find lane edge
+      // This accounts for previous events (lane grows over time)
+      const laneWidthAtEvent = this.getLaneWidthAt(entityDate);
+      
+      // Calculate lane edge Y based on spawn direction
+      // Positive spawnOffsetY = below lane (people) → use bottom edge
+      // Negative spawnOffsetY = above lane (projects) → use top edge
+      const laneEdgeY = this.config.laneCenterY + 
+        (this.config.spawnOffsetY > 0 ? laneWidthAtEvent / 2 : -laneWidthAtEvent / 2);
 
-      // Edge case: Runtime check for particles spawning below viewport
-      const spawnY = laneEdgeY + LAYOUT.particleAnimations.people.spawnOffsetY;
-      if (spawnY > LAYOUT.viewport.height) {
+      // Edge case: Runtime check for particles spawning outside viewport
+      const spawnY = laneEdgeY + this.config.spawnOffsetY;
+      if (spawnY < 0 || spawnY > LAYOUT.viewport.height) {
         console.warn(
-          `⚠️  Particle spawn position too low for ${person.name}: ` +
-          `spawnY=${spawnY.toFixed(1)} > viewport.height=${LAYOUT.viewport.height} ` +
+          `⚠️  Particle spawn position outside viewport for ${entityName}: ` +
+          `spawnY=${spawnY.toFixed(1)}, viewport height=${LAYOUT.viewport.height} ` +
           `(may appear off-screen)`
         );
       }
 
-      this.particleMetadata.set(person.name, {
-        id: `particle-${person.name}`,
-        entityName: person.name,
-        joinDate: person.joined,
+      this.particleMetadata.set(entityName, {
+        id: `particle-${entityName}`,
+        entityName,
+        joinDate: entityDate,
         joinX,
         spawnX,
         laneEdgeY,
@@ -160,7 +191,7 @@ export class ParticleAnimationController {
     
     this.lastUpdateTime = now;
 
-    const detectionWindowSize = LAYOUT.particleAnimations.people.detectionWindowSize;
+    const detectionWindowSize = this.config.detectionWindowSize;
     
     // Iterate through all pre-calculated particle metadata
     for (const [entityName, particle] of this.particleMetadata) {
@@ -259,7 +290,7 @@ export class ParticleAnimationController {
 
     // Inner animation group: starts offset (left and down), will animate to (0,0)
     const offsetX = -(particle.joinX - particle.spawnX); // Negative = left offset
-    const offsetY = LAYOUT.particleAnimations.people.spawnOffsetY; // Positive = down offset
+    const offsetY = this.config.spawnOffsetY; // Positive = down offset
 
     const animationGroup = particleContainer
       .append('g')
@@ -271,18 +302,18 @@ export class ParticleAnimationController {
       .append('circle')
       .attr('cx', 0)
       .attr('cy', 0)
-      .attr('r', LAYOUT.particleAnimations.people.circleRadius)
-      .attr('fill', LAYOUT.particleAnimations.people.circleColor);
+      .attr('r', this.config.circleRadius)
+      .attr('fill', this.config.circleColor);
 
     // Text label to the right of circle
     animationGroup
       .append('text')
-      .attr('x', LAYOUT.particleAnimations.people.labelOffsetX)
+      .attr('x', this.config.labelOffsetX)
       .attr('y', 4) // Vertical centering offset
       .attr('text-anchor', 'start')
-      .attr('font-size', LAYOUT.particleAnimations.people.labelFontSize)
-      .attr('font-family', LAYOUT.particleAnimations.people.labelFontFamily)
-      .attr('fill', LAYOUT.particleAnimations.people.labelColor)
+      .attr('font-size', this.config.labelFontSize)
+      .attr('font-family', this.config.labelFontFamily)
+      .attr('fill', this.config.labelColor)
       .text(particle.entityName);
 
     // Store reference for animation
@@ -315,7 +346,7 @@ export class ParticleAnimationController {
     particle.animationDuration = duration;
     particle.startTransform = {
       x: -(particle.joinX - particle.spawnX),
-      y: LAYOUT.particleAnimations.people.spawnOffsetY
+      y: this.config.spawnOffsetY
     };
   }
 
@@ -335,7 +366,7 @@ export class ParticleAnimationController {
     // Fade out entire container
     container
       .transition()
-      .duration(LAYOUT.particleAnimations.people.fadeOutDuration)
+      .duration(this.config.fadeOutDuration)
       .attr('opacity', 0)
       .on('end', () => {
         // Remove from DOM

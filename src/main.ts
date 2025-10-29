@@ -92,7 +92,7 @@ function displayConfigError(title: string, messages: string[]): void {
 function setupKeyboardControls(
   viewportController: ViewportController,
   timeline: Timeline,
-  particleAnimationController: ParticleAnimationController,
+  particleAnimationController: ParticleAnimationController<Person>,
   photoController: PhotoController
 ): void {
   const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
@@ -256,12 +256,17 @@ async function init(): Promise<void> {
     };
 
     // Create particle animation controller
-    const particleAnimationController = new ParticleAnimationController(
+    const particleAnimationController = new ParticleAnimationController<Person>(
       timeline.getSvg(),
       timeline.getXScale(),
       data.people,
+      (person) => person.joined,
+      (person) => person.name,
       (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
-      LAYOUT.lanes.people.yPosition
+      {
+        laneCenterY: LAYOUT.lanes.people.yPosition,
+        ...LAYOUT.particleAnimations.people,
+      }
     );
 
     // Create particle update callback
