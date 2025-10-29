@@ -11,7 +11,7 @@ import { ActiveCountCalculator } from './active-count-calculator';
 import { ParticleAnimationController } from './particle-animation-controller';
 import { PhotoController } from './photo-controller';
 import { LAYOUT, injectCSSVariables } from './config';
-import type { Person } from './types';
+import type { Person, Project } from './types';
 import './style.css';
 
 // DOM element IDs
@@ -184,6 +184,21 @@ async function init(): Promise<void> {
         formatDescription: (person, isStart) => `${person.name} ${isStart ? '↑' : '↓'}`,
       }
     );
+
+    // Create project width calculator (sums widthIncrement values, not counts)
+    const projectWidthCalculator = new ActiveCountCalculator<Project>(
+      data.projects,
+      (project) => project.start,
+      (project) => project.end,
+      {
+        entityName: 'Projects (width)',
+        formatDescription: (proj, isStart) => `${proj.name} ${isStart ? '+' : '-'}${proj.widthIncrement}px`,
+      },
+      (project) => project.widthIncrement, // Custom start delta: add widthIncrement
+      (project) => -project.widthIncrement // Custom end delta: subtract widthIncrement (parallel to people)
+    );
+    // TODO: Wire up projectWidthCalculator to ProjectLanePathGenerator in next task
+    void projectWidthCalculator; // Suppress unused variable warning
 
     // Create lane path generator (for people lane path generation)
     const peopleLanePathGenerator = new PeopleLanePathGenerator(peopleCount);

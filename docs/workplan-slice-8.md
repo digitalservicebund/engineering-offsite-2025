@@ -88,7 +88,7 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
 **Task 1.3: Map implementation patterns (mental model)**
 - Create explicit mappings:
   - `Person.joined` → `Project.start`
-  - `Person.left` → `Project.end` (projects have no end dates for width calculation)
+  - `Person.left` → `Project.end` (width decreases when projects end, parallel to people)
   - `headcount` → `sum of widthIncrements`
   - `pixelsPerPerson` → `project.widthIncrement` (per-project value)
   - `PeopleLanePathGenerator` → `ProjectLanePathGenerator`
@@ -97,10 +97,10 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
 ---
 
 ### Phase 2: Adapt ActiveCountCalculator for Project Width Increments
-**Status:** Pending  
+**Status:** In Progress (Testing pending)  
 **🎯 INTEGRATION POINT:** Test calculator separately before path generation
 
-**Task 2.1: Design calculator instantiation strategy**
+**Task 2.1: Design calculator instantiation strategy** ✅
 - **Key difference from people:** Projects don't count (1 per entity), they sum `widthIncrement` values
 - **Approach:** Use `ActiveCountCalculator<Project>` but pass `project.widthIncrement` as delta instead of `1`
 - **Challenge:** `ActiveCountCalculator` uses fixed +1/-1 deltas for joins/departures
@@ -108,25 +108,25 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
 - **Decision point:** Extend `ActiveCountCalculator` to support custom deltas OR create wrapper
 - **Rationale:** Calculator currently hardcodes +1/-1; need configurable increments
 
-**Task 2.2: Extend ActiveCountCalculator to support custom delta values**
-- Modify `buildTimeline()` method signature:
+**Task 2.2: Extend ActiveCountCalculator to support custom delta values** ✅
+- Modified constructor signature:
   ```typescript
   // OLD: Fixed +1 for starts, -1 for ends
-  // NEW: Accept custom delta calculation
+  // NEW: Accept custom delta calculation (loggingConfig kept before optional deltas for backward compatibility)
   constructor(
     entities: T[],
     getEntityStart: (entity: T) => Date,
     getEntityEnd: (entity: T) => Date | null,
+    loggingConfig?: LoggingConfig<T>,
     getStartDelta?: (entity: T) => number, // NEW: default = 1
-    getEndDelta?: (entity: T) => number,   // NEW: default = -1
-    loggingConfig?: LoggingConfig<T>
+    getEndDelta?: (entity: T) => number    // NEW: default = -1
   ) { ... }
   ```
-- Update `addEvent()` calls to use custom deltas
-- **Backward compatibility:** Default to +1/-1 if custom deltas not provided
+- Updated `addEvent()` calls to use custom deltas
+- **Backward compatibility:** Defaults to +1/-1 if custom deltas not provided; existing code works unchanged
 - **Rationale:** Makes calculator truly generic, supports both counting and summing
 
-**Task 2.3: Instantiate project width calculator in `main.ts`**
+**Task 2.3: Instantiate project width calculator in `main.ts`** ✅
 - After loading data, create calculator:
   ```typescript
   // Reuse same ActiveCountCalculator pattern, but sum widthIncrements
@@ -134,26 +134,27 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
     data.projects,
     (project) => project.start,
     (project) => project.end,
-    (project) => project.widthIncrement, // Custom delta: use widthIncrement
-    (project) => 0, // End delta not used (null end dates)
     {
       entityName: 'Projects (width)',
-      formatDescription: (proj, isStart) => `${proj.name} +${proj.widthIncrement}px`,
-    }
+      formatDescription: (proj, isStart) => `${proj.name} ${isStart ? '+' : '-'}${proj.widthIncrement}px`,
+    },
+    (project) => project.widthIncrement, // Custom start delta: add widthIncrement
+    (project) => -project.widthIncrement // Custom end delta: subtract widthIncrement (parallel to people)
   );
   ```
-- **Rationale:** Reuses exact same infrastructure as people lane, just different delta source
+- **Rationale:** Reuses exact same infrastructure as people lane, just different delta source. Width increases when projects start, decreases when they end.
 
 **Task 2.4: Test calculator with logging**
 - Run app and check console output:
   ```
   Projects (width) count timeline: N events
-    2021-01-01: 0 → 3 (Platform v1 +3px)
-    2021-06-15: 3 → 8 (Mobile App +5px)
-    2022-03-01: 8 → 19 (Analytics +11px)
+    2020-06-01: 0 → 3 (Platform v1 +3px)
+    2021-03-01: 3 → 8 (Mobile App +5px)
+    2022-09-01: 8 → 12 (Analytics Dashboard +4px)
+    2022-12-31: 12 → 7 (Mobile App -5px)  [project ended, width decreased]
     ...
   ```
-- Verify cumulative sums match manual calculation
+- Verify cumulative sums match manual calculation (including decreases at end dates)
 - Test `getCountAt()` at various dates
 - **Rationale:** Validate domain logic before presentation layer
 
@@ -408,13 +409,13 @@ Implement dynamic project lane width growth by **generalizing and reusing the ex
 - Parallel classes easier to understand than abstraction layers
 - Matches project philosophy: "Focus on clarity, code can be throwaway"
 
-### 3. Projects Have End Dates in Data, but Don't Use Them for Width
-**Decision:** Pass `null` for end date accessor in calculator instantiation  
+### 3. Projects End Dates Decrease Width (Parallel to People)
+**Decision:** Use project end dates with negative delta to decrease width  
 **Rationale:**  
-- Spec is clear: "Width increases when project starts" (no decrease when ends)
-- Projects.end exists in data model for other purposes (not width calculation)
-- Simpler logic: monotonic increase only
-- Calculator supports null end dates (returns no end events)
+- Parallel to people lane: people leave → count decreases, projects end → width decreases
+- Creates realistic visualization of active project load over time
+- Formula: `width = baseWidth + sum(active project widthIncrements)`
+- End delta: `-project.widthIncrement` mirrors start delta: `+project.widthIncrement`
 
 ### 4. Stroke Width Calculation: Fixed Multiplier vs. Per-Project Increment
 **Decision:** Use per-project `widthIncrement` field from data  
@@ -682,9 +683,9 @@ const timeline = new Timeline(
 
 ## Open Questions
 
-1. **Should we add project end date handling for width?**
-   - **Answer:** No - spec says width increases at start, no decrease at end
-   - Projects.end is for other features, not width calculation
+1. **Should project width decrease when projects end?**
+   - **Answer:** Yes - parallel to people lane (people leave → count decreases, projects end → width decreases)
+   - Creates realistic visualization of active project load over time
 
 2. **What if a project has widthIncrement = 0?**
    - **Answer:** Valid - some projects may not impact visual width (administrative projects)

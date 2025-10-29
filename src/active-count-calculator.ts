@@ -4,6 +4,11 @@
  * Precomputes a timeline of cumulative counts for efficient O(log n) lookups.
  * Generic over entity type T - works for People, Projects, or any entity with start/end dates.
  *
+ * Supports both counting (default +1/-1 deltas) and summing (custom deltas per entity).
+ * Examples:
+ * - People: count active individuals (default +1 for joins, -1 for departures)
+ * - Projects: sum width increments (custom delta = project.widthIncrement)
+ *
  * Design: Core domain logic separated from presentation concerns.
  */
 
@@ -17,7 +22,7 @@ interface TimelinePoint {
 
 interface TimelineEvent {
   date: Date;
-  delta: number; // +1 for starts, -1 for ends
+  delta: number; // Default: +1 for starts, -1 for ends; Custom: per-entity value (e.g., widthIncrement)
   description: string; // For logging
 }
 
@@ -34,9 +39,11 @@ export class ActiveCountCalculator<T> {
     entities: T[],
     getEntityStart: (entity: T) => Date,
     getEntityEnd: (entity: T) => Date | null,
-    loggingConfig?: LoggingConfig<T>
+    loggingConfig?: LoggingConfig<T>,
+    getStartDelta?: (entity: T) => number,
+    getEndDelta?: (entity: T) => number
   ) {
-    this.buildTimeline(entities, getEntityStart, getEntityEnd, loggingConfig);
+    this.buildTimeline(entities, getEntityStart, getEntityEnd, loggingConfig, getStartDelta, getEndDelta);
   }
 
   /**
@@ -47,28 +54,32 @@ export class ActiveCountCalculator<T> {
     entities: T[],
     getEntityStart: (entity: T) => Date,
     getEntityEnd: (entity: T) => Date | null,
-    loggingConfig?: LoggingConfig<T>
+    loggingConfig?: LoggingConfig<T>,
+    getStartDelta?: (entity: T) => number,
+    getEndDelta?: (entity: T) => number
   ): void {
     // Step 1 & 2: Collect all start and end events with deltas
     const eventMap = new Map<string, TimelineEvent>();
 
     for (const entity of entities) {
-      // Add start event (+1)
+      // Add start event (default +1, or custom delta from getStartDelta)
       const startDate = getEntityStart(entity);
+      const startDelta = getStartDelta ? getStartDelta(entity) : 1;
       this.addEvent(
         eventMap,
         startDate,
-        1,
+        startDelta,
         loggingConfig ? loggingConfig.formatDescription(entity, true) : ''
       );
 
-      // Add end event (-1) if entity has ended
+      // Add end event (default -1, or custom delta from getEndDelta) if entity has ended
       const endDate = getEntityEnd(entity);
       if (endDate !== null) {
+        const endDelta = getEndDelta ? getEndDelta(entity) : -1;
         this.addEvent(
           eventMap,
           endDate,
-          -1,
+          endDelta,
           loggingConfig ? loggingConfig.formatDescription(entity, false) : ''
         );
       }
