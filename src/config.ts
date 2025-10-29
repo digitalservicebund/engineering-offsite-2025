@@ -11,7 +11,7 @@ const COLORS = {
   projects: '#F0B7D5',   // projects lane
   events: '#81878E',     // events lane, markers, thumbnails
   people: '#60CFFF',     // people lane, particles
-  
+
   // UI Colors
   text: '#2A2B2D',       // Dark gray - text labels, counters
   background: '#E9EEF3', // Light gray - timeline background
@@ -60,6 +60,10 @@ export const LAYOUT = {
       bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
       bezierVerticalTension: 0.8, // 0-1 - vertical interpolation for S-curves (higher = tighter curves)
     },
+  },
+  laneLabels: {
+    offsetX: -120, // px - negative = to the left of timeline start (x=0)
+    leftPadding: 140, // px - viewBox left padding to accommodate labels
   },
   eventMarkers: {
     lineHeight: 30, // px - extends upward from top edge of lane

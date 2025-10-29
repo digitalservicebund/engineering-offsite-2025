@@ -114,6 +114,16 @@ svg {
   animation: pulse 2s ease-in-out infinite;
 }
 
+/* Lane label styling */
+.lane-label {
+  text-anchor: start;
+  dominant-baseline: middle;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: sans-serif;
+  fill: var(--color-text);
+}
+
 /* Event label styling */
 .event-label {
   width: 100%;

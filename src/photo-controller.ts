@@ -298,11 +298,16 @@ export class PhotoController {
    * @returns Object with x and y coordinates for thumbnail
    */
   private calculateThumbnailPosition(markerX: number): { x: number; y: number } {
-    // Thumbnail centered horizontally on marker
-    let x = markerX - LAYOUT.photoDisplay.thumbnailSize / 2;
+    const leftPadding = LAYOUT.laneLabels.leftPadding;
 
-    // Clamp x-position to prevent thumbnails from being clipped at timeline edges
-    x = Math.max(0, Math.min(x, this.timelineWidth - LAYOUT.photoDisplay.thumbnailSize));
+    // Thumbnail centered horizontally on marker (HTML coordinates)
+    let x = markerX + leftPadding - LAYOUT.photoDisplay.thumbnailSize / 2;
+
+    // Clamp x-position to stay within visible area (account for left padding region)
+    x = Math.max(
+      leftPadding,
+      Math.min(x, this.timelineWidth + leftPadding - LAYOUT.photoDisplay.thumbnailSize)
+    );
 
     // Thumbnail positioned BELOW marker line (to avoid obscuring event labels)
     // Position below the events lane bottom edge

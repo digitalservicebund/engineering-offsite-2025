@@ -37,11 +37,13 @@ export class Timeline {
   private createSvgElement(
     container: HTMLElement
   ): d3.Selection<SVGSVGElement, unknown, null, undefined> {
+    const leftPadding = LAYOUT.laneLabels.leftPadding;
     return d3
       .select(container)
       .append('svg')
       .attr('width', 0) // Will be set in calculateDimensions
-      .attr('height', LAYOUT.viewport.height);
+      .attr('height', LAYOUT.viewport.height)
+      .attr('viewBox', `-${leftPadding} 0 ${leftPadding} ${LAYOUT.viewport.height}`); // Initial viewBox, width updated in calculateDimensions
   }
 
   /**
@@ -57,7 +59,13 @@ export class Timeline {
   private calculateDimensions(): void {
     const numYears = this.data.endYear - this.data.startYear;
     this.timelineWidth = numYears * LAYOUT.timeline.pixelsPerYear;
-    this.svg.attr('width', this.timelineWidth);
+    const leftPadding = LAYOUT.laneLabels.leftPadding;
+    
+    // Update SVG width and viewBox to include left padding for labels
+    // IMPORTANT: width must match viewBox width to avoid scaling
+    this.svg
+      .attr('width', this.timelineWidth + leftPadding)
+      .attr('viewBox', `-${leftPadding} 0 ${this.timelineWidth + leftPadding} ${LAYOUT.viewport.height}`);
   }
 
   /**
@@ -171,6 +179,33 @@ export class Timeline {
 
     // People lane (bottom, blue) - rendered as filled path with variable width
     this.renderPeopleLane(lanesGroup);
+
+    // Render lane labels
+    this.renderLaneLabels();
+  }
+
+  /**
+   * Render lane labels on the left side of the timeline
+   * Labels positioned at negative x values (left of timeline start at x=0)
+   * ViewBox adjusted to include this negative space
+   */
+  private renderLaneLabels(): void {
+    const labelsGroup = this.svg.append('g').attr('class', 'lane-labels');
+
+    const labels = [
+      { text: 'Projects', y: LAYOUT.lanes.projects.yPosition },
+      { text: 'Events', y: LAYOUT.lanes.events.yPosition },
+      { text: 'People', y: LAYOUT.lanes.people.yPosition },
+    ];
+
+    labelsGroup
+      .selectAll('text')
+      .data(labels)
+      .join('text')
+      .attr('class', 'lane-label')
+      .attr('x', LAYOUT.laneLabels.offsetX)
+      .attr('y', (d) => d.y)
+      .text((d) => d.text);
   }
 
   /**
