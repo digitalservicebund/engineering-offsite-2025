@@ -1,8 +1,6 @@
-- fixing overlapping text labels for key events
-- change year counter to current date counter
 - visual marker for current date
 - lanes pulsing when particle merges
-- use a gradient to fade out future lanes/events beyond the current date marker
+- use a gradient overlay to fade out future lanes/events beyond the current date marker
 - add subtle gradient backgrounds behind lanes or curved shadow under each lane for depth
 - switch colors to DS brand colors
 - optimize particle size

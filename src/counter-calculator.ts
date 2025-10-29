@@ -43,9 +43,12 @@ export class CounterCalculator {
   }
 
   /**
-   * Extract 4-digit year from a date
+   * Format date as DD.MM.YYYY
    */
-  public getYearAt(date: Date): number {
-    return date.getFullYear();
+  public getFormattedDateAt(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
   }
 }

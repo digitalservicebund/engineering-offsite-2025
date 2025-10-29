@@ -18,7 +18,6 @@ import './style.css';
 const CONTAINER_ID = 'timeline-container';
 const COUNTER_ENGINEERS_ID = 'counter-engineers';
 const COUNTER_PROJECTS_ID = 'counter-projects';
-const COUNTER_YEAR_ID = 'counter-year';
 
 /**
  * Get the timeline container element
@@ -37,17 +36,17 @@ function getTimelineContainer(): HTMLElement {
 function getCounterElements(): {
   engineers: HTMLElement;
   projects: HTMLElement;
-  year: HTMLElement;
+  date: HTMLElement;
 } {
   const engineers = document.getElementById(COUNTER_ENGINEERS_ID);
   const projects = document.getElementById(COUNTER_PROJECTS_ID);
-  const year = document.getElementById(COUNTER_YEAR_ID);
+  const date = document.getElementById('counter-date');
 
-  if (!engineers || !projects || !year) {
+  if (!engineers || !projects || !date) {
     throw new Error('Counter elements not found in DOM');
   }
 
-  return { engineers, projects, year };
+  return { engineers, projects, date };
 }
 
 /**
@@ -236,11 +235,11 @@ async function init(): Promise<void> {
     const updateCounters = (date: Date): void => {
       const engineers = counterCalculator.getActiveEngineersAt(date);
       const projects = counterCalculator.getActiveProjectsAt(date);
-      const year = counterCalculator.getYearAt(date);
+      const formattedDate = counterCalculator.getFormattedDateAt(date);
 
       counterElements.engineers.textContent = `Engineers: ${engineers}`;
       counterElements.projects.textContent = `Projects: ${projects}`;
-      counterElements.year.textContent = `Year: ${year}`;
+      counterElements.date.textContent = `Date: ${formattedDate}`;
     };
 
     // Get key event positions for auto-scroll pause detection
