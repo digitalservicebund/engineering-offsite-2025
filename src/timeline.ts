@@ -17,6 +17,7 @@ export class Timeline {
 
   private timelineWidth = 0;
   private xScale: d3.ScaleTime<number, number> | null = null;
+  private readonly contentGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
 
   constructor(
     container: HTMLElement,
@@ -29,6 +30,7 @@ export class Timeline {
     this.peopleLanePathGenerator = peopleLanePathGenerator || null;
     this.projectLanePathGenerator = projectLanePathGenerator || null;
     this.svg = this.createSvgElement(container);
+    this.contentGroup = this.svg.append('g').attr('class', 'timeline-content');
   }
 
   /**
@@ -37,13 +39,12 @@ export class Timeline {
   private createSvgElement(
     container: HTMLElement
   ): d3.Selection<SVGSVGElement, unknown, null, undefined> {
-    const leftPadding = LAYOUT.laneLabels.leftPadding;
     return d3
       .select(container)
       .append('svg')
       .attr('width', 0) // Will be set in calculateDimensions
       .attr('height', LAYOUT.viewport.height)
-      .attr('viewBox', `-${leftPadding} 0 ${leftPadding} ${LAYOUT.viewport.height}`); // Initial viewBox, width updated in calculateDimensions
+      .attr('viewBox', `0 0 ${LAYOUT.viewport.width} ${LAYOUT.viewport.height}`); // Placeholder
   }
 
   /**
@@ -65,7 +66,9 @@ export class Timeline {
     // IMPORTANT: width must match viewBox width to avoid scaling
     this.svg
       .attr('width', this.timelineWidth + leftPadding)
-      .attr('viewBox', `-${leftPadding} 0 ${this.timelineWidth + leftPadding} ${LAYOUT.viewport.height}`);
+      .attr('viewBox', `0 0 ${this.timelineWidth + leftPadding} ${LAYOUT.viewport.height}`);
+
+    this.contentGroup.attr('transform', `translate(${leftPadding}, 0)`);
   }
 
   /**
@@ -93,11 +96,11 @@ export class Timeline {
    */
   private renderBackground(): void {
     this.svg
-      .append('rect')
+      .insert('rect', ':first-child')
       .attr('class', 'background')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('width', this.timelineWidth)
+      .attr('width', this.timelineWidth + LAYOUT.laneLabels.leftPadding)
       .attr('height', LAYOUT.viewport.height)
       .attr('fill', LAYOUT.background);
   }
@@ -107,7 +110,7 @@ export class Timeline {
    */
   private renderGridlines(): void {
     const xScale = this.getXScaleOrThrow();
-    const gridGroup = this.svg.append('g').attr('class', 'gridlines');
+    const gridGroup = this.contentGroup.append('g').attr('class', 'gridlines');
 
     // Draw gridlines for each year
     for (let year = this.data.startYear; year <= this.data.endYear; year++) {
@@ -163,7 +166,7 @@ export class Timeline {
    * Render the three horizontal lanes
    */
   private renderLanes(): void {
-    const lanesGroup = this.svg.append('g').attr('class', 'lanes');
+    const lanesGroup = this.contentGroup.append('g').attr('class', 'lanes');
 
     // Projects lane (top, green) - rendered as filled path with variable width
     this.renderProjectLane(lanesGroup);
@@ -186,8 +189,7 @@ export class Timeline {
 
   /**
    * Render lane labels on the left side of the timeline
-   * Labels positioned at negative x values (left of timeline start at x=0)
-   * ViewBox adjusted to include this negative space
+   * Labels are positioned using the lane-label padding to sit left of the translated content
    */
   private renderLaneLabels(): void {
     const labelsGroup = this.svg.append('g').attr('class', 'lane-labels');
@@ -203,7 +205,7 @@ export class Timeline {
       .data(labels)
       .join('text')
       .attr('class', 'lane-label')
-      .attr('x', LAYOUT.laneLabels.offsetX)
+      .attr('x', LAYOUT.laneLabels.offsetX + LAYOUT.laneLabels.leftPadding)
       .attr('y', (d) => d.y)
       .text((d) => d.text);
   }
@@ -365,7 +367,7 @@ export class Timeline {
     }
 
     // Render markers first (behind)
-    const markersGroup = this.svg.append('g').attr('class', 'event-markers');
+    const markersGroup = this.contentGroup.append('g').attr('class', 'event-markers');
     
     markersGroup
       .selectAll<SVGLineElement, Event>('line.marker-line')
@@ -385,7 +387,7 @@ export class Timeline {
       .attr('stroke-linecap', 'round');
 
     // Render labels second (in front) in separate group
-    const labelsGroup = this.svg.append('g').attr('class', 'event-labels');
+    const labelsGroup = this.contentGroup.append('g').attr('class', 'event-labels');
     
     const labelContainers = labelsGroup
       .selectAll<SVGForeignObjectElement, Event>('foreignObject.marker-label-container')
@@ -442,6 +444,10 @@ export class Timeline {
 
   public getSvg(): d3.Selection<SVGSVGElement, unknown, null, undefined> {
     return this.svg;
+  }
+
+  public getContentGroup(): d3.Selection<SVGGElement, unknown, null, undefined> {
+    return this.contentGroup;
   }
 
   /**

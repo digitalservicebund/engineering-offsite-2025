@@ -44,7 +44,7 @@ export class ParticleAnimationController<T> {
   private lastUpdateTime: number = 0; // Track frame timing for pause detection
 
   constructor(
-    svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+    svg: d3.Selection<SVGSVGElement | SVGGElement, unknown, null, undefined>,
     xScale: d3.ScaleTime<number, number>,
     entities: T[],
     getEntityDate: (entity: T) => Date,

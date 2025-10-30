@@ -87,9 +87,8 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--timeline-marker-ratio, 0.75) * 100%);
+  left: var(--timeline-marker-position, 900px);
   width: 1px;
-  transform: translateX(-50%);
   background: #FF823C;
   opacity: 0.4;
 }

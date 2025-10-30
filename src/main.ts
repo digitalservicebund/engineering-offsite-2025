@@ -262,7 +262,7 @@ async function init(): Promise<void> {
 
     // Create particle animation controllers
     const peopleParticleController = new ParticleAnimationController<Person>(
-      timeline.getSvg(),
+      timeline.getContentGroup(),
       timeline.getXScale(),
       data.people,
       (person) => person.joined,
@@ -275,7 +275,7 @@ async function init(): Promise<void> {
     );
 
     const peopleLeavingController = new ParticleAnimationController<Person>(
-      timeline.getSvg(),
+      timeline.getContentGroup(),
       timeline.getXScale(),
       data.people.filter(p => p.left !== null),
       (person) => person.left!,
@@ -288,7 +288,7 @@ async function init(): Promise<void> {
     );
 
     const projectParticleController = new ParticleAnimationController<Project>(
-      timeline.getSvg(),
+      timeline.getContentGroup(),
       timeline.getXScale(),
       data.projects,
       (project) => project.start,
@@ -301,7 +301,7 @@ async function init(): Promise<void> {
     );
 
     const projectsEndingController = new ParticleAnimationController<Project>(
-      timeline.getSvg(),
+      timeline.getContentGroup(),
       timeline.getXScale(),
       data.projects.filter(p => p.end !== null),
       (project) => project.end!,

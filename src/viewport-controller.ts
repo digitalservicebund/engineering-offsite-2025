@@ -62,6 +62,7 @@ export class ViewportController {
 
     // Initialize position and apply transform
     this.currentOffset = this.minOffset;
+    
     this.applyTransform();
 
     // Notify initial viewport position
@@ -72,14 +73,16 @@ export class ViewportController {
    * Calculate left padding needed for first event to be at the current position marker
    */
   private calculateMinOffset(): number {
-    return -(this.viewportWidth * LAYOUT.scroll.currentPositionRatio);
+    const overlayX = this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    return -overlayX;
   }
 
   /**
    * Calculate maximum offset (when timeline end reaches the current position marker)
    */
   private calculateMaxOffset(): number {
-    return this.timelineWidth - this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    const overlayX = this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    return this.timelineWidth - overlayX;
   }
 
   /**
@@ -107,7 +110,8 @@ export class ViewportController {
    * Calculate the x-position at the current position marker
    */
   private calculateCurrentPositionX(): number {
-    return this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    const overlayX = this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    return this.currentOffset + overlayX;
   }
 
   /**
@@ -129,7 +133,10 @@ export class ViewportController {
     this.container.style.transition = 'none';
 
     // Negate currentOffset to get proper CSS translateX value
-    this.container.style.transform = `translateX(${-this.currentOffset}px)`;
+    // Subtract leftPadding because content group is already translated by that amount in SVG space
+    const leftPadding = LAYOUT.laneLabels.leftPadding;
+    const transformValue = -this.currentOffset - leftPadding;
+    this.container.style.transform = `translateX(${transformValue}px)`;
   }
 
   /**
@@ -231,7 +238,7 @@ export class ViewportController {
 
     // 9. Update particle animations
     if (this.onParticleUpdate) {
-      const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+      const currentPositionX = this.calculateCurrentPositionX();
       this.onParticleUpdate(currentPositionX);
     }
 
@@ -331,7 +338,7 @@ export class ViewportController {
     }
 
     // Get current position marker x (where we consider "current" to be)
-    const currentPositionX = this.currentOffset + this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+    const currentPositionX = this.calculateCurrentPositionX();
 
     // Find next key event ahead
     let targetKeyEvent: KeyEventPosition | null = null;
@@ -357,7 +364,8 @@ export class ViewportController {
       this.pausedAtEventId = targetKeyEvent.eventId;
 
       // Snap to exact key event position for precision
-      this.currentOffset = targetKeyEvent.xPosition - this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+      const overlayX = this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
+      this.currentOffset = targetKeyEvent.xPosition - overlayX;
       this.applyTransform();
 
       console.log(`Paused at key event: "${targetKeyEvent.eventName}" (${targetKeyEvent.eventId})`);

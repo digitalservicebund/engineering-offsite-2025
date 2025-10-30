@@ -180,7 +180,10 @@ export function injectCSSVariables(): void {
 
   // Event color (TS: D3 SVG lane rendering, CSS: thumbnail border)
   root.style.setProperty('--color-events', LAYOUT.lanes.events.color);
-  root.style.setProperty('--timeline-marker-ratio', `${LAYOUT.scroll.currentPositionRatio}`);
+  
+  // Current date marker position
+  const markerPosition = LAYOUT.viewport.width * LAYOUT.scroll.currentPositionRatio;
+  root.style.setProperty('--timeline-marker-position', `${markerPosition}px`);
 
   console.log('✓ CSS variables injected from config');
 }
