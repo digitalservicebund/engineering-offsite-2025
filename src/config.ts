@@ -31,7 +31,7 @@ export const LAYOUT = {
   },
   autoScroll: {
     speed: 200, // px/sec - constant scroll speed per spec
-    keyEventPauseThreshold: 2, // px - how close to key event before pausing (reduced from 5px to minimize snap jank)
+    keyEventPauseThreshold: 4, // px - how close to key event before pausing
   },
   lanes: {
     projects: {
@@ -142,6 +142,9 @@ export const LAYOUT = {
   },
   background: COLORS.background,
   textColor: COLORS.text,
+  debug: {
+    showFpsCounter: false, // Display FPS counter in top-left corner
+  },
 } as const;
 
 export type LayoutConfig = typeof LAYOUT;

@@ -10,6 +10,7 @@ import { LanePathGenerator } from './lane-path-generator';
 import { ActiveCountCalculator } from './active-count-calculator';
 import { ParticleAnimationController } from './particle-animation-controller';
 import { PhotoController } from './photo-controller';
+import { FpsCounter } from './fps-counter';
 import { LAYOUT, injectCSSVariables } from './config';
 import type { Person, Project } from './types';
 import './style.css';
@@ -161,6 +162,13 @@ async function init(): Promise<void> {
   try {
     // Inject CSS variables from config before any DOM creation
     injectCSSVariables();
+
+    // Initialize FPS counter if enabled
+    let fpsCounter: FpsCounter | null = null;
+    if (LAYOUT.debug.showFpsCounter) {
+      fpsCounter = new FpsCounter();
+      console.log('✓ FPS counter enabled');
+    }
 
     console.log('Loading timeline data...');
 
@@ -326,6 +334,13 @@ async function init(): Promise<void> {
     };
 
     // Create viewport controller for panning
+    // FPS update callback
+    const updateFps = (timestamp: number): void => {
+      if (fpsCounter) {
+        fpsCounter.recordFrame(timestamp);
+      }
+    };
+
     const viewportController = new ViewportController(
       container,
       timeline.getTimelineWidth(),
@@ -335,7 +350,8 @@ async function init(): Promise<void> {
       keyEventPositions,
       updateCounters,
       handleKeyEventReached,
-      updateParticles
+      updateParticles,
+      updateFps
     );
 
     // Setup keyboard controls

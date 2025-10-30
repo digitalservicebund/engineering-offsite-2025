@@ -22,6 +22,7 @@ export class ViewportController {
   private readonly onViewportChange?: (date: Date) => void;
   private readonly onKeyEventReached?: (eventId: string | null) => void;
   private readonly onParticleUpdate?: (currentPositionX: number) => void;
+  private readonly onFpsUpdate?: (timestamp: number) => void;
 
   private currentOffset: number;
 
@@ -41,7 +42,8 @@ export class ViewportController {
     keyEventPositions: KeyEventPosition[],
     onViewportChange?: (date: Date) => void,
     onKeyEventReached?: (eventId: string | null) => void,
-    onParticleUpdate?: (currentPositionX: number) => void
+    onParticleUpdate?: (currentPositionX: number) => void,
+    onFpsUpdate?: (timestamp: number) => void
   ) {
     this.container = container;
     this.timelineWidth = timelineWidth;
@@ -53,6 +55,7 @@ export class ViewportController {
     this.onViewportChange = onViewportChange;
     this.onKeyEventReached = onKeyEventReached;
     this.onParticleUpdate = onParticleUpdate;
+    this.onFpsUpdate = onFpsUpdate;
 
     console.log(`ViewportController initialized with ${keyEventPositions.length} key events`);
 
@@ -189,6 +192,11 @@ export class ViewportController {
    * Implements smooth scrolling at constant speed (200px/sec)
    */
   private autoScrollLoop(timestamp: number): void {
+    // 0. Record frame for FPS tracking
+    if (this.onFpsUpdate) {
+      this.onFpsUpdate(timestamp);
+    }
+
     // 1. Exit if no longer scrolling
     if (this.scrollState !== 'scrolling') {
       this.autoScrollFrameId = null;

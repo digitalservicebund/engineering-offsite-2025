@@ -130,6 +130,23 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
+/* FPS Counter - fixed position in top-left corner */
+.fps-counter {
+  position: absolute;
+  top: var(--space-xl);
+  left: var(--space-2xl);
+  z-index: 100;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(0, 0, 0, 0.75);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+  pointer-events: none;
+}
+
 .counter {
   white-space: nowrap;
 }
