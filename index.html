@@ -4,15 +4,65 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Engineering Offsite 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #000;
+        margin: 0;
+        overflow: hidden;
+        font-family: "Lexend", sans-serif;
+        background-image: url(/images/background.png);
+        background-position: bottom left;
+        background-size: 50vw;
+        background-repeat: no-repeat;
+        height: 100vh;
+      }
+      .nav-container {
+        position: absolute;
+        top: 50%;
+        right: 10vw;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        color: white;
+      }
+      .nav-container h1 {
+        margin-bottom: 1em;
+      }
+      .nav-container a {
+        color: white;
+        text-decoration: underline;
+        font-size: 1.5em;
+        margin: 0.5em 0;
+      }
+      .nav-container h2 {
+        font-size: 1.2em;
+        margin-top: 2em;
+      }
+      .logo {
+        position: absolute;
+        top: 2em;
+        left: 2em;
+        width: 100px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Engineering Offsite 2025</h1>
-    <p>
-      Welcome to the Engineering Offsite 2025 project. This site will contain
-      visualisations of key events and anecdotes about people within the
-      engineering discipline at DigitalService.
-    </p>
-    <a href="/pages/placeholder.html">Placeholder Page</a>
-    <a href="/pages/map.html">People Map</a>
+    <img src="/images/logo.png" alt="Logo" class="logo" />
+    <div class="nav-container">
+      <h1>
+        DigitalService<br />
+        Engineering Offsite 2025
+      </h1>
+      <a href="/pages/placeholder.html">Placeholder Page</a>
+      <a href="/pages/map.html">People Map</a>
+      <h2>Scan to access on this network</h2>
+      <img src="/qr" alt="QR Code" />
+    </div>
   </body>
 </html>
