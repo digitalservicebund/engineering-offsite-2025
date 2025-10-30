@@ -1,9 +1,5 @@
 - animation after final event: lanes merge + morph together, followed by huge fireworks / confetti
 - make design less "flat"
-- change projects label to "Software Projects"
-- optimize particle size and / or try again for an animation when particles join
 - 🌟 emoji for key events
-- add minor gridlines for months
-- animate year ticks on timeline entry
 - gentle parallax effect for background
 - timeline scale adjustable (zoom in/out)

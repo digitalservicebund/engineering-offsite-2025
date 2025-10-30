@@ -106,37 +106,78 @@ export class Timeline {
   }
 
   /**
-   * Render vertical gridlines at year boundaries
+   * Render vertical gridlines at year and month boundaries
    */
   private renderGridlines(): void {
     const xScale = this.getXScaleOrThrow();
     const gridGroup = this.contentGroup.append('g').attr('class', 'gridlines');
 
-    // Draw gridlines for each year
-    for (let year = this.data.startYear; year <= this.data.endYear; year++) {
-      const date = new Date(year, 0, 1);
-      const x = xScale(date);
+    // Month abbreviations for labels
+    const monthAbbr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-      // Vertical line
+    // Draw gridlines for each year and month
+    for (let year = this.data.startYear; year <= this.data.endYear; year++) {
+      // Major gridline: Year boundary
+      const yearDate = new Date(year, 0, 1);
+      const yearX = xScale(yearDate);
+
       gridGroup
         .append('line')
-        .attr('x1', x)
-        .attr('x2', x)
+        .attr('class', 'gridline-major')
+        .attr('x1', yearX)
+        .attr('x2', yearX)
         .attr('y1', 0)
         .attr('y2', LAYOUT.viewport.height)
-        .attr('stroke', LAYOUT.gridlines.color)
-        .attr('stroke-width', LAYOUT.gridlines.strokeWidth);
+        .attr('stroke', LAYOUT.gridlines.major.color)
+        .attr('stroke-width', LAYOUT.gridlines.major.strokeWidth);
 
       // Year label
       gridGroup
         .append('text')
-        .attr('x', x)
+        .attr('class', 'gridline-year-label')
+        .attr('x', yearX)
         .attr('y', LAYOUT.viewport.height - 20)
         .attr('text-anchor', 'middle')
         .attr('fill', LAYOUT.textColor)
         .attr('font-size', '14px')
         .attr('font-family', 'sans-serif')
         .text(year);
+
+      // Minor gridlines: Monthly boundaries (skip January as it's already the year boundary)
+      for (let month = 1; month < 12; month++) {
+        const monthDate = new Date(year, month, 1);
+        const monthX = xScale(monthDate);
+
+        // Skip if month is beyond timeline end
+        if (monthDate > this.getEndDate()) {
+          break;
+        }
+
+        // Month gridline
+        gridGroup
+          .append('line')
+          .attr('class', 'gridline-minor')
+          .attr('x1', monthX)
+          .attr('x2', monthX)
+          .attr('y1', 0)
+          .attr('y2', LAYOUT.viewport.height)
+          .attr('stroke', LAYOUT.gridlines.minor.color)
+          .attr('stroke-width', LAYOUT.gridlines.minor.strokeWidth)
+          .attr('opacity', LAYOUT.gridlines.minor.opacity);
+
+        // Month label
+        gridGroup
+          .append('text')
+          .attr('class', 'gridline-month-label')
+          .attr('x', monthX)
+          .attr('y', LAYOUT.viewport.height - 20)
+          .attr('text-anchor', 'middle')
+          .attr('fill', LAYOUT.textColor)
+          .attr('font-size', '11px')
+          .attr('font-family', 'sans-serif')
+          .attr('opacity', 0.7)
+          .text(monthAbbr[month]);
+      }
     }
   }
 

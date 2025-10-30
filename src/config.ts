@@ -24,7 +24,7 @@ export const LAYOUT = {
     height: 800,
   },
   timeline: {
-    pixelsPerYear: 800,
+    pixelsPerYear: 1200,
   },
   scroll: {
     currentPositionRatio: 0.56, // ratio (0-1) - viewport position used as "current" date marker
@@ -152,8 +152,15 @@ export const LAYOUT = {
     thumbnailGapBelowLane: 10, // px - gap between lane bottom edge and thumbnail top
   },
   gridlines: {
-    color: COLORS.gridlines,
-    strokeWidth: 1,
+    major: {
+      color: COLORS.gridlines,
+      strokeWidth: 4, // px - year boundaries
+    },
+    minor: {
+      color: COLORS.gridlines,
+      strokeWidth: 1, // px - month boundaries
+      opacity: 0.5, // reduced opacity for subtle appearance
+    },
   },
   background: COLORS.background,
   textColor: COLORS.text,
