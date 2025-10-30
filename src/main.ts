@@ -270,6 +270,7 @@ async function init(): Promise<void> {
       (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
       {
         laneCenterY: LAYOUT.lanes.people.yPosition,
+        ...LAYOUT.particleAnimations.particle,
         ...LAYOUT.particleAnimations.people.joining,
       }
     );
@@ -283,6 +284,7 @@ async function init(): Promise<void> {
       (date) => peopleLanePathGenerator.getStrokeWidthAt(date),
       {
         laneCenterY: LAYOUT.lanes.people.yPosition,
+        ...LAYOUT.particleAnimations.particle,
         ...LAYOUT.particleAnimations.people.leaving,
       }
     );
@@ -296,6 +298,7 @@ async function init(): Promise<void> {
       (date) => projectLanePathGenerator.getStrokeWidthAt(date),
       {
         laneCenterY: LAYOUT.lanes.projects.yPosition,
+        ...LAYOUT.particleAnimations.particle,
         ...LAYOUT.particleAnimations.projects.starting,
       }
     );
@@ -309,6 +312,7 @@ async function init(): Promise<void> {
       (date) => projectLanePathGenerator.getStrokeWidthAt(date),
       {
         laneCenterY: LAYOUT.lanes.projects.yPosition,
+        ...LAYOUT.particleAnimations.particle,
         ...LAYOUT.particleAnimations.projects.ending,
       }
     );

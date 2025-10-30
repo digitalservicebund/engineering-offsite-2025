@@ -1,5 +1,3 @@
 - animation after final event: lanes merge + morph together, followed by huge fireworks / confetti
 - make design less "flat"
-- 🌟 emoji for key events
 - gentle parallax effect for background
-- timeline scale adjustable (zoom in/out)

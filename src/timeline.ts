@@ -357,9 +357,9 @@ export class Timeline {
     const maxTiers = LAYOUT.eventMarkers.label.stack.maxTiers;
 
     // Calculate base label Y position
-    // Account for potential text wrapping by using a more generous height estimate
-    const estimatedLabelHeight = 30; // Approximate height for 2-3 lines of text
-    const baseLabelTopY = markerTopY + LAYOUT.eventMarkers.label.offsetY - estimatedLabelHeight;
+    // Account for potential text wrapping by using configured label height
+    const labelHeight = LAYOUT.eventMarkers.label.height;
+    const baseLabelTopY = markerTopY + LAYOUT.eventMarkers.label.offsetY - labelHeight;
 
     // Track all labels in each tier for proper collision detection
     const labelsByTier: Array<{ left: number; right: number; eventId: string }>[] = [];
@@ -443,7 +443,7 @@ export class Timeline {
         return baseLabelTopY - tier * tierHeight;
       })
       .attr('width', LAYOUT.eventMarkers.label.maxWidth)
-      .attr('height', estimatedLabelHeight);
+      .attr('height', labelHeight);
 
     const divs = labelContainers.append('xhtml:div');
     this.applyLabelStyles(divs);

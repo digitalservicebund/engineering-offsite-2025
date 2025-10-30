@@ -20,7 +20,7 @@ const COLORS = {
 
 export const LAYOUT = {
   viewport: {
-    width: 1200,
+    width: 1400,
     height: 800,
   },
   timeline: {
@@ -36,9 +36,9 @@ export const LAYOUT = {
   lanes: {
     projects: {
       yPosition: 150,
-      initialStrokeWidth: 2,
+      initialStrokeWidth: 1,
       color: COLORS.projects,
-      baseStrokeWidth: 2, // px - minimum width before any projects start
+      baseStrokeWidth: 1, // px - minimum width before any projects start
       // Path generation parameters for smooth organic curves
       minEventSpacing: 50, // px - minimum distance between width changes; closer events are consolidated
       bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
@@ -70,28 +70,26 @@ export const LAYOUT = {
     lineWidth: 3, // px - stroke width
     color: COLORS.events,
     label: {
-      fontSize: 11, // px
-      fontFamily: 'sans-serif' as const,
-      color: COLORS.text,
       offsetY: -5, // px - space between bottom edge of text and marker top
-      maxWidth: 100, // px - text wraps within this width
+      maxWidth: 120, // px - text wraps within this width
+      height: 40, // px - estimated label container height for multi-line text (should accommodate ~2 lines at current font size)
       // Label stacking configuration to avoid overlaps
       stack: {
         minHorizontalGap: 12, // px - extra gap between adjacent label boxes
-        tierHeight: 40, // px - vertical distance between stacked tiers (accommodates multi-line text)
+        tierHeight: 50, // px - vertical distance between stacked tiers (should be >= label height + some spacing)
         maxTiers: 4, // maximum number of tiers above the lane
       },
     },
-    keyMoment: {
-      fontWeight: 700, // Bold weight for emphasis
-      fontSize: 11,
-    },
-    regular: {
-      fontWeight: 400, // Normal weight
-      fontSize: 11,
-    },
   },
   particleAnimations: {
+    // Shared particle appearance settings
+    particle: {
+      circleRadius: 4, // px - particle circle size
+      labelOffsetX: 15, // px - text position to right of circle
+      labelFontSize: 14, // px - matches event marker labels
+      labelFontFamily: 'sans-serif' as const,
+      labelColor: COLORS.text,
+    },
     subduedOpacity: 0.6, // Applied via fill-opacity for departure particles (leaving/ending)
     people: {
       joining: {
@@ -99,24 +97,14 @@ export const LAYOUT = {
         // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 300, // ms - fade duration after reaching lane
-        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.people,
-        labelOffsetX: 15, // px - text position to right of circle
-        labelFontSize: 11, // px - matches event marker labels
-        labelFontFamily: 'sans-serif' as const,
-        labelColor: COLORS.text,
       },
       leaving: {
         spawnOffsetY: 60, // px - below lane (same side as joining) - particles separate downward
         animateTowardLane: false, // Animate away from lane (departure)
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for joining)
-        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.people, // Same color, subdued via fill-opacity
-        labelOffsetX: 15, // px - text position to right of circle
-        labelFontSize: 11, // px - matches event marker labels
-        labelFontFamily: 'sans-serif' as const,
-        labelColor: COLORS.text,
       },
     },
     projects: {
@@ -124,24 +112,14 @@ export const LAYOUT = {
         spawnOffsetY: -60, // px - NEGATIVE = above lane
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 300, // ms - fade duration after reaching lane
-        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.projects, // Green - matches project lane
-        labelOffsetX: 15, // px - text position to right of circle
-        labelFontSize: 11, // px - matches event marker labels
-        labelFontFamily: 'sans-serif' as const,
-        labelColor: COLORS.text,
       },
       ending: {
         spawnOffsetY: -60, // px - above lane (same side as starting) - particles separate upward
         animateTowardLane: false, // Animate away from lane (departure)
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for starting)
-        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.projects, // Same color, subdued via fill-opacity
-        labelOffsetX: 15, // px - text position to right of circle
-        labelFontSize: 11, // px - matches event marker labels
-        labelFontFamily: 'sans-serif' as const,
-        labelColor: COLORS.text,
       },
     },
   },
@@ -180,6 +158,10 @@ export type LayoutConfig = typeof LAYOUT;
  */
 export function injectCSSVariables(): void {
   const root = document.documentElement;
+
+  // Viewport dimensions (TS: calculations, CSS: container sizing)
+  root.style.setProperty('--viewport-width', `${LAYOUT.viewport.width}px`);
+  root.style.setProperty('--viewport-height', `${LAYOUT.viewport.height}px`);
 
   // Photo animation durations (TS: setTimeout, CSS: transitions)
   root.style.setProperty('--anim-photo-fade-in', `${LAYOUT.photoDisplay.fadeInDuration}ms`);
