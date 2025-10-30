@@ -93,6 +93,24 @@ body {
   opacity: 0.4;
 }
 
+.future-fade-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--timeline-marker-position, 900px);
+  width: var(--future-fade-width, 300px);
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--color-bg-light) 70%, transparent) 20%,
+    color-mix(in srgb, var(--color-bg-light) 90%, transparent) 40%,
+    var(--color-bg-light) 70%,
+    var(--color-bg-light) 100%
+  );
+  pointer-events: none;
+  z-index: 50;
+}
+
 /* Counters - fixed position in top-right corner */
 .counters {
   position: absolute;

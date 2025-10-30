@@ -277,7 +277,6 @@ export class ViewportController {
     // Set state to scrolling
     this.scrollState = 'scrolling';
     this.lastFrameTimestamp = null; // Restart timing from scratch
-    this.pausedAtEventId = null;
 
     // Restart the auto-scroll loop
     this.autoScrollFrameId = requestAnimationFrame((timestamp) =>
@@ -340,11 +339,24 @@ export class ViewportController {
     // Get current position marker x (where we consider "current" to be)
     const currentPositionX = this.calculateCurrentPositionX();
 
+    // Clear pausedAtEventId once we've moved past the paused event
+    if (this.pausedAtEventId) {
+      const pausedEvent = this.keyEventPositions.find(e => e.eventId === this.pausedAtEventId);
+      if (pausedEvent && currentPositionX > pausedEvent.xPosition + LAYOUT.autoScroll.keyEventPauseThreshold * 2) {
+        this.pausedAtEventId = null;
+      }
+    }
+
     // Find next key event ahead
     let targetKeyEvent: KeyEventPosition | null = null;
 
-    // Find first key event ahead of current position
+    // Find first key event ahead of current position (skip the one we just paused at)
     for (const keyEvent of this.keyEventPositions) {
+      // Skip the event we just paused at to avoid immediate re-pause
+      if (this.pausedAtEventId && keyEvent.eventId === this.pausedAtEventId) {
+        continue;
+      }
+      
       if (keyEvent.xPosition > currentPositionX) {
         targetKeyEvent = keyEvent;
         break;
@@ -356,8 +368,8 @@ export class ViewportController {
       return false;
     }
 
-    // Check if within threshold
-    const distance = Math.abs(currentPositionX - targetKeyEvent.xPosition);
+    // Check if within threshold (distance should always be positive since target is ahead)
+    const distance = targetKeyEvent.xPosition - currentPositionX;
     if (distance <= LAYOUT.autoScroll.keyEventPauseThreshold) {
       // Pause!
       this.scrollState = 'paused';

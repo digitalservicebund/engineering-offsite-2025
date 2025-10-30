@@ -27,7 +27,7 @@ export const LAYOUT = {
     pixelsPerYear: 800,
   },
   scroll: {
-    currentPositionRatio: 0.75, // ratio (0-1) - viewport position used as "current" date marker
+    currentPositionRatio: 0.56, // ratio (0-1) - viewport position used as "current" date marker
   },
   autoScroll: {
     speed: 200, // px/sec - constant scroll speed per spec
@@ -99,7 +99,7 @@ export const LAYOUT = {
         // Note: spawnOffsetX calculated at runtime as LAYOUT.timeline.pixelsPerYear / 3
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 300, // ms - fade duration after reaching lane
-        circleRadius: 8, // px - particle circle size
+        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.people,
         labelOffsetX: 15, // px - text position to right of circle
         labelFontSize: 11, // px - matches event marker labels
@@ -111,7 +111,7 @@ export const LAYOUT = {
         animateTowardLane: false, // Animate away from lane (departure)
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for joining)
-        circleRadius: 8, // px - particle circle size
+        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.people, // Same color, subdued via fill-opacity
         labelOffsetX: 15, // px - text position to right of circle
         labelFontSize: 11, // px - matches event marker labels
@@ -124,7 +124,7 @@ export const LAYOUT = {
         spawnOffsetY: -60, // px - NEGATIVE = above lane
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 300, // ms - fade duration after reaching lane
-        circleRadius: 8, // px - particle circle size
+        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.projects, // Green - matches project lane
         labelOffsetX: 15, // px - text position to right of circle
         labelFontSize: 11, // px - matches event marker labels
@@ -136,7 +136,7 @@ export const LAYOUT = {
         animateTowardLane: false, // Animate away from lane (departure)
         detectionWindowSize: 50, // px - buffer around spawn point to prevent missed spawns due to frame timing
         fadeOutDuration: 600, // ms - slower fade for contemplative feel (vs 300ms for starting)
-        circleRadius: 8, // px - particle circle size
+        circleRadius: 4, // px - particle circle size
         circleColor: COLORS.projects, // Same color, subdued via fill-opacity
         labelOffsetX: 15, // px - text position to right of circle
         labelFontSize: 11, // px - matches event marker labels
@@ -184,6 +184,10 @@ export function injectCSSVariables(): void {
   // Current date marker position
   const markerPosition = LAYOUT.viewport.width * LAYOUT.scroll.currentPositionRatio;
   root.style.setProperty('--timeline-marker-position', `${markerPosition}px`);
+  
+  // Future fade overlay (gradient extends from marker to right edge of viewport)
+  const fadeWidth = LAYOUT.viewport.width - markerPosition;
+  root.style.setProperty('--future-fade-width', `${fadeWidth}px`);
 
   console.log('✓ CSS variables injected from config');
 }
