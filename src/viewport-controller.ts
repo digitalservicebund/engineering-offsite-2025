@@ -371,14 +371,9 @@ export class ViewportController {
     // Check if within threshold (distance should always be positive since target is ahead)
     const distance = targetKeyEvent.xPosition - currentPositionX;
     if (distance <= LAYOUT.autoScroll.keyEventPauseThreshold) {
-      // Pause!
+      // Pause at current position (no snap to avoid visual jump and particle misalignment)
       this.scrollState = 'paused';
       this.pausedAtEventId = targetKeyEvent.eventId;
-
-      // Snap to exact key event position for precision
-      const overlayX = this.viewportWidth * LAYOUT.scroll.currentPositionRatio;
-      this.currentOffset = targetKeyEvent.xPosition - overlayX;
-      this.applyTransform();
 
       console.log(`Paused at key event: "${targetKeyEvent.eventName}" (${targetKeyEvent.eventId})`);
 

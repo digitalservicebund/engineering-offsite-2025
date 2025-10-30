@@ -31,7 +31,7 @@ export const LAYOUT = {
   },
   autoScroll: {
     speed: 200, // px/sec - constant scroll speed per spec
-    keyEventPauseThreshold: 5, // px - how close to key event before pausing
+    keyEventPauseThreshold: 2, // px - how close to key event before pausing (reduced from 5px to minimize snap jank)
   },
   lanes: {
     projects: {
