@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Don't commit personal data
+input_data/*
+public/assets/data.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
