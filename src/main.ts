@@ -98,6 +98,23 @@ function setupKeyboardControls(
   projectsEndingController: ParticleAnimationController<Project>,
   photoController: PhotoController
 ): void {
+  // Track Shift key state for speed multiplier during auto-scroll
+  const handleShiftChange = (pressed: boolean): void => {
+    viewportController.setShiftPressed(pressed);
+  };
+
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    if (event.key === 'Shift' && !event.repeat) {
+      handleShiftChange(true);
+    }
+  });
+
+  document.addEventListener('keyup', (event: KeyboardEvent) => {
+    if (event.key === 'Shift') {
+      handleShiftChange(false);
+    }
+  });
+
   const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
     const { key } = event;
     const currentState = viewportController.getScrollState();

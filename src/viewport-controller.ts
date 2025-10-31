@@ -32,6 +32,7 @@ export class ViewportController {
   private lastFrameTimestamp: number | null = null;
   private autoScrollFrameId: number | null = null;
   private pausedAtEventId: string | null = null;
+  private isShiftPressed: boolean = false;
 
   constructor(
     container: HTMLElement,
@@ -188,6 +189,13 @@ export class ViewportController {
   }
 
   /**
+   * Set Shift pressed state to control speed multiplier
+   */
+  public setShiftPressed(pressed: boolean): void {
+    this.isShiftPressed = pressed;
+  }
+
+  /**
    * Auto-scroll loop - called every frame via requestAnimationFrame
    * Implements smooth scrolling at constant speed (200px/sec)
    */
@@ -210,9 +218,10 @@ export class ViewportController {
     }
     this.lastFrameTimestamp = timestamp;
 
-    // 3. Calculate distance to move based on speed and elapsed time
-    // Speed: 200px/sec = 0.2px/ms
-    const distance = (LAYOUT.autoScroll.speed / 1000) * elapsed;
+    // 3. Calculate distance to move based on speed, modifier, and elapsed time
+    // Base speed: px/sec → px/ms; apply Shift multiplier when pressed
+    const speedMultiplier = this.isShiftPressed ? LAYOUT.autoScroll.shiftSpeedMultiplier : 1;
+    const distance = ((LAYOUT.autoScroll.speed * speedMultiplier) / 1000) * elapsed;
 
     // 4. Apply movement
     this.currentOffset += distance;

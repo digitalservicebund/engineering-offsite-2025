@@ -31,6 +31,7 @@ export const LAYOUT = {
   },
   autoScroll: {
     speed: 200, // px/sec - constant scroll speed per spec
+    shiftSpeedMultiplier: 3, // multiplier when holding Shift during auto-scroll
     keyEventPauseThreshold: 4, // px - how close to key event before pausing
   },
   lanes: {
