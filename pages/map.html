@@ -28,6 +28,12 @@
         border: 2px solid #fff;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
       }
+      @media (max-width: 768px) {
+        .profile-pic {
+          width: 75px;
+          height: 75px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -115,14 +121,9 @@
 
       function addMarker(person, coordinates) {
         const el = document.createElement("div");
-        el.className = "marker";
+        el.className = "profile-pic";
         el.style.backgroundImage = `url(${person.ProfilePic})`;
-        el.style.width = "150px";
-        el.style.height = "150px";
         el.style.backgroundSize = "cover";
-        el.style.borderRadius = "50%";
-        el.style.border = "2px solid #fff";
-        el.style.boxShadow = "0 0 5px rgba(0,0,0,0.5)";
 
         new mapboxgl.Marker(el)
           .setLngLat(coordinates)
