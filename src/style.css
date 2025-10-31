@@ -160,12 +160,6 @@ svg {
   display: block;
 }
 
-/* Event marker pause indicator - visual feedback when paused at key event */
-.event-marker.paused .marker-line {
-  stroke: var(--color-error); /* Red highlight */
-  stroke-width: 5px; /* Thicker than default 3px */
-  animation: pulse 2s ease-in-out infinite;
-}
 
 /* Lane label styling */
 .lane-label {
@@ -202,15 +196,7 @@ svg {
   font-weight: 700;
 }
 
-/* Pulse animation for paused event marker */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
+
 
 /* Photo overlay - full-screen photo display */
 .photo-overlay {

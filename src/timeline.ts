@@ -483,9 +483,7 @@ export class Timeline {
     return new Date(this.data.endYear, 11, 31);
   }
 
-  public getSvg(): d3.Selection<SVGSVGElement, unknown, null, undefined> {
-    return this.svg;
-  }
+  // getSvg() removed: unused public API
 
   public getContentGroup(): d3.Selection<SVGGElement, unknown, null, undefined> {
     return this.contentGroup;
@@ -507,20 +505,5 @@ export class Timeline {
       .sort((a, b) => a.xPosition - b.xPosition);
   }
 
-  /**
-   * Highlight an event marker (visual pause indicator)
-   * Adds 'paused' class to trigger pulsing animation
-   * @param eventId - ID of event to highlight, or null to clear all highlights
-   */
-  public highlightEvent(eventId: string | null): void {
-    if (eventId === null) {
-      // Clear all highlights
-      this.svg.selectAll('.event-marker').classed('paused', false);
-    } else {
-      // Clear previous highlights first
-      this.svg.selectAll('.event-marker').classed('paused', false);
-      // Add highlight to specific event
-      this.svg.select(`.event-marker[data-id="${eventId}"]`).classed('paused', true);
-    }
-  }
+  // highlightEvent() removed: targeted non-existent elements and was a no-op
 }

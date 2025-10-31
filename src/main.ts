@@ -109,7 +109,7 @@ function setupKeyboardControls(
       // If photo is displayed, dismiss it and resume scrolling
       if (photoController.hasActivePhoto()) {
         await photoController.hidePhotoAndCreateThumbnail();
-        timeline.highlightEvent(null);
+        
         viewportController.resumeAutoScroll();
         return;
       }
@@ -118,13 +118,13 @@ function setupKeyboardControls(
       if (currentState === 'idle') {
         // Start auto-scroll forward
         viewportController.startAutoScroll();
-        timeline.highlightEvent(null);
+        
       } else if (currentState === 'scrolling') {
         // Toggle pause (manual pause)
         viewportController.togglePause();
       } else if (currentState === 'paused') {
         // Resume auto-scroll
-        timeline.highlightEvent(null);
+        
         viewportController.resumeAutoScroll();
       }
       return;
@@ -144,8 +144,7 @@ function setupKeyboardControls(
       // Reset viewport to start
       viewportController.resetToStart();
 
-      // Clear event highlights
-      timeline.highlightEvent(null);
+      // Clear event highlights (removed noop)
 
       return;
     }
@@ -255,9 +254,6 @@ async function init(): Promise<void> {
 
     // Create key event reached callback (for visual highlight and photo display)
     const handleKeyEventReached = (eventId: string | null): void => {
-      // Highlight event marker (existing logic)
-      timeline.highlightEvent(eventId);
-
       // If event has photo, show it
       if (eventId) {
         const event = data.events.find((e) => e.id === eventId);
