@@ -1,0 +1,105 @@
+{
+  "repos": [
+    {
+      "milestone": 1,
+      "date": "2020-12-03T16:15:59Z",
+      "repoName": "steuerlotse-archive"
+    },
+    {
+      "milestone": 5,
+      "date": "2021-03-10T19:47:35Z",
+      "repoName": "steuerlotse-infra"
+    },
+    {
+      "milestone": 10,
+      "date": "2021-07-06T13:02:29Z",
+      "repoName": "backend-challenge"
+    },
+    {
+      "milestone": 25,
+      "date": "2022-03-21T11:16:19Z",
+      "repoName": "grundsteuer-infra"
+    },
+    {
+      "milestone": 50,
+      "date": "2022-05-25T16:40:13Z",
+      "repoName": "agora-uptime"
+    },
+    {
+      "milestone": 100,
+      "date": "2023-06-02T08:49:55Z",
+      "repoName": "ris-reports"
+    },
+    {
+      "milestone": 200,
+      "date": "2025-07-01T14:59:47Z",
+      "repoName": "formularbaukasten-agentic-migration"
+    }
+  ],
+  "commits": [
+    {
+      "milestone": 1,
+      "date": "2020-12-09T11:39:16Z",
+      "repoName": "steuerlotse-archive",
+      "author": "nfelger",
+      "commitSha": "b9c365d"
+    },
+    {
+      "milestone": 100,
+      "date": "2021-01-29T20:09:38Z",
+      "repoName": "public_documents",
+      "author": "AnnaHupperth",
+      "commitSha": "0a630ec"
+    },
+    {
+      "milestone": 500,
+      "date": "2021-05-25T08:56:26Z",
+      "repoName": "steuerlotse-archive",
+      "author": "na-st",
+      "commitSha": "8575498"
+    },
+    {
+      "milestone": 1000,
+      "date": "2021-08-16T08:56:22Z",
+      "repoName": "agora",
+      "author": "zechmeister",
+      "commitSha": "a25d5dd"
+    },
+    {
+      "milestone": 5000,
+      "date": "2022-05-04T08:45:46Z",
+      "repoName": "grundsteuer",
+      "author": "frederike-ramin",
+      "commitSha": "a8b7666"
+    },
+    {
+      "milestone": 10000,
+      "date": "2022-07-27T12:26:49Z",
+      "repoName": "grundsteuer",
+      "author": "shrzaf",
+      "commitSha": "05d4625"
+    },
+    {
+      "milestone": 25000,
+      "date": "2023-06-13T13:54:23Z",
+      "repoName": "ris-backend-service",
+      "author": "HPrinz",
+      "commitSha": "c2f7d80"
+    },
+    {
+      "milestone": 50000,
+      "date": "2024-12-05T12:56:54Z",
+      "repoName": "digitalcheck-dito",
+      "author": "lsolcher",
+      "commitSha": "2d1d5e9"
+    }
+  ],
+  "firstInfraRepo": {
+    "name": "steuerlotse-infra",
+    "date": "2021-03-10T19:47:35Z"
+  },
+  "totals": {
+    "repos": 223,
+    "commits": 67470
+  }
+}

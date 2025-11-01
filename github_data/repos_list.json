@@ -1,0 +1,1563 @@
+[
+  {
+    "name": "steuerlotse-archive",
+    "createdAt": "2020-12-03T16:15:59Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "digitalservice4germany.com",
+    "createdAt": "2021-01-08T08:01:36Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "public_documents",
+    "createdAt": "2021-01-08T17:58:44Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "steuerlotse-experiments",
+    "createdAt": "2021-03-01T09:18:37Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "steuerlotse-infra",
+    "createdAt": "2021-03-10T19:47:35Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "engineer-reading-club",
+    "createdAt": "2021-05-07T10:50:52Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-architecture",
+    "createdAt": "2021-06-01T14:31:41Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "agora",
+    "createdAt": "2021-06-03T09:03:57Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "steuerlotse",
+    "createdAt": "2021-06-28T13:56:35Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "backend-challenge",
+    "createdAt": "2021-07-06T13:02:29Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-onboarding",
+    "createdAt": "2021-09-09T14:58:04Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "frontend-challenge",
+    "createdAt": "2021-09-14T07:58:17Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "java-application-template",
+    "createdAt": "2021-09-23T15:13:02Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "read-file-prototype",
+    "createdAt": "2021-10-19T09:53:25Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "mitra-frontend",
+    "createdAt": "2021-10-26T13:13:50Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digital-service-library",
+    "createdAt": "2021-12-14T10:17:15Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "grundsteuer",
+    "createdAt": "2021-12-17T13:57:55Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "style-dictionary",
+    "createdAt": "2022-01-26T09:09:47Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "erica",
+    "createdAt": "2022-01-31T13:26:15Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "mitra-primevue-designer",
+    "createdAt": "2022-02-02T14:31:24Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "opentelekom-playground",
+    "createdAt": "2022-02-24T13:22:18Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-architecture",
+    "createdAt": "2022-02-28T13:21:57Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "typescript-vite-application-template",
+    "createdAt": "2022-03-11T16:54:12Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "platform",
+    "createdAt": "2022-03-15T08:09:03Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "grundsteuer-infra",
+    "createdAt": "2022-03-21T11:16:19Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kotlin-application-template",
+    "createdAt": "2022-03-25T10:10:33Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-backend-service",
+    "createdAt": "2022-03-29T09:09:01Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-infra",
+    "createdAt": "2022-03-30T12:42:02Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "uptime-monitor",
+    "createdAt": "2022-03-30T12:53:38Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "terraform-modules",
+    "createdAt": "2022-04-05T07:03:39Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-backend-service",
+    "createdAt": "2022-04-05T14:27:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-infra",
+    "createdAt": "2022-04-07T09:29:05Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "erica-mock",
+    "createdAt": "2022-04-14T06:13:51Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "github-actions",
+    "createdAt": "2022-04-22T15:50:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digitalservicebund.github.io",
+    "createdAt": "2022-04-25T13:02:31Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-app-android",
+    "createdAt": "2022-04-27T12:43:39Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-app-ios",
+    "createdAt": "2022-04-27T12:45:14Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "infra-template",
+    "createdAt": "2022-04-28T15:22:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": ".github-private",
+    "createdAt": "2022-05-03T06:40:03Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "erica-infra",
+    "createdAt": "2022-05-03T08:57:37Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "achill",
+    "createdAt": "2022-05-09T10:52:24Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "achill-infra",
+    "createdAt": "2022-05-09T14:23:49Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "troi-slack-bot",
+    "createdAt": "2022-05-09T14:30:42Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "github-actions-linter",
+    "createdAt": "2022-05-09T14:31:38Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "troi-library",
+    "createdAt": "2022-05-13T14:10:29Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "troi-cli",
+    "createdAt": "2022-05-13T14:27:30Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-provider-backend-service",
+    "createdAt": "2022-05-18T09:49:04Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-provider-infra",
+    "createdAt": "2022-05-18T13:33:02Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "passport-saml-example",
+    "createdAt": "2022-05-25T12:20:31Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "agora-uptime",
+    "createdAt": "2022-05-25T16:40:13Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "steuer-architecture",
+    "createdAt": "2022-06-08T16:15:15Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "feature-flag-prototype",
+    "createdAt": "2022-06-13T13:27:46Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-eservice-example",
+    "createdAt": "2022-06-16T12:59:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kpi-exporter-loki",
+    "createdAt": "2022-07-07T08:03:10Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kpi-exporter-postgres",
+    "createdAt": "2022-07-07T10:31:26Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "readable-architecture-directives",
+    "createdAt": "2022-07-13T10:34:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "postgres-forward-pod",
+    "createdAt": "2022-07-20T15:50:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-juris-xml-export",
+    "createdAt": "2022-07-27T13:11:12Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-password-store",
+    "createdAt": "2022-08-01T14:09:54Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "steuerlotse-rente-static",
+    "createdAt": "2022-08-16T09:06:17Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "docker-playground",
+    "createdAt": "2022-08-22T08:47:33Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "matomo-sdk-ios",
+    "createdAt": "2022-08-29T11:26:53Z",
+    "defaultBranchRef": {
+      "name": "develop"
+    }
+  },
+  {
+    "name": "grundsteuer-eservice-architecture",
+    "createdAt": "2022-09-02T16:06:16Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "angie",
+    "createdAt": "2022-09-07T09:03:50Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "otc-iam-least-privilege-example",
+    "createdAt": "2022-09-08T16:45:35Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "opensource-template",
+    "createdAt": "2022-10-04T13:01:46Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-eservice-sdk",
+    "createdAt": "2022-10-12T12:19:35Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-juris-importer-old",
+    "createdAt": "2022-10-24T12:44:48Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "nginx-ingress-experiment",
+    "createdAt": "2022-11-04T10:09:37Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "org-as-code",
+    "createdAt": "2022-11-11T08:31:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "shoutout-tool",
+    "createdAt": "2022-12-02T10:41:02Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-form-prototype",
+    "createdAt": "2022-12-05T08:46:11Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "shoutout-tool-infra",
+    "createdAt": "2022-12-09T21:11:12Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "dev",
+    "createdAt": "2022-12-14T13:58:14Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "android-challenge",
+    "createdAt": "2022-12-14T16:43:36Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": ".github",
+    "createdAt": "2022-12-29T08:18:09Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "demo-repository",
+    "createdAt": "2023-01-19T03:11:26Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-rechtsantragstelle",
+    "createdAt": "2023-02-07T14:16:41Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-juris-converter",
+    "createdAt": "2023-02-09T09:37:14Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-data-migration-playground",
+    "createdAt": "2023-02-10T10:18:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-data-migration",
+    "createdAt": "2023-02-15T10:10:25Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "talisman-secrets-scan-action",
+    "createdAt": "2023-02-15T13:31:48Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-rechtsantragstelle-strapi",
+    "createdAt": "2023-02-20T11:42:53Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "snipe-license-importer",
+    "createdAt": "2023-02-21T15:42:45Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-rechtsantragstelle-infra",
+    "createdAt": "2023-02-22T13:16:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "platform-migration",
+    "createdAt": "2023-02-23T13:29:42Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-rechtsantragstelle-strapi-infra",
+    "createdAt": "2023-03-01T09:31:31Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "IT-Scripts",
+    "createdAt": "2023-03-10T08:36:09Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "knowledge-graph",
+    "createdAt": "2023-03-10T09:11:22Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "AusweisApp2Wrapper-iOS-SPM",
+    "createdAt": "2023-03-21T16:46:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "knowledge-graph-importers",
+    "createdAt": "2023-04-12T20:26:53Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "GirlsDay",
+    "createdAt": "2023-04-13T12:22:03Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "platform-docs-infra",
+    "createdAt": "2023-04-13T15:00:26Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "one-stop-search",
+    "createdAt": "2023-04-14T07:07:35Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kpi-dashboard",
+    "createdAt": "2023-04-14T14:09:45Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "platform-playground",
+    "createdAt": "2023-04-20T10:11:37Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "webapp-endpoint-scan",
+    "createdAt": "2023-05-02T13:11:45Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-experiments",
+    "createdAt": "2023-05-09T09:11:23Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "intelligence-template",
+    "createdAt": "2023-05-22T12:55:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-reports",
+    "createdAt": "2023-06-02T08:49:55Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-migration-infra",
+    "createdAt": "2023-06-26T12:48:56Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "useid-documentation",
+    "createdAt": "2023-06-28T13:50:28Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "npm-package-example",
+    "createdAt": "2023-07-12T06:55:47Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "k8s-resource-usage",
+    "createdAt": "2023-07-21T14:30:08Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digitalcheck-data",
+    "createdAt": "2023-07-31T14:29:34Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "basics-vds-scanner-prototype",
+    "createdAt": "2023-08-04T11:41:12Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-portal",
+    "createdAt": "2023-08-08T08:15:47Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "FIM-dev",
+    "createdAt": "2023-08-10T07:28:37Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-portal-infra",
+    "createdAt": "2023-08-14T12:01:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "grundsteuer-static",
+    "createdAt": "2023-08-22T08:10:13Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "meeting-room-display",
+    "createdAt": "2023-08-23T12:44:56Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "rclone-unzip",
+    "createdAt": "2023-09-18T06:28:55Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "public-keys",
+    "createdAt": "2023-09-25T16:17:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "dsctl",
+    "createdAt": "2023-09-25T19:44:42Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "xml-parser",
+    "createdAt": "2023-10-16T07:53:46Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "remix-application-template",
+    "createdAt": "2023-10-24T10:16:53Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-norms-prototype-ldml-diff-to-change-data",
+    "createdAt": "2023-10-26T06:44:19Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "prototype-norms-applying-changes-to-ldml",
+    "createdAt": "2023-10-31T10:52:24Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "prototype-norms-extract-changes-from-jurisxml",
+    "createdAt": "2023-11-02T09:40:02Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-data-prototyping",
+    "createdAt": "2023-11-02T11:08:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "hack-jira-cfd",
+    "createdAt": "2023-11-07T08:42:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "prototype-norms-elasticsearch",
+    "createdAt": "2023-11-10T13:22:16Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-portal-docs",
+    "createdAt": "2023-11-13T18:43:00Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "remix-application-example",
+    "createdAt": "2023-11-15T12:42:34Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "remix-application-example-infra",
+    "createdAt": "2023-11-16T13:36:22Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "notify-on-failure-gha",
+    "createdAt": "2023-11-20T09:20:54Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms",
+    "createdAt": "2023-11-27T12:52:09Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-migration",
+    "createdAt": "2023-11-28T15:40:45Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "atlantis-prototype",
+    "createdAt": "2023-11-30T15:03:38Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "homebrew-tap",
+    "createdAt": "2023-12-14T14:24:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ldml_de_backup",
+    "createdAt": "2023-12-18T07:21:33Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "icons",
+    "createdAt": "2023-12-20T12:53:51Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-infra",
+    "createdAt": "2024-01-02T14:14:25Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "tax-data-analysis",
+    "createdAt": "2024-01-02T18:00:38Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-reports-infra",
+    "createdAt": "2024-01-08T13:20:46Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-search",
+    "createdAt": "2024-01-10T12:31:33Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-search-infra",
+    "createdAt": "2024-01-11T09:42:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "otc-permissions-tester",
+    "createdAt": "2024-01-16T08:47:08Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "xrechnung-converter",
+    "createdAt": "2024-01-24T13:11:54Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "elterngeldrechner",
+    "createdAt": "2024-02-05T10:06:13Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kotlin-application-template-infra",
+    "createdAt": "2024-02-05T12:38:25Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "t4g-prototyp-elterngeldplaner",
+    "createdAt": "2024-02-26T10:14:45Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "ris-docs",
+    "createdAt": "2024-02-26T21:20:25Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "otc-test-clusters",
+    "createdAt": "2024-03-05T10:23:39Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "website",
+    "createdAt": "2024-03-11T13:50:01Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "argocd-deploy",
+    "createdAt": "2024-03-13T10:15:54Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "setup-kubeseal",
+    "createdAt": "2024-03-13T12:57:35Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "setup-terraform",
+    "createdAt": "2024-03-13T13:16:36Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "track-deployment",
+    "createdAt": "2024-03-13T13:40:06Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "create-sbom",
+    "createdAt": "2024-03-14T09:23:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "setup-sonarscanner",
+    "createdAt": "2024-03-14T09:40:24Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "add-ris-report",
+    "createdAt": "2024-03-14T10:35:17Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "export-entity-relationship-diagram",
+    "createdAt": "2024-03-15T08:34:49Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "bump-chainguard-digest",
+    "createdAt": "2024-03-18T09:14:39Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digitalcheck-content",
+    "createdAt": "2024-04-10T12:33:18Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digitalcheck-dito",
+    "createdAt": "2024-04-24T13:30:27Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "wie-viele-menschen",
+    "createdAt": "2024-04-29T09:34:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "run-kube-score",
+    "createdAt": "2024-04-29T14:20:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digitalcheck-dito-infra",
+    "createdAt": "2024-05-06T14:43:44Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-architecture",
+    "createdAt": "2024-05-07T13:57:36Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "accessibility-personas-extension",
+    "createdAt": "2024-05-10T15:07:49Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "basics",
+    "createdAt": "2024-06-21T08:53:39Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "aws-test-clusters",
+    "createdAt": "2024-06-24T08:20:14Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-ui",
+    "createdAt": "2024-07-12T19:25:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "gcp-test-clusters",
+    "createdAt": "2024-07-23T08:06:43Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-fit-connect-spike",
+    "createdAt": "2024-08-28T15:37:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "stackit-test-clusters",
+    "createdAt": "2024-09-02T08:56:06Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "design-system-evaluation",
+    "createdAt": "2024-09-03T19:00:14Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-erv-wrapper",
+    "createdAt": "2024-09-20T11:51:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "digitalcheck-beispiele",
+    "createdAt": "2024-09-25T12:29:09Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-kommunikationsplattform",
+    "createdAt": "2024-09-30T09:07:20Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-firefighting-schedule",
+    "createdAt": "2024-09-30T09:50:52Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-kommunikationsplattform-infra",
+    "createdAt": "2024-10-02T13:26:23Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-migration-import",
+    "createdAt": "2024-10-09T06:25:17Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-adm-literature",
+    "createdAt": "2024-10-17T13:01:13Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-adm-migration",
+    "createdAt": "2024-10-18T12:41:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "infra-bill-notebook",
+    "createdAt": "2024-10-24T08:10:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "github-org-linter",
+    "createdAt": "2024-11-08T12:01:12Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "aws-org",
+    "createdAt": "2024-11-12T15:52:43Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-local-egvp-server",
+    "createdAt": "2024-11-22T15:13:54Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "strapi-plugin-gh-workflow-trigger-v5",
+    "createdAt": "2024-11-29T17:37:11Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-egvp-client",
+    "createdAt": "2024-12-06T14:56:54Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-adm-vwv-infra",
+    "createdAt": "2024-12-13T09:48:23Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-jaxb-demo",
+    "createdAt": "2025-01-07T08:55:37Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "neuris-languagetool",
+    "createdAt": "2025-01-13T16:13:13Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "backend-challenge-review-typescript",
+    "createdAt": "2025-02-27T12:02:57Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "backend-challenge-review-spring",
+    "createdAt": "2025-02-27T12:23:46Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-lookup-tables",
+    "createdAt": "2025-03-12T14:28:32Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-lookup-tables-infra",
+    "createdAt": "2025-03-13T13:08:46Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-lookup-tables-frontend",
+    "createdAt": "2025-03-17T06:17:27Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "formularbaukasten-legacy",
+    "createdAt": "2025-04-14T12:00:04Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-search-backup",
+    "createdAt": "2025-04-15T12:07:56Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kern-ux-tailwind-theme",
+    "createdAt": "2025-04-16T05:45:20Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "formularbaukasten-migration-process-template",
+    "createdAt": "2025-04-23T09:10:19Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "formularbaukasten-discovery",
+    "createdAt": "2025-05-27T08:44:56Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-ldml-schema-extensions",
+    "createdAt": "2025-06-04T11:13:16Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-ui-prototype",
+    "createdAt": "2025-06-06T14:48:51Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-literature-migration",
+    "createdAt": "2025-06-11T12:44:13Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-pdf-playground",
+    "createdAt": "2025-06-24T07:28:08Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "formularbaukasten-agentic-migration",
+    "createdAt": "2025-07-01T14:59:47Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "stackit",
+    "createdAt": "2025-07-28T12:58:47Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-literature-infra",
+    "createdAt": "2025-08-08T08:07:08Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-norms-prototype-fonto",
+    "createdAt": "2025-08-15T09:39:25Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-vibilia-rest",
+    "createdAt": "2025-08-20T09:12:24Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "a2j-vibilia-rest-infra",
+    "createdAt": "2025-08-20T09:13:05Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "awesome-kern-ux",
+    "createdAt": "2025-08-28T12:54:38Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "xml-crypto",
+    "createdAt": "2025-09-03T08:35:59Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "samlify",
+    "createdAt": "2025-09-03T08:36:43Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "fim-discovery",
+    "createdAt": "2025-09-04T12:31:55Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-references-prototype",
+    "createdAt": "2025-09-10T13:02:50Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "security-dashboard-experiment",
+    "createdAt": "2025-09-11T16:11:21Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "kern-ux-cheatsheet",
+    "createdAt": "2025-09-15T11:39:15Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-pdf-printservice",
+    "createdAt": "2025-09-17T08:41:11Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-pdf-printservice-infra",
+    "createdAt": "2025-09-18T11:54:24Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "node-saml",
+    "createdAt": "2025-09-23T11:22:17Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "epbd-prototype",
+    "createdAt": "2025-09-26T14:41:57Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "ris-adm-literature-infra",
+    "createdAt": "2025-10-06T07:53:15Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "stackit-database-validation",
+    "createdAt": "2025-10-06T14:19:59Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "languagetool-contribution",
+    "createdAt": "2025-10-07T09:14:13Z",
+    "defaultBranchRef": {
+      "name": "master"
+    }
+  },
+  {
+    "name": "stackit-cost-exporter",
+    "createdAt": "2025-10-15T11:37:23Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "staffy",
+    "createdAt": "2025-10-21T06:49:58Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "building-id-prototype",
+    "createdAt": "2025-10-21T14:28:12Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  },
+  {
+    "name": "engineering-offsite-2025",
+    "createdAt": "2025-10-22T09:31:51Z",
+    "defaultBranchRef": {
+      "name": "main"
+    }
+  }
+]

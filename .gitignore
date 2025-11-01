@@ -16,6 +16,12 @@ dist-ssr
 input_data/*
 public/assets/data.json
 
+# GitHub analytics data (keep structure, exclude raw data)
+github_data/repos/*
+github_data/commits/*
+!github_data/repos/.gitkeep
+!github_data/commits/.gitkeep
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
