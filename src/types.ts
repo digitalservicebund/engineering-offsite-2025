@@ -96,6 +96,7 @@ export interface ParticleAnimation {
   animationStartTime?: number; // High-res timestamp from performance.now() when animation started
   animationDuration?: number; // Total animation duration in ms
   startTransform?: { x: number; y: number }; // Initial offset position
+  spawnViewportX?: number; // Viewport X position when particle spawned (for distance-based X interpolation)
 }
 
 // Photo display state tracking

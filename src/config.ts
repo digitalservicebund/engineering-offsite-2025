@@ -40,10 +40,9 @@ export const LAYOUT = {
       initialStrokeWidth: 1,
       color: COLORS.projects,
       baseStrokeWidth: 1, // px - minimum width before any projects start
-      // Path generation parameters for smooth organic curves
-      minEventSpacing: 50, // px - minimum distance between width changes; closer events are consolidated
-      bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
-      bezierVerticalTension: 0.8, // 0-1 - vertical interpolation for S-curves (higher = tighter curves)
+      // Path generation parameters
+      transitionDurationDays: 14, // days - width changes complete over 2 days
+      pathSmoothingTension: 0.2, // 0-1 - control point offset for cosmetic smoothing (0.5 was too loose)
     },
     events: {
       yPosition: 400,
@@ -56,10 +55,9 @@ export const LAYOUT = {
       color: COLORS.people,
       baseStrokeWidth: 2, // px - minimum width before any people join
       pixelsPerPerson: 2, // px - width increment per active person
-      // Path generation parameters for smooth organic curves
-      minEventSpacing: 50, // px - minimum distance between width changes; closer events are consolidated
-      bezierTension: 0.4, // 0-1 - horizontal control point offset for Bezier curves (lower = more flowing)
-      bezierVerticalTension: 0.8, // 0-1 - vertical interpolation for S-curves (higher = tighter curves)
+      // Path generation parameters
+      transitionDurationDays: 1, // days - width changes complete over 1 day
+      pathSmoothingTension: 0.2, // 0-1 - control point offset for cosmetic smoothing (0.5 was too loose)
     },
   },
   laneLabels: {

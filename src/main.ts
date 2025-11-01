@@ -91,7 +91,6 @@ function displayConfigError(title: string, messages: string[]): void {
  */
 function setupKeyboardControls(
   viewportController: ViewportController,
-  timeline: Timeline,
   peopleParticleController: ParticleAnimationController<Person>,
   peopleLeavingController: ParticleAnimationController<Person>,
   projectParticleController: ParticleAnimationController<Project>,
@@ -113,6 +112,11 @@ function setupKeyboardControls(
     if (event.key === 'Shift') {
       handleShiftChange(false);
     }
+  });
+
+  // Reset Shift state when window loses focus (prevents stuck modifier)
+  window.addEventListener('blur', () => {
+    handleShiftChange(false);
   });
 
   const handleKeyDown = async (event: KeyboardEvent): Promise<void> => {
@@ -368,7 +372,7 @@ async function init(): Promise<void> {
     );
 
     // Setup keyboard controls
-    setupKeyboardControls(viewportController, timeline, peopleParticleController, peopleLeavingController, projectParticleController, projectsEndingController, photoController);
+    setupKeyboardControls(viewportController, peopleParticleController, peopleLeavingController, projectParticleController, projectsEndingController, photoController);
 
     console.log('✓ Timeline rendered successfully');
   } catch (error) {

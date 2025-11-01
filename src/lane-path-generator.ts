@@ -8,11 +8,18 @@
 import type * as d3 from 'd3';
 import { ActiveCountCalculator } from './active-count-calculator';
 
+/**
+ * Ease-in-out using sine curve
+ * Creates an S-curve: slow start → fast middle → slow end
+ */
+function easeInOutSine(t: number): number {
+  return 0.5 * (1 - Math.cos(Math.PI * t));
+}
+
 interface LaneConfig {
   baseStrokeWidth: number;
-  minEventSpacing: number;
-  bezierTension: number;
-  bezierVerticalTension: number;
+  transitionDurationDays: number; // Duration for width change transitions
+  pathSmoothingTension: number; // Bezier control point offset for cosmetic smoothing
 }
 
 export class LanePathGenerator<T> {
@@ -62,145 +69,205 @@ export class LanePathGenerator<T> {
     timelineStart: Date,
     timelineEnd: Date
   ): string {
-    // Get timeline points (dates where count changes)
+    // 1. Get timeline events (where counts change)
     const timeline = this.activeCount.getTimeline();
     
-    // Build array of width change points
-    const pathPoints: Array<{ x: number; width: number }> = [];
+    // 2. Build transition descriptors (one per count change event)
+    const transitions = this.buildTransitions(timeline, xScale);
     
-    // Start of timeline
-    const startWidth = this.config.baseStrokeWidth;
-    pathPoints.push({
-      x: xScale(timelineStart),
-      width: startWidth,
-    });
+    // 3. Sample width at regular intervals across timeline
+    const pathPoints = this.sampleWidthAcrossTimeline(
+      transitions,
+      xScale,
+      timelineStart,
+      timelineEnd
+    );
     
-    // Add point at each count change with the NEW width
-    for (const point of timeline) {
-      const width = this.calculateWidth(point.count);
+    // 4. Build SVG path from sampled points
+    return this.buildPathFromSamples(pathPoints, centerY);
+  }
+
+  /**
+   * Build transition descriptors from timeline events
+   * Each transition represents a width change that completes over transitionDurationDays
+   */
+  private buildTransitions(
+    timeline: Array<{ date: Date; count: number; description?: string }>,
+    xScale: d3.ScaleTime<number, number>
+  ): Array<{ 
+    startDate: Date; 
+    endDate: Date; 
+    startX: number; 
+    endX: number; 
+    widthDelta: number; 
+    widthBefore: number; 
+    widthAfter: number;
+  }> {
+    const transitions: Array<{
+      startDate: Date;
+      endDate: Date;
+      startX: number;
+      endX: number;
+      widthDelta: number;
+      widthBefore: number;
+      widthAfter: number;
+    }> = [];
+    
+    // Convert days to milliseconds
+    const transitionDurationMs = this.config.transitionDurationDays * 24 * 60 * 60 * 1000;
+    
+    // Track previous count to calculate deltas
+    let previousCount = 0;
+    
+    for (const event of timeline) {
+      const widthBefore = previousCount === 0 
+        ? this.config.baseStrokeWidth 
+        : this.calculateWidth(previousCount);
+      const widthAfter = this.calculateWidth(event.count);
+      const widthDelta = widthAfter - widthBefore;
+      
+      const startDate = event.date;
+      const endDate = new Date(event.date.getTime() + transitionDurationMs);
+      
+      transitions.push({
+        startDate,
+        endDate,
+        startX: xScale(startDate),
+        endX: xScale(endDate),
+        widthDelta,
+        widthBefore,
+        widthAfter,
+      });
+      
+      previousCount = event.count;
+    }
+    
+    return transitions;
+  }
+
+  /**
+   * Sample width at regular intervals across the timeline
+   * Handles overlapping transitions by summing their contributions at each sample point
+   */
+  private sampleWidthAcrossTimeline(
+    transitions: Array<{
+      startDate: Date;
+      endDate: Date;
+      startX: number;
+      endX: number;
+      widthDelta: number;
+      widthBefore: number;
+      widthAfter: number;
+    }>,
+    xScale: d3.ScaleTime<number, number>,
+    timelineStart: Date,
+    timelineEnd: Date
+  ): Array<{ x: number; width: number; date: Date }> {
+    const pathPoints: Array<{ x: number; width: number; date: Date }> = [];
+    
+    // Sample interval: 6 hours for smooth Bezier curves
+    // (24 hours was too coarse, resulting in visible steps even with Bezier smoothing)
+    const sampleIntervalMs = 6 * 60 * 60 * 1000;
+    
+    // Sample from timeline start to timeline end
+    for (
+      let currentTime = timelineStart.getTime();
+      currentTime <= timelineEnd.getTime();
+      currentTime += sampleIntervalMs
+    ) {
+      const currentDate = new Date(currentTime);
+      let totalWidth = this.config.baseStrokeWidth;
+      
+      // Sum contributions from all transitions
+      for (const transition of transitions) {
+        const transitionStart = transition.startDate.getTime();
+        const transitionEnd = transition.endDate.getTime();
+        
+        if (currentTime < transitionStart) {
+          // Transition hasn't started yet: no contribution
+          continue;
+        } else if (currentTime >= transitionEnd) {
+          // Transition complete: add full delta
+          totalWidth += transition.widthDelta;
+        } else {
+          // Transition in progress: eased interpolation
+          const elapsed = currentTime - transitionStart;
+          const duration = transitionEnd - transitionStart;
+          const progress = Math.min(Math.max(elapsed / duration, 0), 1);
+          const easedProgress = easeInOutSine(progress);
+          totalWidth += transition.widthDelta * easedProgress;
+        }
+      }
+      
       pathPoints.push({
-        x: xScale(point.date),
-        width,
+        x: xScale(currentDate),
+        width: totalWidth,
+        date: currentDate,
       });
     }
     
-    // End of timeline (maintain last width)
-    const lastWidth = pathPoints[pathPoints.length - 1].width;
-    pathPoints.push({
-      x: xScale(timelineEnd),
-      width: lastWidth,
-    });
-    
-    // Consolidate points that are too close together (causes jagged curves)
-    const consolidatedPoints = this.consolidateClosePoints(
-      pathPoints,
-      this.config.minEventSpacing
-    );
-    
-    // Construct smooth path with Bezier curves
-    return this.buildSmoothPath(consolidatedPoints, centerY);
+    return pathPoints;
   }
 
   /**
-   * Consolidate points that are too close together
-   * When events happen on nearby dates, the curve becomes jagged.
-   * Average nearby points for smoothness.
+   * Build SVG path from sampled width points with Bezier smoothing
    */
-  private consolidateClosePoints(
-    points: Array<{ x: number; width: number }>,
-    minSpacing: number
-  ): Array<{ x: number; width: number }> {
-    if (points.length <= 2) return points;
-    
-    const result: Array<{ x: number; width: number }> = [points[0]];
-    
-    for (let i = 1; i < points.length; i++) {
-      const prev = result[result.length - 1];
-      const curr = points[i];
-      
-      const spacing = curr.x - prev.x;
-      
-      if (spacing < minSpacing && i < points.length - 1) {
-        // Too close - merge with previous point by averaging
-        // Use the width from current point (it's the more recent state)
-        result[result.length - 1] = {
-          x: (prev.x + curr.x) / 2, // Average position
-          width: curr.width, // Keep current width (accumulated changes)
-        };
-      } else {
-        result.push(curr);
-      }
-    }
-    
-    return result;
-  }
-
-  /**
-   * Build smooth SVG path with cubic Bezier curves
-   * Creates organic flowing transitions between width changes
-   */
-  private buildSmoothPath(
-    points: Array<{ x: number; width: number }>,
+  private buildPathFromSamples(
+    points: Array<{ x: number; width: number; date: Date }>,
     centerY: number
   ): string {
     if (points.length < 2) {
       return '';
     }
 
-    // Build top edge with smooth curves
+    const tension = this.config.pathSmoothingTension;
     const topEdge: string[] = [];
     const bottomEdge: string[] = [];
 
-    // Start point (top edge)
     topEdge.push(`M ${points[0].x},${centerY - points[0].width / 2}`);
 
-    // Create smooth curves along top edge
     for (let i = 1; i < points.length; i++) {
       const prev = points[i - 1];
       const curr = points[i];
-      
-      const prevY = centerY - prev.width / 2;
-      const currY = centerY - curr.width / 2;
-      
-      // Calculate control points for smooth Bezier S-curve
+
+      const prevTopY = centerY - prev.width / 2;
+      const currTopY = centerY - curr.width / 2;
+
       const dx = curr.x - prev.x;
-      const dy = currY - prevY;
-      
-      const cp1x = prev.x + dx * this.config.bezierTension;
-      const cp1y = prevY + dy * this.config.bezierVerticalTension;
-      const cp2x = curr.x - dx * this.config.bezierTension;
-      const cp2y = currY - dy * this.config.bezierVerticalTension;
-      
-      topEdge.push(`C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${currY}`);
+      const dy = currTopY - prevTopY;
+
+      const cp1x = prev.x + dx * tension;
+      const cp1y = prevTopY + dy * tension;
+      const cp2x = curr.x - dx * tension;
+      const cp2y = currTopY - dy * tension;
+
+      topEdge.push(`C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${currTopY}`);
     }
 
-    // Create smooth curves along bottom edge (reversed)
     for (let i = points.length - 1; i >= 0; i--) {
       const curr = points[i];
-      const currY = centerY + curr.width / 2;
-      
+      const currBottomY = centerY + curr.width / 2;
+
       if (i === points.length - 1) {
-        // First point of bottom edge (continuation from top)
-        bottomEdge.push(`L ${curr.x},${currY}`);
+        bottomEdge.push(`L ${curr.x},${currBottomY}`);
       } else {
         const next = points[i + 1];
-        const nextY = centerY + next.width / 2;
-        
-        // Calculate control points for smooth Bezier S-curve
+        const nextBottomY = centerY + next.width / 2;
+
         const dx = next.x - curr.x;
-        const dy = currY - nextY;
-        
-        const cp1x = next.x - dx * this.config.bezierTension;
-        const cp1y = nextY + dy * this.config.bezierVerticalTension;
-        const cp2x = curr.x + dx * this.config.bezierTension;
-        const cp2y = currY - dy * this.config.bezierVerticalTension;
-        
-        bottomEdge.push(`C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${currY}`);
+        const dy = currBottomY - nextBottomY;
+
+        const cp1x = next.x - dx * tension;
+        const cp1y = nextBottomY + dy * tension;
+        const cp2x = curr.x + dx * tension;
+        const cp2y = currBottomY - dy * tension;
+
+        bottomEdge.push(`C ${cp1x},${cp1y} ${cp2x},${cp2y} ${curr.x},${currBottomY}`);
       }
     }
 
-    // Combine and close path
     return [...topEdge, ...bottomEdge, 'Z'].join(' ');
   }
+
 }
 

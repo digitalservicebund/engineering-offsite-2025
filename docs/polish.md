@@ -1,4 +1,5 @@
 - set lower autoscroll speed
+- scale project circles with widthIncrement
 - configure fade to start later (obscures names)
 - look into separating people & project labels a bit (maybe simply: alternating sides?)
 - make event boxes wider to fit everything on two lines (investigate: can we do auto font-resizing if we go above two lines?)

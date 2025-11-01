@@ -228,7 +228,7 @@ export class ParticleAnimationController<T> {
       if (currentViewportX >= particle.spawnX && !particle.hasSpawned) {
         // Only spawn if particle is active (was detected in window)
         if (this.activeParticles.has(entityName)) {
-          this.spawnParticle(particle);
+          this.spawnParticle(particle, currentViewportX);
           particle.hasSpawned = true;
         }
       }
@@ -236,31 +236,37 @@ export class ParticleAnimationController<T> {
 
     // Update all active particle animations
     for (const particle of this.activeParticles.values()) {
-      if (!particle.animationStartTime || !particle.element || !particle.startTransform) {
+      if (!particle.animationStartTime || !particle.element || !particle.startTransform || particle.spawnViewportX === undefined) {
         continue;
       }
 
-      // Calculate animation progress
-      const elapsed = now - particle.animationStartTime;
-      const progress = Math.min(elapsed / particle.animationDuration!, 1);
-
       const animateTowardLane = this.config.animateTowardLane ?? true;
       
-      // X-axis: Linear motion to stay synchronized with viewport scroll speed
-      // Y-axis: Asymptotic easing for organic "settling" into/away from lane
+      // Calculate X-axis progress based on viewport distance traveled (speed-independent)
+      // This ensures particles stay synchronized with timeline scroll regardless of speed multiplier
+      const viewportDistanceTraveled = currentViewportX - particle.spawnViewportX;
+      const totalXDistance = Math.abs(particle.startTransform.x);
+      const xProgress = Math.min(viewportDistanceTraveled / totalXDistance, 1);
+      
+      // Calculate Y-axis progress based on elapsed time (for organic settling motion)
+      const elapsed = now - particle.animationStartTime;
+      const yProgress = Math.min(elapsed / particle.animationDuration!, 1);
+      
+      // X-axis: Distance-based linear motion (synchronized with viewport scroll)
+      // Y-axis: Time-based asymptotic easing for organic "settling" into/away from lane
       let x: number;
       let y: number;
       
       if (animateTowardLane) {
         // Joining: animate FROM offset TO (0,0) - lane center
         // startTransform.x is negative (left offset), moves rightward toward 0
-        x = particle.startTransform.x * (1 - progress);
-        y = particle.startTransform.y * (1 - this.easeAsymptotic(progress));
+        x = particle.startTransform.x * (1 - xProgress);
+        y = particle.startTransform.y * (1 - this.easeAsymptotic(yProgress));
       } else {
         // Leaving: animate FROM (0,0) TO forward offset - away from lane
         // startTransform.x is positive (forward distance to travel)
-        x = particle.startTransform.x * progress;
-        y = particle.startTransform.y * this.easeAsymptotic(progress);
+        x = particle.startTransform.x * xProgress;
+        y = particle.startTransform.y * this.easeAsymptotic(yProgress);
       }
 
       // Apply transform
@@ -269,15 +275,15 @@ export class ParticleAnimationController<T> {
       // For departure particles, fade out the opacity as they leave
       if (!animateTowardLane) {
         const targetOpacity = LAYOUT.particleAnimations.subduedOpacity;
-        const currentOpacity = targetOpacity + (1 - progress) * (1 - targetOpacity); // Fade out: start at 1, end at targetOpacity
+        const currentOpacity = targetOpacity + (1 - yProgress) * (1 - targetOpacity); // Fade out: start at 1, end at targetOpacity
         
         // Apply to both circle and label
         particle.element.select('circle').attr('fill-opacity', currentOpacity);
         particle.element.select('text').attr('fill-opacity', currentOpacity);
       }
 
-      // Check if animation complete
-      if (progress >= 1) {
+      // Check if animation complete (use xProgress for completion since it's the synchronizing axis)
+      if (xProgress >= 1) {
         this.fadeOutParticle(particle);
       }
     }
@@ -310,8 +316,11 @@ export class ParticleAnimationController<T> {
    * Creates nested group structure for transform-based animation
    * 
    * Visual encoding: Blue circle represents person joining, text label identifies who
+   * @param currentViewportX - Current viewport X position at spawn time (for distance-based animation)
    */
-  private spawnParticle(particle: ParticleAnimation): void {
+  private spawnParticle(particle: ParticleAnimation, currentViewportX: number): void {
+    // Store viewport position at spawn for distance-based X interpolation
+    particle.spawnViewportX = currentViewportX;
     // Outer group: positioned at final merge location (joinX, laneEdgeY)
     const particleContainer = this.particleGroup
       .append('g')
