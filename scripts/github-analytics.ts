@@ -145,8 +145,14 @@ interface Repo {
 
 interface Commit {
   oid: string;
-  authoredDate: string;
+  committedDate: string;
   author: {
+    name: string;
+    user: {
+      login: string;
+    } | null;
+  };
+  committer: {
     name: string;
     user: {
       login: string;
@@ -304,8 +310,14 @@ async function fetchCommitsForRepo(owner: string, repoName: string, defaultBranc
                 history(first: 100, after: $cursor) {
                   nodes {
                     oid
-                    authoredDate
+                    committedDate
                     author {
+                      name
+                      user {
+                        login
+                      }
+                    }
+                    committer {
                       name
                       user {
                         login
@@ -414,9 +426,9 @@ function calculateRepoMilestones(repos: Repo[], milestones: number[]): Milestone
  * Calculate commit milestones
  */
 function calculateCommitMilestones(allCommits: Array<{ commit: Commit; repoName: string }>, milestones: number[]): Milestone[] {
-  // Sort all commits by author date
+  // Sort all commits by commit date (when added to repo, not authored)
   const sorted = allCommits.sort((a, b) => 
-    new Date(a.commit.authoredDate).getTime() - new Date(b.commit.authoredDate).getTime()
+    new Date(a.commit.committedDate).getTime() - new Date(b.commit.committedDate).getTime()
   );
 
   const results: Milestone[] = [];
@@ -426,7 +438,7 @@ function calculateCommitMilestones(allCommits: Array<{ commit: Commit; repoName:
       const commitData = sorted[milestone - 1]; // 0-indexed
       results.push({
         milestone,
-        date: commitData.commit.authoredDate,
+        date: commitData.commit.committedDate,
         repoName: commitData.repoName,
         author: commitData.commit.author.user?.login || commitData.commit.author.name,
         commitSha: commitData.commit.oid.substring(0, 7),
@@ -481,7 +493,7 @@ function generateMilestonesCSV(
   // Repository milestones
   for (const milestone of repoMilestones) {
     const date = formatDateForCSV(milestone.date);
-    const name = `${milestone.milestone} GitHub repos (latest: ${milestone.repoName})`;
+    const name = `${milestone.milestone}th GitHub repo (${milestone.repoName})`;
     rows.push(`${date},${name},false,,`);
   }
   
@@ -489,7 +501,7 @@ function generateMilestonesCSV(
   for (const milestone of commitMilestones) {
     const date = formatDateForCSV(milestone.date);
     const author = milestone.author || 'unknown';
-    const name = `${milestone.milestone} git commits across all repos (${author} in ${milestone.repoName})`;
+    const name = `${milestone.milestone}th git commit (${author} in ${milestone.repoName})`;
     rows.push(`${date},${name},false,,`);
   }
   
@@ -648,10 +660,10 @@ async function runAnalytics(force: boolean = false): Promise<void> {
   console.log('🎯 Calculating milestones...');
 
   // Determine repo milestone thresholds
-  const repoMilestones = [1, 5, 10, 25, 50, 100, 200, 500].filter(m => m <= repos.length);
+  const repoMilestones = [1, 5, 10, 25, 50, 100, 150, 200, 500].filter(m => m <= repos.length);
   
   // Determine commit milestone thresholds (use filtered count)
-  const commitMilestones = [1, 100, 500, 1000, 5000, 10000, 25000, 50000].filter(m => m <= filteredCommits.length);
+  const commitMilestones = [1, 100, 500, 1000, 2500, 5000, 10000, 25000, 50000, 67500].filter(m => m <= filteredCommits.length);
 
   const repoMilestoneResults = calculateRepoMilestones(repos, repoMilestones);
   const commitMilestoneResults = calculateCommitMilestones(filteredCommits, commitMilestones);

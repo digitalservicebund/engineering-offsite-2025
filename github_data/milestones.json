@@ -31,6 +31,11 @@
       "repoName": "ris-reports"
     },
     {
+      "milestone": 150,
+      "date": "2024-03-14T09:23:21Z",
+      "repoName": "create-sbom"
+    },
+    {
       "milestone": 200,
       "date": "2025-07-01T14:59:47Z",
       "repoName": "formularbaukasten-agentic-migration"
@@ -39,24 +44,24 @@
   "commits": [
     {
       "milestone": 1,
-      "date": "2020-12-09T11:39:16Z",
+      "date": "2020-12-17T14:20:48Z",
       "repoName": "steuerlotse-archive",
-      "author": "nfelger",
-      "commitSha": "b9c365d"
+      "author": "frederike-ramin",
+      "commitSha": "6b2249b"
     },
     {
       "milestone": 100,
-      "date": "2021-01-29T20:09:38Z",
-      "repoName": "public_documents",
-      "author": "AnnaHupperth",
-      "commitSha": "0a630ec"
+      "date": "2021-02-01T15:56:39Z",
+      "repoName": "digitalservice4germany.com",
+      "author": "nfelger",
+      "commitSha": "92113e7"
     },
     {
       "milestone": 500,
-      "date": "2021-05-25T08:56:26Z",
+      "date": "2021-05-27T14:37:16Z",
       "repoName": "steuerlotse-archive",
-      "author": "na-st",
-      "commitSha": "8575498"
+      "author": "Frederike Ramin",
+      "commitSha": "281b70a"
     },
     {
       "milestone": 1000,
@@ -66,32 +71,39 @@
       "commitSha": "a25d5dd"
     },
     {
+      "milestone": 2500,
+      "date": "2022-02-09T15:21:49Z",
+      "repoName": "steuerlotse",
+      "author": "Sanny Nguyen Hung",
+      "commitSha": "4126405"
+    },
+    {
       "milestone": 5000,
-      "date": "2022-05-04T08:45:46Z",
-      "repoName": "grundsteuer",
-      "author": "frederike-ramin",
-      "commitSha": "a8b7666"
+      "date": "2022-05-04T09:16:50Z",
+      "repoName": "ris-backend-service",
+      "author": "benjaminaaron",
+      "commitSha": "233cc83"
     },
     {
       "milestone": 10000,
-      "date": "2022-07-27T12:26:49Z",
+      "date": "2022-07-27T15:57:25Z",
       "repoName": "grundsteuer",
-      "author": "shrzaf",
-      "commitSha": "05d4625"
+      "author": "JulianRoesner",
+      "commitSha": "686ae7f"
     },
     {
       "milestone": 25000,
-      "date": "2023-06-13T13:54:23Z",
-      "repoName": "ris-backend-service",
-      "author": "HPrinz",
-      "commitSha": "c2f7d80"
+      "date": "2023-06-13T14:35:27Z",
+      "repoName": "grundsteuer-infra",
+      "author": "JulianRoesner",
+      "commitSha": "6987c50"
     },
     {
       "milestone": 50000,
-      "date": "2024-12-05T12:56:54Z",
-      "repoName": "digitalcheck-dito",
-      "author": "lsolcher",
-      "commitSha": "2d1d5e9"
+      "date": "2024-12-05T13:21:01Z",
+      "repoName": "a2j-rechtsantragstelle",
+      "author": "rbrtrfl",
+      "commitSha": "7bb5893"
     }
   ],
   "firstInfraRepo": {
