@@ -31,7 +31,7 @@ export class ViewportController {
   private keyEventPositions: KeyEventPosition[] = [];
   private lastFrameTimestamp: number | null = null;
   private autoScrollFrameId: number | null = null;
-  private pausedAtEventId: string | null = null;
+  private visitedKeyEventIds: Set<string> = new Set(); // Track key events we've already paused at
   private isShiftPressed: boolean = false;
 
   constructor(
@@ -158,10 +158,10 @@ export class ViewportController {
   }
 
   /**
-   * Get paused event ID (null if not paused at key event)
+   * Get visited key event IDs (for debugging/testing)
    */
-  public getPausedEventId(): string | null {
-    return this.pausedAtEventId;
+  public getVisitedKeyEventIds(): Set<string> {
+    return this.visitedKeyEventIds;
   }
 
   /**
@@ -172,7 +172,6 @@ export class ViewportController {
     // Set state
     this.scrollState = 'scrolling';
     this.lastFrameTimestamp = null; // Will be set on first frame
-    this.pausedAtEventId = null;
 
     // Cancel any existing auto-scroll animation frame
     if (this.autoScrollFrameId !== null) {
@@ -277,7 +276,7 @@ export class ViewportController {
     // Reset state
     this.scrollState = 'idle';
     this.lastFrameTimestamp = null;
-    this.pausedAtEventId = null;
+    this.visitedKeyEventIds.clear();
 
     console.log('Auto-scroll stopped');
   }
@@ -356,31 +355,23 @@ export class ViewportController {
     // Get current position marker x (where we consider "current" to be)
     const currentPositionX = this.calculateCurrentPositionX();
 
-    // Clear pausedAtEventId once we've moved past the paused event
-    if (this.pausedAtEventId) {
-      const pausedEvent = this.keyEventPositions.find(e => e.eventId === this.pausedAtEventId);
-      if (pausedEvent && currentPositionX > pausedEvent.xPosition + LAYOUT.autoScroll.keyEventPauseThreshold * 2) {
-        this.pausedAtEventId = null;
-      }
-    }
-
-    // Find next key event ahead
+    // Find next unvisited key event ahead of current position
     let targetKeyEvent: KeyEventPosition | null = null;
 
-    // Find first key event ahead of current position (skip the one we just paused at)
     for (const keyEvent of this.keyEventPositions) {
-      // Skip the event we just paused at to avoid immediate re-pause
-      if (this.pausedAtEventId && keyEvent.eventId === this.pausedAtEventId) {
+      // Skip events we've already paused at
+      if (this.visitedKeyEventIds.has(keyEvent.eventId)) {
         continue;
       }
       
+      // Find first event ahead of current position
       if (keyEvent.xPosition > currentPositionX) {
         targetKeyEvent = keyEvent;
         break;
       }
     }
 
-    // No key event found ahead
+    // No unvisited key event found ahead
     if (!targetKeyEvent) {
       return false;
     }
@@ -390,7 +381,9 @@ export class ViewportController {
     if (distance <= LAYOUT.autoScroll.keyEventPauseThreshold) {
       // Pause at current position (no snap to avoid visual jump and particle misalignment)
       this.scrollState = 'paused';
-      this.pausedAtEventId = targetKeyEvent.eventId;
+      
+      // Mark this event as visited so we never pause here again
+      this.visitedKeyEventIds.add(targetKeyEvent.eventId);
 
       console.log(`Paused at key event: "${targetKeyEvent.eventName}" (${targetKeyEvent.eventId})`);
 

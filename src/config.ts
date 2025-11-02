@@ -70,7 +70,7 @@ export const LAYOUT = {
     color: COLORS.events,
     label: {
       offsetY: -5, // px - space between bottom edge of text and marker top
-      maxWidth: 120, // px - text wraps within this width
+      maxWidth: 150, // px - text wraps within this width
       height: 40, // px - estimated label container height for multi-line text (should accommodate ~2 lines at current font size)
       // Label stacking configuration to avoid overlaps
       stack: {
