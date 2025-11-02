@@ -304,12 +304,12 @@ export class ParticleAnimationController<T> {
    * @returns Eased progress from 0 to 1 following smooth curve
    */
   private easeAsymptotic(t: number): number {
-    // Quadratic ease-out formula: 1 - (1 - t)^2
-    // Gentler than cubic - subtle deceleration without lingering:
-    // - Slightly faster initial rise
-    // - Smooth finish that completes promptly
-    // - Just enough easing to feel organic without appearing slow
-    return 1 - Math.pow(1 - t, 2);
+    // Reduced ease-out formula: 1 - (1 - t)^1.5
+    // Less smooth than quadratic - more direct approach:
+    // - Faster movement throughout
+    // - Less deceleration at the end
+    // - Maintains organic feel without appearing overly smooth
+    return 1 - Math.pow(1 - t, 1.5);
   }
 
   /**
