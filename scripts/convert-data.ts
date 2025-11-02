@@ -57,10 +57,39 @@ interface TimelineData {
  * Parse CSV with simple comma splitting (no quoted field handling)
  */
 function parseCSV(content: string): string[][] {
-  return content
-    .trim()
-    .split('\n')
-    .map(line => line.split(',').map(field => field.trim()));
+  const lines = content.trim().split('\n');
+  return lines.map(line => {
+    const fields: string[] = [];
+    let currentField = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      const nextChar = line[i + 1];
+      
+      if (char === '"') {
+        if (inQuotes && nextChar === '"') {
+          // Escaped quote: "" inside quoted field
+          currentField += '"';
+          i++; // Skip next quote
+        } else {
+          // Toggle quote state
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        // Field separator (only when not inside quotes)
+        fields.push(currentField.trim());
+        currentField = '';
+      } else {
+        currentField += char;
+      }
+    }
+    
+    // Add the last field
+    fields.push(currentField.trim());
+    
+    return fields;
+  });
 }
 
 /**
@@ -80,7 +109,7 @@ function convertEvents(csvPath: string): Event[] {
     const hasPhoto = photoFilename && photoFilename.trim() !== '';
     
     // Generate event ID from photo filename if present, otherwise from index
-    const id = hasPhoto ? path.parse(photoFilename).name : `evt${index + 1}`;
+    const id = hasPhoto ? photoFilename : `evt${index + 1}`;
     
     return {
       id,
