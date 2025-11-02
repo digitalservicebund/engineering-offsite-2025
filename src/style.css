@@ -209,6 +209,12 @@ svg {
   width: fit-content;
 }
 
+/* Left-aligned labels for joiners (text-align right within the box) */
+.particle-label-left {
+  text-align: right;
+  margin-left: auto;
+}
+
 
 
 /* Photo overlay - full-screen photo display */

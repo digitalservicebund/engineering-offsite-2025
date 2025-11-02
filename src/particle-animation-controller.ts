@@ -382,24 +382,28 @@ export class ParticleAnimationController<T> {
       .attr('r', this.config.circleRadius)
       .attr('fill', this.config.circleColor);
 
-    // Text label to the right of circle with vertical staggering
-    // Append 👋 emoji for departure particles to improve visibility
+    // Text label with vertical staggering
+    // Joiners: label on LEFT of circle
+    // Leavers: label on RIGHT of circle with 👋 emoji
     const labelText = animateTowardLane ? particle.entityName : `${particle.entityName} 👋`;
     
     // Calculate vertical offset to avoid overlap with nearby particles
     const verticalOffset = this.calculateVerticalOffset(particle.spawnX);
     
+    // Position label: left for joiners (toward lane), right for leavers (away from lane)
+    const labelX = animateTowardLane ? -this.config.labelOffsetX - 150 : this.config.labelOffsetX;
+    
     // Use foreignObject for CSS-styled label with background
     const labelFO = animationGroup
       .append('foreignObject')
-      .attr('x', this.config.labelOffsetX)
+      .attr('x', labelX)
       .attr('y', -10 + verticalOffset) // Center vertically with offset
       .attr('width', 150)
       .attr('height', 20);
     
     labelFO
       .append('xhtml:div')
-      .attr('class', 'particle-label')
+      .attr('class', animateTowardLane ? 'particle-label particle-label-left' : 'particle-label')
       .text(labelText);
     
     // For departure particles, start with subdued opacity (will fade out during animation)

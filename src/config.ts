@@ -95,7 +95,7 @@ export const LAYOUT = {
         maxOffset: 60,            // px - maximum vertical offset (cap at ±60px)
       },
     },
-    subduedOpacity: 0.6, // Applied via fill-opacity for departure particles (leaving/ending)
+    subduedOpacity: 0.85, // Applied via fill-opacity for departure particles (leaving/ending)
     people: {
       joining: {
         spawnOffsetY: 60, // px - vertical distance below people lane bottom edge where particle starts
