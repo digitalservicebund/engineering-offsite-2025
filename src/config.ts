@@ -8,9 +8,9 @@
  */
 const COLORS = {
   // Brand/Lane Colors
-  projects: '#F0B7D5',   // projects lane
-  events: '#81878E',     // events lane, markers, thumbnails
-  people: '#60CFFF',     // people lane, particles
+  projects: '#f08640',   // projects lane
+  events: '#66c8f2',     // events lane, markers, thumbnails
+  people: '#b49dca',     // people lane, particles
 
   // UI Colors
   text: '#2A2B2D',       // Dark gray - text labels, counters
@@ -31,7 +31,7 @@ export const LAYOUT = {
   },
   autoScroll: {
     speed: 200, // px/sec - constant scroll speed per spec
-    shiftSpeedMultiplier: 3, // multiplier when holding Shift during auto-scroll
+    shiftSpeedMultiplier: 5, // multiplier when holding Shift during auto-scroll
     keyEventPauseThreshold: 4, // px - how close to key event before pausing
   },
   lanes: {
@@ -54,7 +54,7 @@ export const LAYOUT = {
       initialStrokeWidth: 1,
       color: COLORS.people,
       baseStrokeWidth: 1, // px - minimum width before any people join
-      pixelsPerPerson: 2, // px - width increment per active person
+      pixelsPerPerson: 1, // px - width increment per active person
       // Path generation parameters
       transitionDurationDays: 1, // days - width changes complete over 1 day
       pathSmoothingTension: 0.2, // 0-1 - control point offset for cosmetic smoothing (0.5 was too loose)
@@ -71,11 +71,11 @@ export const LAYOUT = {
     label: {
       offsetY: -5, // px - space between bottom edge of text and marker top
       maxWidth: 180, // px - text wraps within this width
-      height: 40, // px - estimated label container height for multi-line text (should accommodate ~2 lines at current font size)
+      height: 50, // px - estimated label container height for multi-line text (should accommodate ~2 lines at current font size)
       // Label stacking configuration to avoid overlaps
       stack: {
         minHorizontalGap: 12, // px - extra gap between adjacent label boxes
-        tierHeight: 50, // px - vertical distance between stacked tiers (should be >= label height + some spacing)
+        tierHeight: 55, // px - vertical distance between stacked tiers (should be >= label height + some spacing)
         maxTiers: 5, // maximum number of tiers above the lane (0, 1, 2, 3, 4)
         maxTiersBelow: 4, // maximum number of tiers below the lane (-1, -2, -3, -4, for regular events only)
       },
