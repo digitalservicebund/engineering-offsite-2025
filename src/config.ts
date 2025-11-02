@@ -89,6 +89,11 @@ export const LAYOUT = {
       labelFontSize: 13, // px - matches event marker labels
       labelFontFamily: 'sans-serif' as const,
       labelColor: COLORS.text,
+      labelStagger: {
+        proximityThreshold: 100, // px - particles within this distance are considered "nearby"
+        verticalStep: 20,         // px - vertical spacing between staggered labels
+        maxOffset: 60,            // px - maximum vertical offset (cap at ±60px)
+      },
     },
     subduedOpacity: 0.6, // Applied via fill-opacity for departure particles (leaving/ending)
     people: {

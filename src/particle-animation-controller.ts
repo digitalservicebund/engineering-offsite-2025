@@ -42,6 +42,7 @@ export class ParticleAnimationController<T> {
   private particleGroup: d3.Selection<SVGGElement, unknown, null, undefined>;
   private particleMetadata: Map<string, ParticleAnimation>; // Pre-calculated spawn data
   private lastUpdateTime: number = 0; // Track frame timing for pause detection
+  private verticalOffsetMap: Map<number, number> = new Map(); // spawnX -> verticalOffset for label staggering
 
   constructor(
     svg: d3.Selection<SVGSVGElement | SVGGElement, unknown, null, undefined>,
@@ -312,6 +313,36 @@ export class ParticleAnimationController<T> {
   }
 
   /**
+   * Calculate vertical offset for particle label to avoid overlaps
+   * Staggers labels vertically when multiple particles spawn close together
+   */
+  private calculateVerticalOffset(spawnX: number): number {
+    const proximityThreshold = LAYOUT.particleAnimations.particle.labelStagger.proximityThreshold;
+    const verticalStep = LAYOUT.particleAnimations.particle.labelStagger.verticalStep;
+    const maxOffset = LAYOUT.particleAnimations.particle.labelStagger.maxOffset;
+    
+    // Find nearby particles
+    let nearbyCount = 0;
+    for (const [particleX] of this.verticalOffsetMap.entries()) {
+      if (Math.abs(particleX - spawnX) < proximityThreshold) {
+        nearbyCount++;
+      }
+    }
+    
+    // Stagger: alternate above/below with increasing offset
+    // Pattern: 0, +20, -20, +40, -40, +60, -60...
+    let offset = 0;
+    if (nearbyCount > 0) {
+      offset = (nearbyCount % 2 === 0 ? -1 : 1) * Math.ceil(nearbyCount / 2) * verticalStep;
+      // Cap at maxOffset
+      offset = Math.max(-maxOffset, Math.min(maxOffset, offset));
+    }
+    
+    this.verticalOffsetMap.set(spawnX, offset);
+    return offset;
+  }
+
+  /**
    * Spawn a particle by creating SVG elements
    * Creates nested group structure for transform-based animation
    * 
@@ -351,24 +382,30 @@ export class ParticleAnimationController<T> {
       .attr('r', this.config.circleRadius)
       .attr('fill', this.config.circleColor);
 
-    // Text label to the right of circle
+    // Text label to the right of circle with vertical staggering
     // Append 👋 emoji for departure particles to improve visibility
     const labelText = animateTowardLane ? particle.entityName : `${particle.entityName} 👋`;
     
-    const label = animationGroup
-      .append('text')
+    // Calculate vertical offset to avoid overlap with nearby particles
+    const verticalOffset = this.calculateVerticalOffset(particle.spawnX);
+    
+    // Use foreignObject for CSS-styled label with background
+    const labelFO = animationGroup
+      .append('foreignObject')
       .attr('x', this.config.labelOffsetX)
-      .attr('y', 4) // Vertical centering offset
-      .attr('text-anchor', 'start')
-      .attr('font-size', this.config.labelFontSize)
-      .attr('font-family', this.config.labelFontFamily)
-      .attr('fill', this.config.labelColor)
+      .attr('y', -10 + verticalOffset) // Center vertically with offset
+      .attr('width', 150)
+      .attr('height', 20);
+    
+    labelFO
+      .append('xhtml:div')
+      .attr('class', 'particle-label')
       .text(labelText);
     
     // For departure particles, start with subdued opacity (will fade out during animation)
     if (!animateTowardLane) {
       circle.attr('fill-opacity', LAYOUT.particleAnimations.subduedOpacity);
-      label.attr('fill-opacity', LAYOUT.particleAnimations.subduedOpacity);
+      labelFO.attr('opacity', LAYOUT.particleAnimations.subduedOpacity);
     }
 
     // Store reference for animation
@@ -438,6 +475,11 @@ export class ParticleAnimationController<T> {
         particle.isComplete = true;
         this.activeParticles.delete(particle.entityName);
         this.completedJoins.add(particle.entityName);
+        
+        // Clean up offset map entry
+        if (particle.spawnX !== undefined) {
+          this.verticalOffsetMap.delete(particle.spawnX);
+        }
 
         console.log(`✓ Particle animation complete: ${particle.entityName}`);
       });
@@ -458,6 +500,7 @@ export class ParticleAnimationController<T> {
     this.activeParticles.clear();
     this.completedJoins.clear();
     this.lastUpdateTime = 0; // Reset frame timing
+    this.verticalOffsetMap.clear(); // Clear label stagger offsets
 
     // Reset all particle metadata to initial state
     // This allows particles to spawn fresh after a reset
