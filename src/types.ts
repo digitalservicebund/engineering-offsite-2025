@@ -35,7 +35,6 @@ export interface EventRaw {
   isKeyMoment: boolean;
   hasPhoto: boolean;
   caption: string | null;
-  // Note: photoUrl removed - derived from id using pattern: assets/photos/${id}.jpg
 }
 
 // Parsed data types (dates are Date objects, ready for use)
@@ -69,7 +68,6 @@ export interface Event {
   isKeyMoment: boolean;
   hasPhoto: boolean;
   caption: string | null;
-  // Note: photoUrl removed - derived from id using pattern: assets/photos/${id}.jpg
   // Note: caption falls back to event name if null
 }
 

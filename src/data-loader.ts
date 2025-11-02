@@ -83,7 +83,6 @@ export async function loadTimelineData(): Promise<TimelineData> {
       isKeyMoment: event.isKeyMoment,
       hasPhoto: event.hasPhoto,
       caption: event.caption,
-      // photoUrl removed - derived from id using pattern: assets/photos/${id}.jpg
     })),
   };
 }

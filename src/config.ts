@@ -24,7 +24,7 @@ export const LAYOUT = {
     height: 800,
   },
   timeline: {
-    pixelsPerYear: 1200,
+    pixelsPerYear: 2000,
   },
   scroll: {
     currentPositionRatio: 0.56, // ratio (0-1) - viewport position used as "current" date marker
@@ -51,9 +51,9 @@ export const LAYOUT = {
     },
     people: {
       yPosition: 650,
-      initialStrokeWidth: 2,
+      initialStrokeWidth: 1,
       color: COLORS.people,
-      baseStrokeWidth: 2, // px - minimum width before any people join
+      baseStrokeWidth: 1, // px - minimum width before any people join
       pixelsPerPerson: 2, // px - width increment per active person
       // Path generation parameters
       transitionDurationDays: 1, // days - width changes complete over 1 day
@@ -142,7 +142,7 @@ export const LAYOUT = {
   background: COLORS.background,
   textColor: COLORS.text,
   debug: {
-    showFpsCounter: false, // Display FPS counter in top-left corner
+    showFpsCounter: true, // Display FPS counter in top-left corner
   },
 } as const;
 

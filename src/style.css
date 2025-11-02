@@ -102,8 +102,8 @@ body {
   background: linear-gradient(
     to right,
     transparent 0%,
-    color-mix(in srgb, var(--color-bg-light) 70%, transparent) 20%,
-    color-mix(in srgb, var(--color-bg-light) 90%, transparent) 40%,
+    color-mix(in srgb, var(--color-bg-light) 70%, transparent) 40%,
+    color-mix(in srgb, var(--color-bg-light) 90%, transparent) 60%,
     var(--color-bg-light) 70%,
     var(--color-bg-light) 100%
   );
