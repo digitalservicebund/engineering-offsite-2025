@@ -70,7 +70,7 @@ export const LAYOUT = {
     color: COLORS.events,
     label: {
       offsetY: -5, // px - space between bottom edge of text and marker top
-      maxWidth: 150, // px - text wraps within this width
+      maxWidth: 180, // px - text wraps within this width
       height: 40, // px - estimated label container height for multi-line text (should accommodate ~2 lines at current font size)
       // Label stacking configuration to avoid overlaps
       stack: {
@@ -86,7 +86,7 @@ export const LAYOUT = {
     particle: {
       circleRadius: 4, // px - particle circle size
       labelOffsetX: 15, // px - text position to right of circle
-      labelFontSize: 14, // px - matches event marker labels
+      labelFontSize: 13, // px - matches event marker labels
       labelFontFamily: 'sans-serif' as const,
       labelColor: COLORS.text,
     },

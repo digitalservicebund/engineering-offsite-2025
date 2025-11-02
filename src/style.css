@@ -178,13 +178,14 @@ svg {
   flex-direction: column;
   justify-content: center;
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-family: sans-serif;
   font-weight: 400;
   color: var(--color-text);
   line-height: 1.2;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  word-break: break-word;
   hyphens: auto;
   background: rgba(248, 249, 250, 0.8);
   border-radius: 4px;
