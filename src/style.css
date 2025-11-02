@@ -91,6 +91,7 @@ body {
   width: 1px;
   background: #FF823C;
   opacity: 0.4;
+  transition: opacity 0.3s ease-out;
 }
 
 .future-fade-overlay {
@@ -109,6 +110,7 @@ body {
   );
   pointer-events: none;
   z-index: 50;
+  transition: opacity 0.3s ease-out;
 }
 
 /* Counters - fixed position in top-right corner */

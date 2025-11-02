@@ -33,6 +33,9 @@ export class ViewportController {
   private autoScrollFrameId: number | null = null;
   private visitedKeyEventIds: Set<string> = new Set(); // Track key events we've already paused at
   private isShiftPressed: boolean = false;
+  
+  // Zoom-out state
+  private isZoomedOut: boolean = false;
 
   constructor(
     container: HTMLElement,
@@ -169,6 +172,12 @@ export class ViewportController {
    * Entry point for continuous scrolling at fixed speed (200px/sec)
    */
   public startAutoScroll(): void {
+    // Don't start if zoomed out - user must reset first
+    if (this.isZoomedOut) {
+      console.log('Cannot start auto-scroll: timeline is zoomed out. Press Left Arrow to reset.');
+      return;
+    }
+    
     // Set state
     this.scrollState = 'scrolling';
     this.lastFrameTimestamp = null; // Will be set on first frame
@@ -230,13 +239,15 @@ export class ViewportController {
     
     this.currentOffset = Math.max(this.minOffset, Math.min(this.maxOffset, this.currentOffset));
 
-    // Check if we hit a boundary - stop auto-scroll
+    // Check if we hit a boundary - trigger zoom-out effect
     if (wasClamped) {
-      this.scrollState = 'idle';
       this.autoScrollFrameId = null;
       this.applyTransform();
       this.notifyViewportChange();
       console.log('Auto-scroll stopped: reached timeline end');
+      
+      // Trigger zoom-out effect to show full timeline
+      this.triggerZoomOut();
       return;
     }
 
@@ -331,15 +342,89 @@ export class ViewportController {
   public resetToStart(): void {
     // Stop any active auto-scroll
     this.stopAutoScroll();
-
-    // Reset to initial position
-    this.currentOffset = this.minOffset;
-    this.applyTransform();
-
-    // Update counters at start position
-    this.notifyViewportChange();
+    
+    // Reset zoom state if zoomed out
+    if (this.isZoomedOut) {
+      // Show overlays again
+      const markerEl = document.querySelector('.current-date-marker') as HTMLElement;
+      const fadeEl = document.querySelector('.future-fade-overlay') as HTMLElement;
+      if (markerEl) markerEl.style.opacity = '1';
+      if (fadeEl) fadeEl.style.opacity = '1';
+      
+      this.container.style.transition = 'transform 0.5s ease-out';
+      this.container.style.transform = 'translate(0, 0) scale(1)';
+      this.isZoomedOut = false;
+      
+      // Wait for zoom-in transition to complete before resetting position
+      setTimeout(() => {
+        this.container.style.transition = 'none';
+        this.currentOffset = this.minOffset;
+        this.applyTransform();
+        this.notifyViewportChange();
+      }, 500);
+    } else {
+      // Normal reset without zoom transition
+      this.currentOffset = this.minOffset;
+      this.applyTransform();
+      this.notifyViewportChange();
+    }
 
     console.log('Timeline reset to start');
+  }
+
+  /**
+   * Trigger zoom-out effect to show entire timeline
+   * Called when auto-scroll reaches the end of the timeline
+   */
+  private triggerZoomOut(): void {
+    if (!LAYOUT.zoomOut.enabled) {
+      return;
+    }
+
+    console.log('Triggering zoom-out to show full timeline');
+    
+    this.isZoomedOut = true;
+    this.scrollState = 'idle'; // Stop scroll state machine
+    
+    // Hide overlays (current date marker and future fade)
+    const markerEl = document.querySelector('.current-date-marker') as HTMLElement;
+    const fadeEl = document.querySelector('.future-fade-overlay') as HTMLElement;
+    if (markerEl) markerEl.style.opacity = '0';
+    if (fadeEl) fadeEl.style.opacity = '0';
+    
+    // Calculate scale factor to fit entire timeline in viewport (both axes)
+    const timelineContentWidth = this.timelineWidth;
+    const timelineContentHeight = LAYOUT.viewport.height;
+    const viewportWidth = this.viewportWidth;
+    const viewportHeight = LAYOUT.viewport.height;
+    const padding = LAYOUT.zoomOut.padding;
+    
+    const availableWidth = viewportWidth - (padding * 2);
+    const availableHeight = viewportHeight - (padding * 2);
+    
+    // Use the smaller scale factor to ensure everything fits
+    const scaleFactorX = availableWidth / timelineContentWidth;
+    const scaleFactorY = availableHeight / timelineContentHeight;
+    const scaleFactor = Math.min(scaleFactorX, scaleFactorY);
+    
+    // Calculate centering offsets for both axes
+    const scaledWidth = timelineContentWidth * scaleFactor;
+    const scaledHeight = timelineContentHeight * scaleFactor;
+    const centerX = (viewportWidth - scaledWidth) / 2;
+    const centerY = (viewportHeight - scaledHeight) / 2;
+    
+    // Apply CSS transform with transition (scale both axes, center both axes)
+    const duration = LAYOUT.zoomOut.duration;
+    const easing = LAYOUT.zoomOut.easing;
+    
+    this.container.style.transition = `transform ${duration}ms ${easing}`;
+    this.container.style.transform = `translate(${centerX}px, ${centerY}px) scale(${scaleFactor})`;
+    this.container.style.transformOrigin = '0 0'; // Scale from top-left
+    
+    // Log completion after animation
+    setTimeout(() => {
+      console.log('Zoom-out complete: full timeline visible');
+    }, duration);
   }
 
   /**

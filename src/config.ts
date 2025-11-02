@@ -134,6 +134,12 @@ export const LAYOUT = {
     thumbnailSize: 100, // px - thumbnail max width/height
     thumbnailGapBelowLane: 10, // px - gap between lane bottom edge and thumbnail top
   },
+  zoomOut: {
+    enabled: true,
+    duration: 2500,        // ms - animation duration for zoom-out effect at timeline end
+    easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)', // Material ease-out
+    padding: 40,           // px - horizontal margin around timeline in zoomed-out view
+  },
   gridlines: {
     major: {
       color: COLORS.gridlines,
