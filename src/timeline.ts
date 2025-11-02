@@ -322,13 +322,21 @@ export class Timeline {
   }
 
   /**
-   * Calculate event marker positioning
+   * Calculate event marker positioning (both above and below lane)
    */
-  private calculateMarkerPositions(): { laneTopEdge: number; markerTopY: number } {
+  private calculateMarkerPositions(): { 
+    laneTopEdge: number; 
+    laneBottomEdge: number;
+    markerTopY: number;
+    markerBottomY: number;
+  } {
     const laneTopEdge =
       LAYOUT.lanes.events.yPosition - LAYOUT.lanes.events.strokeWidth / 2;
+    const laneBottomEdge =
+      LAYOUT.lanes.events.yPosition + LAYOUT.lanes.events.strokeWidth / 2;
     const markerTopY = laneTopEdge - LAYOUT.eventMarkers.lineHeight;
-    return { laneTopEdge, markerTopY };
+    const markerBottomY = laneBottomEdge + LAYOUT.eventMarkers.lineHeight;
+    return { laneTopEdge, laneBottomEdge, markerTopY, markerBottomY };
   }
 
   /**
@@ -343,68 +351,143 @@ export class Timeline {
   }
 
   /**
+   * Check if there's a photo thumbnail near the given x position
+   */
+  private hasNearbyThumbnail(eventX: number, xScale: d3.ScaleTime<number, number>): boolean {
+    const labelHalfWidth = LAYOUT.eventMarkers.label.maxWidth / 2;
+    const thumbnailHalfWidth = LAYOUT.photoDisplay.thumbnailSize / 2;
+    const minGap = LAYOUT.eventMarkers.label.stack.minHorizontalGap;
+    const threshold = labelHalfWidth + thumbnailHalfWidth + minGap;
+    
+    for (const ev of this.sortedEvents) {
+      if (!ev.hasPhoto) continue;
+      const photoX = xScale(ev.date);
+      if (Math.abs(photoX - eventX) < threshold) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Render event markers on the events lane
    * Visual encoding: Vertical lines mark timeline events, with bold text for key moments
+   * Key events always render above lane; regular events can render below when crowded
    */
   private renderEventMarkers(): void {
     const xScale = this.getXScaleOrThrow();
-    const { laneTopEdge, markerTopY } = this.calculateMarkerPositions();
+    const { laneTopEdge, laneBottomEdge, markerTopY, markerBottomY } = this.calculateMarkerPositions();
 
-    // Pre-compute non-overlapping label tiers using simple greedy stacking
+    // Pre-compute non-overlapping label tiers using bidirectional greedy stacking
     const halfWidth = LAYOUT.eventMarkers.label.maxWidth / 2;
     const minGap = LAYOUT.eventMarkers.label.stack.minHorizontalGap;
     const tierHeight = LAYOUT.eventMarkers.label.stack.tierHeight;
-    const maxTiers = LAYOUT.eventMarkers.label.stack.maxTiers;
+    const maxTiersAbove = LAYOUT.eventMarkers.label.stack.maxTiers;
+    const maxTiersBelow = LAYOUT.eventMarkers.label.stack.maxTiersBelow;
 
-    // Calculate base label Y position
-    // Account for potential text wrapping by using configured label height
+    // Calculate base label Y positions (above and below)
     const labelHeight = LAYOUT.eventMarkers.label.height;
     const baseLabelTopY = markerTopY + LAYOUT.eventMarkers.label.offsetY - labelHeight;
+    const baseLabelBottomY = markerBottomY - LAYOUT.eventMarkers.label.offsetY;
 
-    // Track all labels in each tier for proper collision detection
-    const labelsByTier: Array<{ left: number; right: number; eventId: string }>[] = [];
-    // Map event id to assigned tier index
+    // Track all labels by tier (positive = above, negative = below)
+    // Tier 0 = closest above lane, Tier -1 = closest below lane
+    const labelsByTier = new Map<number, Array<{ left: number; right: number; eventId: string }>>();
     const labelTierByEventId = new Map<string, number>();
 
-    for (const ev of this.sortedEvents) {
+    // Helper: check if label fits in tier without overlap
+    const canFitInTier = (tier: number, left: number, right: number): boolean => {
+      const tierLabels = labelsByTier.get(tier);
+      if (!tierLabels) return true;
+      
+      for (const existing of tierLabels) {
+        if (!(right + minGap <= existing.left || left >= existing.right + minGap)) {
+          return false;
+        }
+      }
+      return true;
+    };
+
+    // Helper: assign label to tier
+    const assignToTier = (tier: number, left: number, right: number, eventId: string): void => {
+      if (!labelsByTier.has(tier)) {
+        labelsByTier.set(tier, []);
+      }
+      labelsByTier.get(tier)!.push({ left, right, eventId });
+      labelTierByEventId.set(eventId, tier);
+    };
+
+    // Separate key events and regular events
+    const keyEvents = this.sortedEvents.filter(ev => ev.isKeyMoment);
+    const regularEvents = this.sortedEvents.filter(ev => !ev.isKeyMoment);
+
+    // FIRST PASS: Assign key events (always above, tiers 0+)
+    for (const ev of keyEvents) {
       const x = xScale(ev.date);
       const left = x - halfWidth;
       const right = x + halfWidth;
 
-      // Find first tier where this label fits without horizontal overlap
-      let assignedTier = -1;
-      for (let t = 0; t < labelsByTier.length; t++) {
-        const tierLabels = labelsByTier[t];
-        let hasOverlap = false;
-        
-        // Check against all existing labels in this tier
-        for (const existingLabel of tierLabels) {
-          if (!(right + minGap <= existingLabel.left || left >= existingLabel.right + minGap)) {
-            hasOverlap = true;
-            break;
-          }
-        }
-        
-        if (!hasOverlap) {
-          assignedTier = t;
+      // Try tiers 0 through maxTiersAbove-1
+      let assigned = false;
+      for (let tier = 0; tier < maxTiersAbove; tier++) {
+        if (canFitInTier(tier, left, right)) {
+          assignToTier(tier, left, right, ev.id);
+          assigned = true;
           break;
         }
       }
       
-      // If none found, open a new tier if allowed
-      if (assignedTier === -1) {
-        if (labelsByTier.length < maxTiers) {
-          labelsByTier.push([]);
-          assignedTier = labelsByTier.length - 1;
-        } else {
-          // Fallback: place in the last tier (may overlap in extreme density)
-          assignedTier = labelsByTier.length - 1;
+      // Fallback: place in last above tier (may overlap)
+      if (!assigned) {
+        assignToTier(maxTiersAbove - 1, left, right, ev.id);
+      }
+    }
+
+    // SECOND PASS: Assign regular events (can use both above and below)
+    for (const ev of regularEvents) {
+      const x = xScale(ev.date);
+      const left = x - halfWidth;
+      const right = x + halfWidth;
+
+      let assigned = false;
+
+      // Try tier 0 first (closest above)
+      if (canFitInTier(0, left, right)) {
+        assignToTier(0, left, right, ev.id);
+        assigned = true;
+      } else { 
+        // Crowded (tier 0 full): consider below-lane placement if no thumbnails nearby
+        const hasThumbnail = this.hasNearbyThumbnail(x, xScale);
+        
+        if (!hasThumbnail) {
+          // Try below-lane tiers first: -1, -2, -3, etc.
+          for (let tier = -1; tier >= -maxTiersBelow; tier--) {
+            if (canFitInTier(tier, left, right)) {
+              assignToTier(tier, left, right, ev.id);
+              assigned = true;
+              break;
+            }
+          }
+        }
+        
+        // If still not assigned, try remaining above tiers: 1, 2, 3, etc.
+        if (!assigned) {
+          for (let tier = 1; tier < maxTiersAbove; tier++) {
+            if (canFitInTier(tier, left, right)) {
+              assignToTier(tier, left, right, ev.id);
+              assigned = true;
+              break;
+            }
+          }
         }
       }
       
-      // Add this label to the assigned tier
-      labelsByTier[assignedTier].push({ left, right, eventId: ev.id });
-      labelTierByEventId.set(ev.id, assignedTier);
+      // Ultimate fallback: place in last available tier (above or below based on thumbnail)
+      if (!assigned) {
+        const hasThumbnail = this.hasNearbyThumbnail(x, xScale);
+        const fallbackTier = hasThumbnail ? (maxTiersAbove - 1) : (-maxTiersBelow);
+        assignToTier(fallbackTier, left, right, ev.id);
+      }
     }
 
     // Render markers first (behind)
@@ -417,11 +500,20 @@ export class Timeline {
       .attr('class', 'marker-line')
       .attr('x1', (d) => xScale(d.date))
       .attr('x2', (d) => xScale(d.date))
-      .attr('y1', laneTopEdge)
+      .attr('y1', (d) => {
+        const tier = labelTierByEventId.get(d.id) ?? 0;
+        // Above lane: extend from top edge, below lane: extend from bottom edge
+        return tier >= 0 ? laneTopEdge : laneBottomEdge;
+      })
       .attr('y2', (d) => {
         const tier = labelTierByEventId.get(d.id) ?? 0;
-        // Extend per tier while maintaining original margin (offsetY) between marker and label
-        return markerTopY - tier * tierHeight;
+        // Above: y2 = markerTopY - tier * tierHeight (extends up)
+        // Below: y2 = markerBottomY + abs(tier) * tierHeight (extends down)
+        if (tier >= 0) {
+          return markerTopY - tier * tierHeight;
+        } else {
+          return markerBottomY + Math.abs(tier) * tierHeight;
+        }
       })
       .attr('stroke', LAYOUT.eventMarkers.color)
       .attr('stroke-width', LAYOUT.eventMarkers.lineWidth)
@@ -440,7 +532,13 @@ export class Timeline {
       .attr('x', (d) => xScale(d.date) - LAYOUT.eventMarkers.label.maxWidth / 2)
       .attr('y', (d) => {
         const tier = labelTierByEventId.get(d.id) ?? 0;
-        return baseLabelTopY - tier * tierHeight;
+        // Above: y = baseLabelTopY - tier * tierHeight
+        // Below: y = baseLabelBottomY + abs(tier) * tierHeight
+        if (tier >= 0) {
+          return baseLabelTopY - tier * tierHeight;
+        } else {
+          return baseLabelBottomY + Math.abs(tier) * tierHeight;
+        }
       })
       .attr('width', LAYOUT.eventMarkers.label.maxWidth)
       .attr('height', labelHeight);
