@@ -76,8 +76,8 @@ export const LAYOUT = {
       stack: {
         minHorizontalGap: 12, // px - extra gap between adjacent label boxes
         tierHeight: 50, // px - vertical distance between stacked tiers (should be >= label height + some spacing)
-        maxTiers: 4, // maximum number of tiers above the lane
-        maxTiersBelow: 3, // maximum number of tiers below the lane (for regular events only, when tier 0 is full)
+        maxTiers: 5, // maximum number of tiers above the lane (0, 1, 2, 3, 4)
+        maxTiersBelow: 4, // maximum number of tiers below the lane (-1, -2, -3, -4, for regular events only)
       },
     },
   },

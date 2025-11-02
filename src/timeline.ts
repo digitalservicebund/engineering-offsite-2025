@@ -351,21 +351,39 @@ export class Timeline {
   }
 
   /**
-   * Check if there's a photo thumbnail near the given x position
+   * Check if there's a photo thumbnail near the given x position for a specific tier
+   * IMPORTANT: Tier -1 vertically overlaps with thumbnails, but tier -2 and -3 are below them
    */
-  private hasNearbyThumbnail(eventX: number, xScale: d3.ScaleTime<number, number>): boolean {
-    const labelHalfWidth = LAYOUT.eventMarkers.label.maxWidth / 2;
-    const thumbnailHalfWidth = LAYOUT.photoDisplay.thumbnailSize / 2;
-    const minGap = LAYOUT.eventMarkers.label.stack.minHorizontalGap;
-    const threshold = labelHalfWidth + thumbnailHalfWidth + minGap;
+  private hasNearbyThumbnail(eventX: number, xScale: d3.ScaleTime<number, number>, tier: number): boolean {
+    const labelHalfWidth = LAYOUT.eventMarkers.label.maxWidth / 2;  // 90px
+    const thumbnailHalfWidth = LAYOUT.photoDisplay.thumbnailSize / 2;  // 50px
+    
+    // Thumbnails: 414-514px vertical range
+    // Tier -1 labels: ~439-479px (overlaps!)
+    // Tier -2 labels: ~489-529px (below thumbnails, no overlap!)
+    // Tier -3 labels: ~539-579px (well below, no overlap!)
+    
+    // Only tier -1 needs thumbnail blocking; tier -2 and -3 are vertically clear
+    if (tier <= -2) {
+      console.log(`  [Thumbnail check] Tier ${tier} is below thumbnails - no blocking needed`);
+      return false;
+    }
+    
+    // For tier -1, check horizontal proximity
+    const threshold = (labelHalfWidth + thumbnailHalfWidth) * 0.7;  // 98px
+    
+    console.log(`  [Thumbnail check] eventX=${eventX.toFixed(1)}, threshold=${threshold}px, tier=${tier}`);
     
     for (const ev of this.sortedEvents) {
       if (!ev.hasPhoto) continue;
       const photoX = xScale(ev.date);
-      if (Math.abs(photoX - eventX) < threshold) {
+      const distance = Math.abs(photoX - eventX);
+      if (distance < threshold) {
+        console.log(`    → BLOCKED by ${ev.id} "${ev.name}" at ${photoX.toFixed(1)}px (distance: ${distance.toFixed(1)}px < ${threshold}px)`);
         return true;
       }
     }
+    console.log(`    → No thumbnails nearby`);
     return false;
   }
 
@@ -449,46 +467,71 @@ export class Timeline {
       const left = x - halfWidth;
       const right = x + halfWidth;
 
+      console.log(`[Event ${ev.id} "${ev.name}"]`);
+      console.log(`  - Position: ${x.toFixed(1)}px`);
+      console.log(`  - Tier 0 available: ${canFitInTier(0, left, right)}`);
+
       let assigned = false;
 
       // Try tier 0 first (closest above)
       if (canFitInTier(0, left, right)) {
         assignToTier(0, left, right, ev.id);
         assigned = true;
+        console.log(`  ✓ ASSIGNED TO TIER 0`);
       } else { 
-        // Crowded (tier 0 full): consider below-lane placement if no thumbnails nearby
-        const hasThumbnail = this.hasNearbyThumbnail(x, xScale);
-        
-        if (!hasThumbnail) {
-          // Try below-lane tiers first: -1, -2, -3, etc.
-          for (let tier = -1; tier >= -maxTiersBelow; tier--) {
-            if (canFitInTier(tier, left, right)) {
-              assignToTier(tier, left, right, ev.id);
-              assigned = true;
-              break;
-            }
+        // Crowded (tier 0 full): consider below-lane placement
+        // Check each below-lane tier individually for thumbnail conflicts
+        console.log(`  - Trying below-lane tiers...`);
+        for (let tier = -1; tier >= -maxTiersBelow; tier--) {
+          const fits = canFitInTier(tier, left, right);
+          const hasThumbnail = this.hasNearbyThumbnail(x, xScale, tier);
+          console.log(`    - Tier ${tier}: ${fits ? 'space available' : 'blocked'}, thumbnail conflict: ${hasThumbnail}`);
+          if (fits && !hasThumbnail) {
+            assignToTier(tier, left, right, ev.id);
+            assigned = true;
+            console.log(`  ✓ ASSIGNED TO TIER ${tier}`);
+            break;
           }
         }
         
         // If still not assigned, try remaining above tiers: 1, 2, 3, etc.
         if (!assigned) {
+          console.log(`  - Trying remaining above tiers...`);
           for (let tier = 1; tier < maxTiersAbove; tier++) {
-            if (canFitInTier(tier, left, right)) {
+            const fits = canFitInTier(tier, left, right);
+            console.log(`    - Tier ${tier}: ${fits ? 'AVAILABLE' : 'blocked'}`);
+            if (fits) {
               assignToTier(tier, left, right, ev.id);
               assigned = true;
+              console.log(`  ✓ ASSIGNED TO TIER ${tier}`);
               break;
             }
           }
         }
       }
       
-      // Ultimate fallback: place in last available tier (above or below based on thumbnail)
+      // Ultimate fallback: place in last available tier
+      // Prefer tier -3 (below thumbnails) over tier 3 (high above)
       if (!assigned) {
-        const hasThumbnail = this.hasNearbyThumbnail(x, xScale);
-        const fallbackTier = hasThumbnail ? (maxTiersAbove - 1) : (-maxTiersBelow);
+        const hasThumbnailAtTier3Below = this.hasNearbyThumbnail(x, xScale, -maxTiersBelow);
+        const fallbackTier = hasThumbnailAtTier3Below ? (maxTiersAbove - 1) : (-maxTiersBelow);
         assignToTier(fallbackTier, left, right, ev.id);
+        console.log(`  ⚠ FALLBACK TO TIER ${fallbackTier}`);
       }
     }
+
+    // Log tier distribution summary
+    console.log('\n=== TIER ASSIGNMENT SUMMARY ===');
+    const tierCounts = new Map<number, number>();
+    for (const [, tier] of labelTierByEventId.entries()) {
+      tierCounts.set(tier, (tierCounts.get(tier) || 0) + 1);
+    }
+    const sortedTiers = Array.from(tierCounts.keys()).sort((a, b) => b - a);
+    for (const tier of sortedTiers) {
+      const location = tier >= 0 ? 'above' : 'below';
+      console.log(`  Tier ${tier.toString().padStart(2)} (${location}): ${tierCounts.get(tier)} events`);
+    }
+    console.log('================================\n');
 
     // Render markers first (behind)
     const markersGroup = this.contentGroup.append('g').attr('class', 'event-markers');
@@ -605,3 +648,4 @@ export class Timeline {
 
   // highlightEvent() removed: targeted non-existent elements and was a no-op
 }
+
