@@ -345,6 +345,12 @@ export class ViewportController {
     
     // Reset zoom state if zoomed out
     if (this.isZoomedOut) {
+      // Remove final overlay if present
+      const finalOverlay = document.querySelector('.final-overlay');
+      if (finalOverlay) {
+        finalOverlay.remove();
+      }
+      
       // Show overlays again
       const markerEl = document.querySelector('.current-date-marker') as HTMLElement;
       const fadeEl = document.querySelector('.future-fade-overlay') as HTMLElement;
@@ -415,16 +421,60 @@ export class ViewportController {
     
     // Apply CSS transform with transition (scale both axes, center both axes)
     const duration = LAYOUT.zoomOut.duration;
+    const mtmDelay = 500;
     const easing = LAYOUT.zoomOut.easing;
     
     this.container.style.transition = `transform ${duration}ms ${easing}`;
     this.container.style.transform = `translate(${centerX}px, ${centerY}px) scale(${scaleFactor})`;
     this.container.style.transformOrigin = '0 0'; // Scale from top-left
     
-    // Log completion after animation
+    // Show final image overlay after zoom-out completes
     setTimeout(() => {
       console.log('Zoom-out complete: full timeline visible');
-    }, duration);
+      this.showFinalOverlay();
+    }, duration + mtmDelay);
+  }
+
+  /**
+   * Show final overlay image after zoom-out completes
+   */
+  private showFinalOverlay(): void {
+    // Create overlay container
+    const overlay = document.createElement('div');
+    overlay.className = 'final-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.8s ease-in;
+    `;
+
+    // Create image element
+    const img = document.createElement('img');
+    img.src = '/assets/merge-to-main.png';
+    img.style.cssText = `
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    `;
+
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
+
+    // Fade in
+    requestAnimationFrame(() => {
+      overlay.style.opacity = '1';
+    });
+
+    console.log('Final overlay displayed');
   }
 
   /**
