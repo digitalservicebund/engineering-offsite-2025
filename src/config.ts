@@ -69,7 +69,7 @@ export const LAYOUT = {
     lineWidth: 3, // px - stroke width
     color: COLORS.events,
     label: {
-      offsetY: -5, // px - space between bottom edge of text and marker top
+      offsetY: -3, // px - space between bottom edge of text and marker top
       maxWidth: 180, // px - text wraps within this width
       height: 50, // px - estimated label container height for multi-line text (should accommodate ~2 lines at current font size)
       // Label stacking configuration to avoid overlaps

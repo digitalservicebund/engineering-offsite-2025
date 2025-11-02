@@ -194,9 +194,11 @@ svg {
   padding: 0 4px;
 }
 
-/* Key moment labels use bold font */
+/* Key moment labels use bold font and subtle border */
 .event-label.key-moment {
   font-weight: 700;
+  border: 2px solid rgba(102, 200, 242, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 /* Particle label styling - used for people/project join/leave animations */
