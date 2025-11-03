@@ -1,0 +1,819 @@
+{
+  "startYear": 2020,
+  "endYear": 2025,
+  "people": [
+    {
+      "name": "Pers A",
+      "joined": "2020-03-16",
+      "left": "2020-09-30"
+    },
+    {
+      "name": "Pers B",
+      "joined": "2020-12-01",
+      "left": "2025-04-30"
+    },
+    {
+      "name": "Pers C",
+      "joined": "2020-12-01"
+    },
+    {
+      "name": "Pers D",
+      "joined": "2021-03-01",
+      "left": "2024-11-30"
+    },
+    {
+      "name": "Pers E",
+      "joined": "2021-05-01",
+      "left": "2023-01-31"
+    },
+    {
+      "name": "Pers F",
+      "joined": "2021-10-01",
+      "left": "2024-06-30"
+    },
+    {
+      "name": "Pers G",
+      "joined": "2021-10-01"
+    },
+    {
+      "name": "Pers H",
+      "joined": "2021-12-01",
+      "left": "2024-12-31"
+    },
+    {
+      "name": "Pers I",
+      "joined": "2021-12-06"
+    },
+    {
+      "name": "Pers J",
+      "joined": "2022-01-01",
+      "left": "2022-06-30"
+    },
+    {
+      "name": "Pers K",
+      "joined": "2022-01-01"
+    },
+    {
+      "name": "Pers L",
+      "joined": "2022-02-01"
+    },
+    {
+      "name": "Pers M",
+      "joined": "2022-03-01"
+    },
+    {
+      "name": "Pers N",
+      "joined": "2022-04-01",
+      "left": "2025-06-24"
+    },
+    {
+      "name": "Pers O",
+      "joined": "2022-04-15"
+    },
+    {
+      "name": "Pers P",
+      "joined": "2022-05-01"
+    },
+    {
+      "name": "Pers Q",
+      "joined": "2022-07-01",
+      "left": "2024-01-31"
+    },
+    {
+      "name": "Pers R",
+      "joined": "2022-07-01"
+    },
+    {
+      "name": "Pers S",
+      "joined": "2022-08-01"
+    },
+    {
+      "name": "Pers T",
+      "joined": "2022-10-01"
+    },
+    {
+      "name": "Pers U",
+      "joined": "2022-10-01"
+    },
+    {
+      "name": "Pers V",
+      "joined": "2022-12-01"
+    },
+    {
+      "name": "Pers W",
+      "joined": "2022-12-01"
+    },
+    {
+      "name": "Pers X",
+      "joined": "2023-01-01"
+    },
+    {
+      "name": "Pers Z",
+      "joined": "2023-01-01"
+    },
+    {
+      "name": "Pers 1",
+      "joined": "2023-01-15"
+    },
+    {
+      "name": "Pers 2",
+      "joined": "2023-01-15"
+    },
+    {
+      "name": "Pers 3",
+      "joined": "2023-02-01"
+    },
+    {
+      "name": "Pers 4",
+      "joined": "2023-02-06"
+    },
+    {
+      "name": "Pers 5",
+      "joined": "2023-02-06"
+    },
+    {
+      "name": "Pers 6",
+      "joined": "2023-02-06"
+    },
+    {
+      "name": "Pers 7",
+      "joined": "2023-02-15",
+      "left": "2023-08-31"
+    },
+    {
+      "name": "Pers 8",
+      "joined": "2023-02-15"
+    },
+    {
+      "name": "Pers 9",
+      "joined": "2023-05-01"
+    },
+    {
+      "name": "Pers 10",
+      "joined": "2023-07-01"
+    },
+    {
+      "name": "Pers 11",
+      "joined": "2023-09-01"
+    },
+    {
+      "name": "Pers 12",
+      "joined": "2023-10-15"
+    },
+    {
+      "name": "Pers 13",
+      "joined": "2023-11-01",
+      "left": "2025-08-31"
+    },
+    {
+      "name": "Pers 14",
+      "joined": "2023-11-01"
+    },
+    {
+      "name": "Pers 15",
+      "joined": "2023-12-01",
+      "left": "2024-05-31"
+    },
+    {
+      "name": "Pers 16",
+      "joined": "2024-01-01"
+    },
+    {
+      "name": "Pers 17",
+      "joined": "2024-01-01"
+    },
+    {
+      "name": "Pers 18",
+      "joined": "2024-01-01"
+    },
+    {
+      "name": "Pers 19",
+      "joined": "2024-02-01"
+    },
+    {
+      "name": "Pers 20",
+      "joined": "2024-04-01"
+    },
+    {
+      "name": "Pers 21",
+      "joined": "2024-05-01",
+      "left": "2025-12-31"
+    },
+    {
+      "name": "Pers 22",
+      "joined": "2024-05-01"
+    },
+    {
+      "name": "Pers 23",
+      "joined": "2024-06-01"
+    },
+    {
+      "name": "Pers 24",
+      "joined": "2024-06-01"
+    },
+    {
+      "name": "Pers 25",
+      "joined": "2024-06-01"
+    },
+    {
+      "name": "Pers 26",
+      "joined": "2024-07-01"
+    },
+    {
+      "name": "Pers 27",
+      "joined": "2024-08-01"
+    },
+    {
+      "name": "Pers 28",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 29",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 30",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 31",
+      "joined": "2024-09-01",
+      "left": "2025-02-14"
+    },
+    {
+      "name": "Pers 32",
+      "joined": "2024-09-01"
+    },
+    {
+      "name": "Pers 33",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 34",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 35",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 36",
+      "joined": "2024-10-01"
+    },
+    {
+      "name": "Pers 37",
+      "joined": "2024-12-01",
+      "left": "2025-04-15"
+    },
+    {
+      "name": "Pers 38",
+      "joined": "2024-12-01",
+      "left": "2025-05-12"
+    },
+    {
+      "name": "Pers 39",
+      "joined": "2025-01-01"
+    },
+    {
+      "name": "Pers 40",
+      "joined": "2025-04-01"
+    },
+    {
+      "name": "Pers 41",
+      "joined": "2025-05-01"
+    },
+    {
+      "name": "Pers 42",
+      "joined": "2025-06-01"
+    },
+    {
+      "name": "Pers 43",
+      "joined": "2025-06-15"
+    },
+    {
+      "name": "Pers 44",
+      "joined": "2025-08-01"
+    },
+    {
+      "name": "Pers 45",
+      "joined": "2025-09-01"
+    },
+    {
+      "name": "Pers 46",
+      "joined": "2025-09-01"
+    },
+    {
+      "name": "Pers 47",
+      "joined": "2025-09-01"
+    },
+    {
+      "name": "Pers 48",
+      "joined": "2025-10-01"
+    },
+    {
+      "name": "Pers 49",
+      "joined": "2025-11-01"
+    },
+    {
+      "name": "Pers 50",
+      "joined": "2025-11-01"
+    },
+    {
+      "name": "Pers 51",
+      "joined": "2025-11-01"
+    },
+    {
+      "name": "Pers 52",
+      "joined": "2025-11-01"
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj1",
+      "name": "Platform v1",
+      "start": "2020-06-01",
+      "end": "2021-02-28",
+      "widthIncrement": 7
+    },
+    {
+      "id": "proj2",
+      "name": "Mobile App",
+      "start": "2021-03-01",
+      "end": "2022-12-31",
+      "widthIncrement": 5
+    },
+    {
+      "id": "proj3",
+      "name": "Analytics Dashboard",
+      "start": "2022-09-01",
+      "end": null,
+      "widthIncrement": 4
+    }
+  ],
+  "events": [
+    {
+      "id": "evt1",
+      "date": "2020-07-15",
+      "name": "Company Founded",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt2",
+      "date": "2020-09-01",
+      "name": "First Office Space",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt3",
+      "date": "2020-11-20",
+      "name": "Beta Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt4",
+      "date": "2021-01-05",
+      "name": "New Year Kickoff",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt5",
+      "date": "2021-02-10",
+      "name": "First Product Launch",
+      "isKeyMoment": true,
+      "hasPhoto": true,
+      "caption": "This was a big moment for the company. We launched our first product and it was a success. The team was excited and we had a lot of fun. We had a lot of fun. Our first product was a success. It was a big moment for the company. Something to be proud of. You can see the team celebrating in the photo. Such a great moment for the company. Truly a great moment for the company. The company. Great. Moment."
+    },
+    {
+      "id": "evt6",
+      "date": "2021-03-15",
+      "name": "Reached 1K Users",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt7",
+      "date": "2021-05-10",
+      "name": "First Hackathon",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt8",
+      "date": "2021-06-22",
+      "name": "Summer BBQ",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt9",
+      "date": "2021-08-05",
+      "name": "API v2 Release",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt10",
+      "date": "2021-10-15",
+      "name": "First Team Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": true,
+      "caption": null
+    },
+    {
+      "id": "evt11",
+      "date": "2021-11-25",
+      "name": "Holiday Party",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt12",
+      "date": "2022-01-10",
+      "name": "Q4 All-Hands",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt13",
+      "date": "2022-02-14",
+      "name": "Engineering Week",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt14",
+      "date": "2022-03-20",
+      "name": "10K Users Milestone",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt15",
+      "date": "2022-04-12",
+      "name": "Security Audit Complete",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt16",
+      "date": "2022-05-18",
+      "name": "Enterprise Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt17",
+      "date": "2022-06-20",
+      "name": "Series A Funding",
+      "isKeyMoment": true,
+      "hasPhoto": true,
+      "caption": null
+    },
+    {
+      "id": "evt18",
+      "date": "2022-07-30",
+      "name": "New HQ Opening",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt19",
+      "date": "2022-08-15",
+      "name": "Summer Hackathon",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt20",
+      "date": "2022-09-22",
+      "name": "Mobile App Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt21",
+      "date": "2022-10-31",
+      "name": "Halloween Social",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt22",
+      "date": "2022-11-10",
+      "name": "100K Users",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt23",
+      "date": "2022-12-15",
+      "name": "Year-End Celebration",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt24",
+      "date": "2023-01-20",
+      "name": "2023 Kickoff",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt25",
+      "date": "2023-02-14",
+      "name": "Valentine's Team Lunch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt26",
+      "date": "2023-03-01",
+      "name": "Reached 1M Users",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt27",
+      "date": "2023-04-10",
+      "name": "Platform Redesign",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt28",
+      "date": "2023-05-25",
+      "name": "Spring Offsite",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt29",
+      "date": "2023-06-15",
+      "name": "Mid-Year Review",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt30",
+      "date": "2023-07-20",
+      "name": "AI Features Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt31",
+      "date": "2023-08-12",
+      "name": "Summer Games",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt32",
+      "date": "2023-09-05",
+      "name": "Q3 All-Hands",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt33",
+      "date": "2023-10-18",
+      "name": "Product Hunt Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt34",
+      "date": "2023-11-15",
+      "name": "Second Annual Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": true,
+      "caption": null
+    },
+    {
+      "id": "evt35",
+      "date": "2023-12-01",
+      "name": "5M Users Reached",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt36",
+      "date": "2023-12-20",
+      "name": "Holiday Celebration",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt37",
+      "date": "2024-01-15",
+      "name": "2024 Strategy Session",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt38",
+      "date": "2024-02-28",
+      "name": "Series B Funding",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt39",
+      "date": "2024-03-22",
+      "name": "Spring Launch Event",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt40",
+      "date": "2024-04-18",
+      "name": "Engineering Summit",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt41",
+      "date": "2024-05-30",
+      "name": "Customer Conference",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt42",
+      "date": "2024-07-04",
+      "name": "Summer BBQ 2024",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt43",
+      "date": "2024-08-15",
+      "name": "10M Users Milestone",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt44",
+      "date": "2024-09-10",
+      "name": "Platform v3 Launch",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt45",
+      "date": "2024-10-25",
+      "name": "Third Annual Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt46",
+      "date": "2024-11-28",
+      "name": "Thanksgiving Social",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt47",
+      "date": "2024-12-18",
+      "name": "End of Year Party",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt48",
+      "date": "2025-01-10",
+      "name": "2025 Kickoff Meeting",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt49",
+      "date": "2025-02-20",
+      "name": "Product Roadmap Review",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt50",
+      "date": "2025-03-15",
+      "name": "International Expansion",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt51",
+      "date": "2025-04-22",
+      "name": "Spring Team Building",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt52",
+      "date": "2025-05-30",
+      "name": "Mid-Year Planning",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt53",
+      "date": "2025-07-04",
+      "name": "Summer Company Picnic",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt54",
+      "date": "2025-08-20",
+      "name": "Tech Conference 2025",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt55",
+      "date": "2025-09-15",
+      "name": "50M Users Milestone",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt56",
+      "date": "2025-10-30",
+      "name": "Q3 All-Hands",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt57",
+      "date": "2025-11-20",
+      "name": "Fourth Annual Offsite",
+      "isKeyMoment": true,
+      "hasPhoto": false,
+      "caption": null
+    },
+    {
+      "id": "evt58",
+      "date": "2025-12-15",
+      "name": "Year End Celebration 2025",
+      "isKeyMoment": false,
+      "hasPhoto": false,
+      "caption": null
+    }
+  ]
+}

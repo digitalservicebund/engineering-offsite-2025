@@ -1,0 +1,19 @@
+---
+globs: ["**/*.ts", "**/*.js"]
+alwaysApply: true
+---
+
+- Always take small steps. Stop when told. Only generate as much code as is necessary to fulfil an instruction.
+- When there's any ambiguity in the instructions, ALWAYS ask the user for clarification.
+- Use modern HTML and CSS. Target is the latest Chrome, so feel free to use latest web features.
+- Refer to HTML, CSS and D3 documentation in the folder /apidocs
+- No JavaScript frameworks.
+- Use TypeScript. No Any type.
+- Use D3.js for all visualization logic.
+- Stick to the spec in docs/spec.md
+- Keep data bindings pure and avoid side effects.
+- Encapsulate layout constants in a separate config file.
+- Document every visual encoding with a comment describing the semantic meaning.
+- We're prototyping: focus is on clarity of concept, not polish or scalability. Code can be throwaway.
+- Favor readability and simplicity. Use SVG or D3 if needed.
+- Suggest variations if the design can be implemented in more than one way (e.g., SVG paths vs. positioned divs).

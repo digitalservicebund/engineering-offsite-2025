@@ -1,0 +1,389 @@
+/**
+ * Main styles for timeline visualization
+ */
+
+:root {
+  /* Color Tokens - CSS-only presentation values */
+  --color-text: #2A2B2D; /* Duplicates LAYOUT.textColor (used for SVG labels) */
+  --color-bg-light: #E9EEF3; /* Duplicates LAYOUT.background (used for SVG bg) */
+  --color-border-light: #C7CED4; /* Duplicates LAYOUT.gridlines.color */
+  --color-white: #FFFFFF;
+  --color-gray-muted: #C7CED4;
+  --color-error: #FF823C; /* Red - pause indicator, errors */
+  
+  /* Spacing Tokens - CSS-only */
+  --space-xs: 2px;
+  --space-md: 8px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 40px;
+  
+  /* Border Radius - CSS-only */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  
+  /* Shadows - CSS-only */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-text: 0 2px 4px rgba(0, 0, 0, 0.8);
+  
+  /* Photo Overlay - CSS-only */
+  --photo-backdrop: rgba(0, 0, 0, 0.7);
+  
+  /* ====================================================================
+     INJECTED VARIABLES (from config.ts at runtime)
+     These values are used by BOTH TypeScript and CSS
+     ==================================================================== */
+  
+  /* Animation Durations (TS: setTimeout, CSS: transitions) */
+  --anim-photo-fade-in: 150ms; /* Injected from LAYOUT.photoDisplay.fadeInDuration */
+  --anim-photo-fade-out: 150ms; /* Injected from LAYOUT.photoDisplay.fadeOutDuration */
+  
+  /* Brand Colors (TS: D3 SVG rendering, CSS: styling) */
+  --color-events: #E0F0FF;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background: var(--color-bg-light);
+  overflow: hidden;
+}
+
+/* Viewport wrapper - fixed size container with hidden overflow */
+#viewport-wrapper {
+  position: relative;
+  width: var(--viewport-width, 1200px);
+  height: var(--viewport-height, 800px);
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+  border: 1px solid var(--color-border-light);
+  background: var(--color-bg-light);
+}
+
+/* Timeline container - inner scrollable container that will be transformed */
+#timeline-container {
+  width: fit-content; /* Let container be as wide as its content (SVG) */
+  height: 100%;
+  position: relative;
+}
+
+/* Overlay layer for viewport-aligned decorations (e.g., current date marker) */
+.timeline-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.current-date-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--timeline-marker-position, 900px);
+  width: 1px;
+  background: #FF823C;
+  opacity: 0.4;
+  transition: opacity 0.3s ease-out;
+}
+
+.future-fade-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--timeline-marker-position, 900px);
+  width: var(--future-fade-width, 300px);
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--color-bg-light) 70%, transparent) 40%,
+    color-mix(in srgb, var(--color-bg-light) 90%, transparent) 60%,
+    var(--color-bg-light) 70%,
+    var(--color-bg-light) 100%
+  );
+  pointer-events: none;
+  z-index: 50;
+  transition: opacity 0.3s ease-out;
+}
+
+/* Counters - fixed position in top-right corner */
+.counters {
+  position: absolute;
+  top: var(--space-xl);
+  right: var(--space-2xl);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  font-family: sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.9);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+}
+
+/* FPS Counter - fixed position in top-left corner */
+.fps-counter {
+  position: absolute;
+  top: var(--space-xl);
+  left: var(--space-2xl);
+  z-index: 100;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(0, 0, 0, 0.75);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+  pointer-events: none;
+}
+
+.counter {
+  white-space: nowrap;
+}
+
+.counter-separator {
+  color: var(--color-border-light);
+  font-weight: 300;
+}
+
+svg {
+  display: block;
+}
+
+
+/* Lane label styling */
+.lane-label {
+  text-anchor: start;
+  dominant-baseline: middle;
+  font-size: 18px;
+  font-family: sans-serif;
+  fill: var(--color-text);
+}
+
+/* Event label styling */
+.event-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-size: 13px;
+  font-family: sans-serif;
+  font-weight: 400;
+  color: var(--color-text);
+  line-height: 1.2;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  background: rgba(248, 249, 250, 0.8);
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+/* Key moment labels use bold font and subtle border */
+.event-label.key-moment {
+  font-weight: 700;
+  border: 2px solid rgba(102, 200, 242, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Particle label styling - used for people/project join/leave animations */
+.particle-label {
+  font-size: 13px;
+  font-family: sans-serif;
+  color: var(--color-text);
+  background: rgba(248, 249, 250, 0.9);
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  width: fit-content;
+}
+
+/* Left-aligned labels for joiners (text-align right within the box) */
+.particle-label-left {
+  text-align: right;
+  margin-left: auto;
+}
+
+
+
+/* Photo overlay - full-screen photo display */
+.photo-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none; /* Allow keyboard events to pass through */
+}
+
+.photo-overlay.hidden {
+  display: none;
+}
+
+/* Dark backdrop behind photo */
+.photo-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--photo-backdrop);
+  opacity: 0;
+  transition: opacity var(--anim-photo-fade-in) ease-in;
+}
+
+.photo-overlay.visible .photo-backdrop {
+  opacity: 1;
+}
+
+/* Full-screen photo container */
+.photo-fullscreen {
+  position: relative;
+  max-width: 70vw;
+  max-height: 70vh;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity var(--anim-photo-fade-in) ease-in, 
+              transform var(--anim-photo-fade-in) ease-in;
+  border-radius: var(--radius-sm);
+}
+
+.photo-overlay.visible .photo-fullscreen {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Photo fade-out transition (when dismissing) */
+.photo-fullscreen.fading-out {
+  transition: opacity var(--anim-photo-fade-out) ease-out,
+              transform var(--anim-photo-fade-out) ease-out;
+}
+
+.photo-backdrop.fading-out,
+.photo-caption.fading-out {
+  transition: opacity var(--anim-photo-fade-out) ease-out;
+}
+
+.photo-fullscreen img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+}
+
+/* Photo caption */
+.photo-caption {
+  position: relative;
+  margin: var(--space-xl) auto 0 auto;
+  text-align: center;
+  color: var(--color-white);
+  font-size: 24px;
+  font-weight: 300;
+  font-family: sans-serif;
+  text-shadow: var(--shadow-text);
+  max-width: 90%;
+  overflow-wrap: break-word;
+  word-wrap: break-word; /* Legacy browser support */
+  transition: opacity var(--anim-photo-fade-in) ease-in;
+}
+
+/* Photo thumbnail - positioned on timeline */
+.photo-thumbnail {
+  position: absolute;
+  max-width: 100px;
+  max-height: 100px;
+  width: auto;
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: var(--space-xs) solid var(--color-events); /* Orange border matches event color */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  pointer-events: auto;
+  object-fit: contain; /* Maintain aspect ratio, fit within bounds */
+  display: block;
+}
+
+.photo-thumbnail:hover {
+  transform: scale(1.1);
+}
+
+/* Error display styles */
+.error-container {
+  padding: var(--space-2xl);
+  text-align: center;
+  color: var(--color-error);
+  font-family: sans-serif;
+}
+
+.error-container h2 {
+  margin: 0 0 var(--space-lg) 0;
+}
+
+.error-container p {
+  margin: 0;
+}
+
+/* Config error overlay - full screen blocking error */
+.config-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--color-text);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  z-index: 10000;
+}
+
+.config-error-content {
+  max-width: 600px;
+  padding: var(--space-2xl);
+}
+
+.config-error-title {
+  color: var(--color-error);
+  margin: 0 0 var(--space-xl) 0;
+  font-size: 32px;
+}
+
+.config-error-messages {
+  background: rgba(231, 76, 60, 0.1);
+  padding: var(--space-xl);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-xl);
+}
+
+.config-error-messages p {
+  margin: 10px 0;
+  font-size: var(--space-lg);
+}
+
+.config-error-footer {
+  color: var(--color-gray-muted);
+  margin: 0;
+  font-size: 14px;
+}

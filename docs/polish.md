@@ -1,0 +1,8 @@
+- set lower autoscroll speed
+- scale project circles with widthIncrement
+- look into separating people & project labels a bit (maybe simply: alternating sides?)
+- make event boxes wider to fit everything on two lines (investigate: can we do auto font-resizing if we go above two lines?)
+- animation after final event: lanes merge + morph together, followed by huge fireworks / confetti
+- animation after final event: zoom out to show the whole timeline
+- make design less "flat"
+- gentle parallax effect for background

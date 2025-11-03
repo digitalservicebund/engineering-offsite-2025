@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Engineering Timeline Visualization</title>
+  </head>
+  <body>
+    <div id="viewport-wrapper">
+      <div id="counters" class="counters">
+        <span id="counter-engineers" class="counter">Engineers: 0</span>
+        <span class="counter-separator">|</span>
+        <span id="counter-projects" class="counter">Projects: 0</span>
+        <span class="counter-separator">|</span>
+        <span id="counter-date" class="counter">Date: 01.01.2020</span>
+      </div>
+      <div class="timeline-overlay">
+        <div class="current-date-marker" aria-hidden="true"></div>
+        <div class="future-fade-overlay" aria-hidden="true"></div>
+      </div>
+      <div id="timeline-container"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
