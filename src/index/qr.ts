@@ -1,5 +1,5 @@
 import QRCode from "qrcode";
-import { ipAddress } from "./ip";
+import { ipAddress } from "../ip";
 
 const port = window.location.port;
 const url = `http://${ipAddress}:${port}`;

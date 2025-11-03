@@ -10,117 +10,11 @@
       href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        overflow: hidden;
-
-        font-family: "Lexend", sans-serif;
-      }
-      body {
-        background-color: #000;
-        background-image: url(/images/background.png);
-        background-repeat: no-repeat;
-        background-position: bottom left;
-        background-size: contain;
-      }
-      .main-container {
-        display: flex;
-        height: 100%;
-      }
-      .content-area {
-        flex-grow: 1;
-        padding: 2em;
-      }
-      .logo {
-        width: 100px;
-      }
-      .nav-container {
-        flex-basis: 40%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: start;
-        color: white;
-        padding: 2em;
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(10px);
-      }
-      h1 {
-        font-size: 3em;
-        margin-bottom: 0.25em;
-        font-weight: 200;
-      }
-      h2 {
-        font-size: 2.25em;
-        margin-top: 1em;
-        margin-bottom: 1em;
-        font-weight: 200;
-      }
-      h3 {
-        font-size: 1.5em;
-        margin-top: 1em;
-        margin-bottom: 0.5em;
-        font-weight: 400;
-      }
-      p {
-        font-size: 1em;
-        margin-top: 1em;
-        margin-bottom: 0.5em;
-        font-weight: 400;
-      }
-      .nav-container a {
-        color: white;
-        text-decoration: underline;
-        font-weight: 500;
-      }
-      .nav-container ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 1em 0;
-      }
-      .nav-container li {
-        font-size: 1.2em;
-        margin: 0.5em 0;
-        font-weight: 200;
-      }
-
-      @media (max-width: 768px) {
-        html,
-        body {
-          overflow: auto;
-        }
-        .main-container {
-          flex-direction: column;
-          height: auto;
-          align-items: center;
-        }
-        .content-area {
-          flex-grow: 1;
-          background-size: cover;
-          background-position: center bottom;
-        }
-        .nav-container {
-          flex-basis: auto;
-          flex-grow: 0;
-          text-align: center;
-          align-items: center;
-          padding: 1em;
-          padding-bottom: 4em;
-          margin-bottom: 100%;
-        }
-        .logo {
-          text-align: center;
-        }
-      }
-    </style>
   </head>
   <body>
     <div class="main-container">
       <div class="content-area">
-        <img src="/images/logo.png" alt="Logo" class="logo" />
+        <img src="/src/index/images/logo.png" alt="Logo" class="logo" />
       </div>
       <div class="nav-container">
         <h1>
@@ -137,7 +31,10 @@
             <a href="/pages/venue.html">Floor plan</a> - Find your way around
             the venue
           </li>
-          <li><a href="/pages/timeline.html">Timeline</a></li>
+          <li>
+            <a href="/pages/timeline.html">Timeline</a> - Scroll through the
+            history of Engineering
+          </li>
           <li>
             <a href="/pages/map.html">People Map</a> - Get to know your
             colleagues
@@ -152,6 +49,7 @@
         </p>
       </div>
     </div>
-    <script type="module" src="/src/qr.ts"></script>
+    <script type="module" src="/src/index/main.ts"></script>
+    <script type="module" src="/src/index/qr.ts"></script>
   </body>
 </html>
