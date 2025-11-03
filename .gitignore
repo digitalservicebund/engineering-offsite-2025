@@ -1,3 +1,10 @@
 data/*
 node_modules
 .DS_Store
+# Don't commit personal data
+input_data/*
+public/assets/data.json
+public/assets/photos/*
+
+# GitHub analytics data (keep structure, exclude raw data)
+github_data/*

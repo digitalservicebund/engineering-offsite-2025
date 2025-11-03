@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "This repository contains visualisations of key events and anecdotes about people within the engineering discipline at DigitalService.",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "convert-data": "ts-node scripts/convert-data.ts",
+    "milestone-dates": "ts-node scripts/milestone-dates.ts",
+    "github-analytics": "ts-node scripts/github-analytics.ts"
   },
   "repository": {
     "type": "git",
@@ -16,10 +20,18 @@
     "url": "https://github.com/digitalservicebund/engineering-offsite-2025/issues"
   },
   "homepage": "https://github.com/digitalservicebund/engineering-offsite-2025#readme",
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  },
   "dependencies": {
     "express": "^5.1.0",
     "mapbox-gl": "^3.15.0",
     "papaparse": "^5.5.3",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "@types/d3": "^7.4.3",
+    "d3": "^7.9.0"
   }
 }
