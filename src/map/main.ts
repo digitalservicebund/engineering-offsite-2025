@@ -1,7 +1,16 @@
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { type LngLatLike } from "mapbox-gl";
 import Papa from "papaparse";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./style.css";
+
+interface Person {
+  FirstName: string;
+  LastName: string;
+  Country: string;
+  Bundesland?: string;
+  ProfilePic: string;
+  Anecdote: string;
+}
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoibWlrZS1waWVyY2UtZGlnaXRhbHNlcnZpY2UiLCJhIjoiY21oM2dtNmVxMTVjcmQzc2IxbDc4eXV0dyJ9.MbZkYC0SWQ_a-OHNddzOXg";
@@ -17,7 +26,7 @@ map.on("load", () => {
   fetch("/data/people-map/people.csv")
     .then((response) => response.text())
     .then((csvText) => {
-      Papa.parse(csvText, {
+      Papa.parse<Person>(csvText, {
         header: true,
         complete: (results) => {
           plotData(results.data);
@@ -26,10 +35,10 @@ map.on("load", () => {
     });
 });
 
-function plotData(data) {
+function plotData(data: Person[]) {
   const geocodingPromises = data
-    .filter((person) => person.Country)
-    .map((person) => {
+    .filter((person: Person) => person.Country)
+    .map((person: Person) => {
       const query = person.Bundesland
         ? `${person.Bundesland}, ${person.Country}`
         : person.Country;
@@ -43,7 +52,7 @@ function plotData(data) {
           if (geoData.features && geoData.features.length > 0) {
             return {
               person,
-              coordinates: geoData.features[0].center,
+              coordinates: geoData.features[0].center as [number, number],
             };
           }
           return null;
@@ -51,25 +60,32 @@ function plotData(data) {
     });
 
   Promise.all(geocodingPromises).then((results) => {
-    const validResults = results.filter((r) => r !== null);
+    const validResults = results.filter(
+      (
+        r
+      ): r is {
+        person: Person;
+        coordinates: [number, number];
+      } => r !== null
+    );
 
-    const locations = new Map();
+    const locations = new Map<string, Person[]>();
     validResults.forEach((result) => {
       const key = result.coordinates.toString();
       if (!locations.has(key)) {
         locations.set(key, []);
       }
-      locations.get(key).push(result.person);
+      locations.get(key)?.push(result.person);
     });
 
     locations.forEach((people, key) => {
-      const coordinates = key.split(",").map(Number);
+      const coordinates = key.split(",").map(Number) as [number, number];
       if (people.length > 1) {
         // Apply offset
         const radius = 0.5; // adjust as needed
         people.forEach((person, i) => {
           const angle = (i / people.length) * 2 * Math.PI;
-          const newCoords = [
+          const newCoords: [number, number] = [
             coordinates[0] + radius * Math.cos(angle),
             coordinates[1] + radius * Math.sin(angle),
           ];
@@ -82,7 +98,7 @@ function plotData(data) {
   });
 }
 
-function addMarker(person, coordinates) {
+function addMarker(person: Person, coordinates: LngLatLike) {
   const el = document.createElement("div");
   el.className = "profile-pic";
   el.style.backgroundImage = `url(${person.ProfilePic})`;
