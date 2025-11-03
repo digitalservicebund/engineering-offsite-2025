@@ -8,3 +8,4 @@ public/assets/photos/*
 
 # GitHub analytics data (keep structure, exclude raw data)
 github_data/*
+src/ip.ts

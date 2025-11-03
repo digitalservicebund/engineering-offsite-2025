@@ -1,6 +1,40 @@
-export default {
+import { Plugin, defineConfig } from "vite";
+import fs from "fs";
+import path from "path";
+import os from "os";
+
+function getNetworkIp() {
+  const networkInterfaces = os.networkInterfaces();
+  for (const interfaceName in networkInterfaces) {
+    const networkInterface = networkInterfaces[interfaceName];
+    if (networkInterface) {
+      for (const anInterface of networkInterface) {
+        if (anInterface.family === "IPv4" && !anInterface.internal) {
+          return anInterface.address;
+        }
+      }
+    }
+  }
+  return "localhost";
+}
+
+const networkIp = getNetworkIp();
+
+const ipPlugin: () => Plugin = () => ({
+  name: "ip-plugin",
+  configureServer: (server) => {
+    const ipFile = path.resolve(__dirname, "src/ip.ts");
+    const ipAddress =
+      server.config.server.host === true ? networkIp : "localhost";
+    fs.writeFileSync(ipFile, `export const ipAddress = '${ipAddress}'\n`);
+  },
+});
+
+export default defineConfig({
   server: {
-    host: true,     
+    host: true,
+    port: 5173,
     allowedHosts: true,
   },
-}
+  plugins: [ipPlugin()],
+});
