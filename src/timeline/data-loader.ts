@@ -40,7 +40,7 @@ function parseISODate(dateString: string, contextName: string): Date {
  * This is the ONLY place where date parsing happens - all downstream code uses Date objects
  */
 export async function loadTimelineData(): Promise<TimelineData> {
-  const rawData = await d3.json<TimelineDataRaw>('/assets/data.json');
+  const rawData = await d3.json<TimelineDataRaw>('/data/events-timeline/data.json');
 
   if (!rawData) {
     throw new Error('Failed to load data.json');

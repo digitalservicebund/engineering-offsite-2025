@@ -459,7 +459,7 @@ export class ViewportController {
 
     // Create image element
     const img = document.createElement('img');
-    img.src = '/assets/merge-to-main.png';
+    img.src = '/photos/events-timeline/merge-to-main.png';
     img.style.cssText = `
       max-width: 90%;
       max-height: 90%;

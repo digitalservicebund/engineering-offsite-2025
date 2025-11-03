@@ -26,12 +26,12 @@ export class PhotoController {
   private thumbnails: Map<string, HTMLElement> = new Map(); // eventId → thumbnail element
 
   /**
-   * Get photo URL from event ID (convention: assets/photos/{eventId})
+   * Get photo URL from event ID (convention: photos/events-timeline/{eventId}.jpg)
    * @param eventId - The event ID
    * @returns Photo URL path
    */
   public static getPhotoUrl(eventId: string): string {
-    return `assets/photos/${eventId}`;
+    return `/photos/events-timeline/${eventId}`;
   }
 
   /**

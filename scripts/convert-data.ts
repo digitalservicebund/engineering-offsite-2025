@@ -11,7 +11,7 @@
  *   - people.json: array of {name, joined, left}
  * 
  * Output:
- *   - public/assets/data.json
+ *   - public/data/events-timeline/data.json
  */
 
 import * as fs from 'fs';
@@ -188,7 +188,7 @@ function calculateYearRange(people: Person[], projects: Project[], events: Event
 function convertData(): void {
   const projectRoot = path.resolve(__dirname, '..');
   const inputDir = path.join(projectRoot, 'input_data');
-  const outputPath = path.join(projectRoot, 'public', 'assets', 'data.json');
+  const outputPath = path.join(projectRoot, 'public', 'data', 'events-timeline', 'data.json');
   
   console.log('🔄 Converting data...');
   console.log(`Input directory: ${inputDir}`);
