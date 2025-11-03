@@ -1,6 +1,7 @@
 import { Plugin, defineConfig } from "vite";
 import fs from "fs";
-import path from "path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import os from "os";
 
 function getNetworkIp() {
@@ -19,11 +20,12 @@ function getNetworkIp() {
 }
 
 const networkIp = getNetworkIp();
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const ipPlugin: () => Plugin = () => ({
   name: "ip-plugin",
   configureServer: (server) => {
-    const ipFile = path.resolve(__dirname, "src/ip.ts");
+    const ipFile = resolve(__dirname, "src/ip.ts");
     const ipAddress =
       server.config.server.host === true ? networkIp : "localhost";
     fs.writeFileSync(ipFile, `export const ipAddress = '${ipAddress}'\n`);
@@ -37,4 +39,14 @@ export default defineConfig({
     allowedHosts: true,
   },
   plugins: [ipPlugin()],
+  build: {
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, "index.html"),
+        floorplan: resolve(__dirname, "pages/floorplan.html"),
+        map: resolve(__dirname, "pages/map.html"),
+        timeline: resolve(__dirname, "pages/timeline.html"),
+      },
+    },
+  },
 });
