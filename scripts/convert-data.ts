@@ -106,7 +106,7 @@ function convertEvents(csvPath: string): Event[] {
     const [date, name, isKeyMomentStr, photoFilename, caption] = row;
     
     const isKeyMoment = isKeyMomentStr.toLowerCase() === 'true' || isKeyMomentStr === '1';
-    const hasPhoto = photoFilename && photoFilename.trim() !== '';
+    const hasPhoto = Boolean(photoFilename && photoFilename.trim() !== '');
     
     // Generate event ID from photo filename if present, otherwise from index
     const id = hasPhoto ? photoFilename : `evt${index + 1}`;
