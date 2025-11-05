@@ -397,9 +397,9 @@ export class ParticleAnimationController<T> {
     const labelFO = animationGroup
       .append('foreignObject')
       .attr('x', labelX)
-      .attr('y', -10 + verticalOffset) // Center vertically with offset
+      .attr('y', -22 + verticalOffset) // Center vertically with offset (accommodates 2-3 lines)
       .attr('width', 150)
-      .attr('height', 20);
+      .attr('height', 45);
     
     labelFO
       .append('xhtml:div')

@@ -24,7 +24,7 @@ export const LAYOUT = {
     height: 800,
   },
   timeline: {
-    pixelsPerYear: 2000,
+    pixelsPerYear: 2500,
   },
   scroll: {
     currentPositionRatio: 0.56, // ratio (0-1) - viewport position used as "current" date marker
