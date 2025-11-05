@@ -73,7 +73,7 @@ export class ParticleAnimationController<T> {
     this.config = config;
 
     // Compute spawn offset X (1/3 of pixels per year)
-    this.spawnOffsetX = LAYOUT.timeline.pixelsPerYear / 3;
+    this.spawnOffsetX = LAYOUT.timeline.pixelsPerYear / 6;
 
     // Initialize tracking structures
     this.activeParticles = new Map();
