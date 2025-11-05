@@ -154,7 +154,7 @@ export const LAYOUT = {
   background: COLORS.background,
   textColor: COLORS.text,
   debug: {
-    showFpsCounter: true, // Display FPS counter in top-left corner
+    showFpsCounter: false, // Display FPS counter in top-left corner
   },
 } as const;
 
